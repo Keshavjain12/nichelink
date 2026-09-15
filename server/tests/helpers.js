@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { createApp } from '../src/app.js';
 import { COMMUNITY_ACCESS, COMMUNITY_ROLES, ROLES } from '../src/constants/roles.js';
-import { Community, Membership, User } from '../src/models/index.js';
+import { Community, Membership, Subscription, User } from '../src/models/index.js';
 import { signAccessToken } from '../src/utils/tokens.js';
 
 export const TEST_PASSWORD = 'Str0ngPassw0rd';
@@ -32,11 +32,18 @@ export async function createUser({ plan = 'free', admin = false, ...overrides } 
   };
 
   if (admin) data.role = ROLES.ADMIN;
+  const currentPeriodEnd = new Date(Date.now() + 30 * DAY_MS);
   if (plan === 'pro') {
     data.role = data.role ?? ROLES.PRO;
-    data.subscription = { plan: 'pro', status: 'active', currentPeriodEnd: new Date(Date.now() + 30 * DAY_MS) };
+    data.subscription = { plan: 'pro', status: 'active', currentPeriodEnd };
   }
-  return User.create(data);
+
+  const user = await User.create(data);
+  if (plan === 'pro') {
+    // Keep the snapshot backed by a real record, as the subscription service would.
+    await Subscription.create({ user: user._id, provider: 'complimentary', status: 'active', currentPeriodEnd });
+  }
+  return user;
 }
 
 export const createFreeUser = (overrides) => createUser(overrides);

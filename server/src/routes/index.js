@@ -3,6 +3,7 @@ import { env } from '../config/env.js';
 import { isDatabaseReady } from '../config/database.js';
 import { PLAN_CATALOG, PLAN_LIMITS } from '../constants/plans.js';
 import { sendSuccess } from '../utils/response.js';
+import { createAdminRouter, createReportRouter } from './adminRoutes.js';
 import { createAuthRouter } from './authRoutes.js';
 import { createCommunityRouter, createMembershipRouter } from './communityRoutes.js';
 import { createConversationRouter, createMessageRouter } from './conversationRoutes.js';
@@ -40,6 +41,8 @@ export function createApiRouter({ limiters }) {
   router.use('/subscriptions', createSubscriptionRouter({ limiters }));
   router.use('/search', createSearchRouter());
   router.use('/notifications', createNotificationRouter());
+  router.use('/reports', createReportRouter({ limiters }));
+  router.use('/admin', createAdminRouter());
 
   return router;
 }

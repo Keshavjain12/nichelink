@@ -245,7 +245,10 @@ describe('subscriptions & Stripe webhooks', () => {
 
   it('expires lapsed subscriptions when webhooks were missed', async () => {
     const user = await createProUser();
-    await User.updateOne({ _id: user._id }, { 'subscription.currentPeriodEnd': new Date(Date.now() - 5 * DAY_S * 1000) });
+    const lapsedAt = new Date(Date.now() - 5 * DAY_S * 1000);
+    // Stored state still says "active" because the cancellation webhook never arrived.
+    await User.updateOne({ _id: user._id }, { 'subscription.currentPeriodEnd': lapsedAt });
+    await Subscription.updateMany({ user: user._id }, { currentPeriodEnd: lapsedAt });
 
     // Access is already denied at request time …
     const me = await request(app).get('/api/v1/auth/me').set(bearer(user)).expect(200);

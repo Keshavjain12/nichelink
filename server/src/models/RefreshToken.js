@@ -1,0 +1,20 @@
+import mongoose from 'mongoose';
+
+const refreshTokenSchema = new mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    tokenHash: { type: String, required: true, unique: true },
+    family: { type: String, required: true, index: true },
+    expiresAt: { type: Date, required: true },
+    revokedAt: { type: Date },
+    revokedReason: { type: String, enum: ['rotated', 'logout', 'reuse-detected', 'password-change', 'suspended'] },
+    userAgent: { type: String, maxlength: 300 },
+    ip: { type: String, maxlength: 64 },
+  },
+  { timestamps: true },
+);
+
+// MongoDB removes expired tokens automatically.
+refreshTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
+export const RefreshToken = mongoose.model('RefreshToken', refreshTokenSchema);

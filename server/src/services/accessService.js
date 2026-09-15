@@ -3,7 +3,7 @@ import { permissionsForRole, roleHasPermission } from '../constants/permissions.
 import { COMMUNITY_ACCESS, ROLES } from '../constants/roles.js';
 
 /** Stripe renews at period end; tolerate delayed renewal webhooks before revoking access. */
-const RENEWAL_GRACE_MS = 48 * 60 * 60 * 1000;
+export const RENEWAL_GRACE_MS = 48 * 60 * 60 * 1000;
 
 export function isSubscriptionEntitled(subscription, now = Date.now()) {
   if (!subscription || !ENTITLED_SUBSCRIPTION_STATUSES.includes(subscription.status)) return false;

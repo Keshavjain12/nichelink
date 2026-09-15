@@ -3,6 +3,8 @@ import { createApp } from './app.js';
 import { connectDatabase, disconnectDatabase } from './config/database.js';
 import { env } from './config/env.js';
 import { logger } from './config/logger.js';
+import { startJobs } from './jobs/index.js';
+import { createSocketServer } from './sockets/index.js';
 
 const SHUTDOWN_TIMEOUT_MS = 10_000;
 
@@ -11,6 +13,8 @@ async function start() {
 
   const app = createApp();
   const server = http.createServer(app);
+  const sockets = createSocketServer(server);
+  const stopJobs = startJobs();
 
   await new Promise((resolve) => server.listen(env.PORT, resolve));
   logger.info(
@@ -30,6 +34,8 @@ async function start() {
     }, SHUTDOWN_TIMEOUT_MS);
     forceExit.unref();
 
+    stopJobs();
+    await sockets.close();
     await new Promise((resolve) => server.close(resolve));
     await disconnectDatabase();
     logger.info('Shutdown complete');

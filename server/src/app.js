@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import { pinoHttp } from 'pino-http';
 import { env } from './config/env.js';
 import { logger } from './config/logger.js';
+import * as subscriptionController from './controllers/subscriptionController.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { createRateLimiters } from './middleware/rateLimiters.js';
 import { sanitizeInput } from './middleware/sanitizeInput.js';
@@ -47,6 +48,13 @@ export function createApp({ rateLimitEnabled = env.RATE_LIMIT_ENABLED } = {}) {
   );
   app.use(compression());
   app.use(cookieParser());
+
+  // Stripe signs the exact request bytes, so the webhook must receive the raw body (before JSON parsing).
+  app.post(
+    `${API_PREFIX}/subscriptions/webhook`,
+    express.raw({ type: 'application/json', limit: '1mb' }),
+    subscriptionController.webhook,
+  );
 
   app.use(express.json({ limit: '200kb' }));
   app.use(sanitizeInput);

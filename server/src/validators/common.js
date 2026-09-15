@@ -13,11 +13,12 @@ export const searchTerm = z.string().trim().max(100);
 
 const TAG_PATTERN = /^[\p{L}\p{N}][\p{L}\p{N} .+#&/-]*$/u;
 
-export const tagList = (max) =>
+export const tagArray = (max) =>
   z
     .array(z.string().trim().min(1).max(40).regex(TAG_PATTERN, 'Tags may contain letters, numbers and - . + # & /'))
-    .max(max, `At most ${max} items`)
-    .default([]);
+    .max(max, `At most ${max} items`);
+
+export const tagList = (max) => tagArray(max).default([]);
 
 /** Comma separated query value → array (e.g. ?skills=react,node). */
 export const csvQuery = (max = 10) =>

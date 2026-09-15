@@ -18,6 +18,8 @@ const projectSchema = new mongoose.Schema(
       maxlength: CONTENT_LIMITS.PROJECT_DESCRIPTION_MAX,
     },
     requiredSkills: { type: [String], default: [] },
+    // Lowercased copy of requiredSkills for case-insensitive, index-backed filtering.
+    skillKeys: { type: [String], default: [], select: false },
     projectType: { type: String, enum: PROJECT_TYPES, required: true },
     commitment: { type: String, enum: PROJECT_COMMITMENTS, required: true },
     compensation: { type: String, enum: PROJECT_COMPENSATION, required: true },
@@ -32,7 +34,13 @@ const projectSchema = new mongoose.Schema(
 
 projectSchema.index({ status: 1, createdAt: -1 });
 projectSchema.index({ author: 1, status: 1, createdAt: -1 });
-projectSchema.index({ status: 1, requiredSkills: 1 });
+projectSchema.index({ status: 1, skillKeys: 1, createdAt: -1 });
+
+projectSchema.pre('save', function syncSkillKeys() {
+  if (this.isModified('requiredSkills')) {
+    this.skillKeys = this.requiredSkills.map((skill) => skill.toLowerCase());
+  }
+});
 projectSchema.index(
   { title: 'text', summary: 'text', description: 'text', requiredSkills: 'text' },
   { weights: { title: 10, requiredSkills: 6, summary: 4, description: 1 }, name: 'project_text' },

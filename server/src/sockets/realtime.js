@@ -24,6 +24,11 @@ export function emitToUsers(userIds, event, payload) {
   io.to(userIds.map((id) => userRoom(String(id)))).emit(event, payload);
 }
 
+/** Forcefully closes every socket of a user (e.g. after suspension). */
+export function disconnectUser(userId) {
+  io?.in(userRoom(String(userId))).disconnectSockets(true);
+}
+
 export function emitToConversation(conversationId, event, payload, { exceptSocket } = {}) {
   if (!io) return;
   const target = io.to(conversationRoom(String(conversationId)));

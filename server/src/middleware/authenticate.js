@@ -43,14 +43,22 @@ export async function resolveUserFromToken(token) {
     throw ApiError.unauthorized('Invalid access token');
   }
 
-  const user = await User.findById(payload.sub).select(AUTH_USER_FIELDS).lean();
+  return loadRequestUser(payload.sub, { issuedAtMs: payload.iat * 1000 });
+}
+
+/**
+ * Loads the current authorization state for a user id. Long-lived socket connections call this
+ * before privileged actions so plan changes and suspensions apply without reconnecting.
+ */
+export async function loadRequestUser(userId, { issuedAtMs } = {}) {
+  const user = await User.findById(userId).select(AUTH_USER_FIELDS).lean();
   if (!user) throw ApiError.unauthorized('Invalid access token');
 
   if (user.status === ACCOUNT_STATUS.SUSPENDED) {
     throw ApiError.forbidden('This account has been suspended', { code: ERROR_CODES.ACCOUNT_SUSPENDED });
   }
 
-  if (user.passwordChangedAt && payload.iat * 1000 + IAT_TOLERANCE_MS < user.passwordChangedAt.getTime()) {
+  if (issuedAtMs && user.passwordChangedAt && issuedAtMs + IAT_TOLERANCE_MS < user.passwordChangedAt.getTime()) {
     throw ApiError.unauthorized('Session is no longer valid', { code: ERROR_CODES.TOKEN_EXPIRED });
   }
 

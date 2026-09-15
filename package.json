@@ -1,0 +1,29 @@
+{
+  "name": "nichelink",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NicheLink — niche professional communities for remote workers (MERN monorepo)",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,magenta \"npm run dev -w server\" \"npm run dev -w client\"",
+    "server": "npm run dev -w server",
+    "client": "npm run dev -w client",
+    "build": "npm run build -w client",
+    "start": "npm run start -w server",
+    "lint": "npm run lint -w server && npm run lint -w client",
+    "test": "npm run test -w server && npm run test -w client",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "seed": "npm run seed -w server"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5",
+    "prettier": "^3.9.6"
+  }
+}

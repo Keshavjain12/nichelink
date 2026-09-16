@@ -185,6 +185,18 @@ no stack traces in production responses, env validation at startup. See [securit
 | 10 | QA | lint, tests, production build, dependency audit | full run |
 | 11 | Deployment & docs | README, docs, Render/Vercel config, Dockerfile, CI | — |
 
+## 3a. Delivery log
+
+All phases are implemented and verified. Notable corrections found during the build:
+
+| Found | Issue | Fix |
+| --- | --- | --- |
+| Phase 4 | `registerConnection` awaited a presence broadcast **before** attaching socket listeners, so events emitted immediately after `connect` were dropped (an intermittent test failure that was a real race). | Listeners are attached synchronously; presence broadcasts afterwards. |
+| Phase 4 | Test helpers created Pro users with a plan snapshot but no `Subscription` record, so entitlement re-derivation correctly downgraded them. | Helpers now create a complimentary subscription record, matching production data. |
+| Phase 9 | `SearchPage` synced its input with `setState` inside an effect (cascading renders). | Derived during render via the previous-value pattern. |
+| Phase 9 | Project skill filters used case-insensitive regexes that could not use an index. | Added a stored lowercase `skillKeys` array with a compound index. |
+| Phase 9 | `window.location.assign` could not be stubbed in jsdom. | Extracted a `redirectTo` helper — testable, and the component reads more clearly. |
+
 ## 4. Out of scope (deliberately)
 
 - Email delivery (verification / password reset) — no mail provider in requirements; documented as future work.

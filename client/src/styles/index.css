@@ -1,0 +1,176 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-300: #a5b4fc;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-brand-800: #3730a3;
+  --color-brand-900: #312e81;
+
+  --shadow-card: 0 1px 2px rgb(15 18 34 / 0.04), 0 1px 3px rgb(15 18 34 / 0.06);
+  --shadow-elevated: 0 12px 32px -12px rgb(15 18 34 / 0.18), 0 2px 6px rgb(15 18 34 / 0.06);
+
+  --animate-fade-in: fade-in 160ms ease-out;
+  --animate-slide-up: slide-up 200ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* Semantic surface tokens switch with the theme so components never need dark: overrides for them. */
+@theme inline {
+  --color-canvas: var(--nl-canvas);
+  --color-surface: var(--nl-surface);
+  --color-surface-muted: var(--nl-surface-muted);
+  --color-surface-hover: var(--nl-surface-hover);
+  --color-line: var(--nl-line);
+  --color-line-strong: var(--nl-line-strong);
+  --color-fg: var(--nl-fg);
+  --color-fg-muted: var(--nl-fg-muted);
+  --color-fg-subtle: var(--nl-fg-subtle);
+}
+
+:root {
+  --nl-canvas: #f6f7fb;
+  --nl-surface: #ffffff;
+  --nl-surface-muted: #f1f3f8;
+  --nl-surface-hover: #eceff6;
+  --nl-line: #e3e6ef;
+  --nl-line-strong: #cfd4e2;
+  --nl-fg: #0f1222;
+  --nl-fg-muted: #4a5068;
+  --nl-fg-subtle: #737a93;
+  color-scheme: light;
+}
+
+.dark {
+  --nl-canvas: #0a0c13;
+  --nl-surface: #11141d;
+  --nl-surface-muted: #181c28;
+  --nl-surface-hover: #1e2331;
+  --nl-line: #242a3a;
+  --nl-line-strong: #333b50;
+  --nl-fg: #eceef6;
+  --nl-fg-muted: #a8aec4;
+  --nl-fg-subtle: #767d96;
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-canvas font-sans text-fg antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  ::selection {
+    @apply bg-brand-500/25;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-500;
+  }
+  button,
+  [role='button'] {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+@layer components {
+  /* Rendered post content (sanitized HTML). */
+  .rich-content {
+    @apply text-[15px] leading-7 text-fg break-words;
+  }
+  .rich-content > * + * {
+    @apply mt-3;
+  }
+  .rich-content h2 {
+    @apply mt-6 text-xl font-semibold tracking-tight;
+  }
+  .rich-content h3 {
+    @apply mt-5 text-lg font-semibold tracking-tight;
+  }
+  .rich-content a {
+    @apply font-medium text-brand-600 underline decoration-brand-300 underline-offset-2 hover:decoration-brand-600 dark:text-brand-400;
+  }
+  .rich-content ul {
+    @apply list-disc pl-6;
+  }
+  .rich-content ol {
+    @apply list-decimal pl-6;
+  }
+  .rich-content li + li {
+    @apply mt-1;
+  }
+  .rich-content blockquote {
+    @apply border-l-4 border-brand-300 pl-4 text-fg-muted italic dark:border-brand-700;
+  }
+  .rich-content code {
+    @apply rounded bg-surface-muted px-1.5 py-0.5 font-mono text-[0.85em];
+  }
+  .rich-content pre {
+    @apply overflow-x-auto rounded-lg bg-slate-950 p-4 font-mono text-sm leading-6 text-slate-100;
+  }
+  .rich-content pre code {
+    @apply bg-transparent p-0 text-inherit;
+  }
+
+  /* Quill editor, restyled to match the design system. */
+  .rich-editor .ql-toolbar.ql-snow {
+    @apply rounded-t-lg border-line bg-surface-muted font-sans;
+  }
+  .rich-editor .ql-container.ql-snow {
+    @apply min-h-56 rounded-b-lg border-line bg-surface font-sans text-[15px] text-fg;
+  }
+  .rich-editor .ql-editor {
+    @apply min-h-56 leading-7;
+  }
+  .rich-editor .ql-editor.ql-blank::before {
+    @apply not-italic text-fg-subtle;
+  }
+  .rich-editor .ql-snow .ql-stroke {
+    stroke: var(--nl-fg-muted);
+  }
+  .rich-editor .ql-snow .ql-fill {
+    fill: var(--nl-fg-muted);
+  }
+  .rich-editor .ql-snow .ql-picker {
+    color: var(--nl-fg-muted);
+  }
+  .rich-editor .ql-snow .ql-picker-options {
+    @apply border-line bg-surface;
+  }
+  .rich-editor:focus-within .ql-container.ql-snow,
+  .rich-editor:focus-within .ql-toolbar.ql-snow {
+    @apply border-brand-400;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

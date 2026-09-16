@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:8
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping:1})'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Server tests
+        run: npm test --workspace server
+        env:
+          TEST_MONGODB_URI: mongodb://127.0.0.1:27017
+
+      - name: Client tests
+        run: npm test --workspace client
+
+      - name: Production build
+        run: npm run build
+
+      - name: Check for committed secrets
+        run: |
+          if git grep -nE "sk_(live|test)_[A-Za-z0-9]{10,}|whsec_[A-Za-z0-9]{10,}|mongodb\+srv://[^ ]*:[^ ]*@" -- ':!*.md' ':!.github/workflows/*'; then
+            echo "::error::Possible secret committed"
+            exit 1
+          fi

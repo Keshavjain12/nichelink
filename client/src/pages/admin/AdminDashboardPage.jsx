@@ -151,10 +151,10 @@ export default function AdminDashboardPage() {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {Array.from({ length: 6 }, (_, index) => <Skeleton key={index} className="h-28 rounded-2xl" />)}
         </div>
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <Skeleton className="h-72 rounded-2xl" />
           <Skeleton className="h-72 rounded-2xl" />
         </div>
@@ -167,7 +167,7 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <StatTile icon={Users} label="Members" value={totals.users} hint={`+${totals.newUsersThisWeek} this week`} to="/admin/users" />
         <StatTile icon={Crown} label="Pro members" value={totals.proUsers} hint={`${Math.round((totals.proUsers / (totals.users || 1)) * 100)}% of members`} tone="pro" />
         <StatTile icon={Compass} label="Communities" value={totals.communities} hint={`${totals.proCommunities} Pro-only`} to="/admin/communities" />
@@ -176,7 +176,7 @@ export default function AdminDashboardPage() {
         <StatTile icon={Flag} label="Open reports" value={totals.openReports} hint="Moderation queue" tone={totals.openReports > 0 ? 'danger' : 'neutral'} to="/admin/reports" />
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader title="New members" description="Sign-ups per day, last 30 days" />
           <TrendChart type="area" data={series.signups} color={colors.series1} grid={colors.grid} axis={colors.axis} unit="new members" tickInterval={6} />
@@ -187,7 +187,7 @@ export default function AdminDashboardPage() {
         </Card>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <Card>
           <CardHeader title="Messages sent" description="Per day, last 14 days" />
           <TrendChart type="bar" data={series.messages} color={colors.series1} grid={colors.grid} axis={colors.axis} unit="messages" tickInterval={2} />
@@ -195,7 +195,7 @@ export default function AdminDashboardPage() {
         <PlanMix totals={totals} colors={colors} />
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader title="Newest members" action={<Link to="/admin/users" className="text-xs font-medium text-brand-600 hover:underline dark:text-brand-400">Manage</Link>} />
           <ul className="divide-y divide-line px-5 pb-2">

@@ -88,7 +88,7 @@ function CommunityFormDialog({ open, onClose, community }) {
   return (
     <Dialog open={open} onClose={onClose} size="lg" title={community ? `Edit ${community.name}` : 'Create a community'} description="Communities are created by admins; members join and moderators keep them healthy.">
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
-        <div className="grid gap-4 sm:grid-cols-[1fr_96px_120px]">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_96px_120px]">
           <TextField id="community-name" label="Name" required error={errors.name?.message ?? errors.slug?.message} {...register('name')} />
           <TextField id="community-icon" label="Icon" required error={errors.icon?.message} {...register('icon')} />
           <FormField id="community-color" label="Accent" error={errors.accentColor?.message}>
@@ -97,7 +97,7 @@ function CommunityFormDialog({ open, onClose, community }) {
         </div>
         <TextField id="community-tagline" label="Tagline" error={errors.tagline?.message} {...register('tagline')} />
         <TextareaField id="community-description" label="Description" error={errors.description?.message} {...register('description')} />
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <SelectField id="community-category" label="Category" required error={errors.category?.message} {...register('category')}>
             <option value="">Select…</option>
             {COMMUNITY_CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
@@ -166,7 +166,7 @@ export default function AdminCommunitiesPage() {
         <ErrorState error={error} onRetry={refetch} />
       ) : (
         <Card className="overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="relative overflow-x-auto xl:overflow-visible">
             <table className="w-full min-w-[760px] text-left text-sm">
               <caption className="sr-only">Communities</caption>
               <thead className="border-b border-line bg-surface-muted text-xs text-fg-subtle uppercase">

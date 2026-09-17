@@ -49,7 +49,7 @@ function CreateMenu() {
     <Menu
       label="Create"
       trigger={(props) => (
-        <Button size="sm" leftIcon={Plus} className="hidden sm:inline-flex" {...props}>
+        <Button size="sm" leftIcon={Plus} className="max-sm:hidden" {...props}>
           Create
         </Button>
       )}
@@ -84,7 +84,7 @@ export default function TopBar() {
           <MenuIcon className="size-5" aria-hidden="true" />
         </Button>
         <Link to={isAuthenticated ? '/feed' : '/'} className="rounded-lg lg:w-60" aria-label="NicheLink home">
-          <Logo className="hidden sm:inline-flex" />
+          <Logo className="max-sm:hidden" />
           <Logo compact className="sm:hidden" />
         </Link>
 

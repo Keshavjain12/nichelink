@@ -20,7 +20,7 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <PageHeader title="Settings" description="Manage your profile, security, plan and preferences." />
-      <div className="grid gap-6 md:grid-cols-[220px_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-[220px_minmax(0,1fr)]">
         <nav aria-label="Settings sections" className="-mx-4 flex gap-1 overflow-x-auto px-4 md:mx-0 md:flex-col md:px-0">
           {SECTIONS.map((section) => (
             <NavLink

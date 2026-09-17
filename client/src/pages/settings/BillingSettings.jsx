@@ -71,7 +71,7 @@ export default function BillingSettings() {
           {subscription.status !== 'none' && <Badge variant={status.variant}>{status.label}</Badge>}
         </div>
 
-        <dl className="mt-6 grid gap-4 sm:grid-cols-2">
+        <dl className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {subscription.currentPeriodEnd && (
             <div>
               <dt className="text-xs text-fg-subtle">{subscription.cancelAtPeriodEnd ? 'Access ends' : 'Renews on'}</dt>

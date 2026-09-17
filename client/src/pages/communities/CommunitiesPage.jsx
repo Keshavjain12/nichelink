@@ -121,7 +121,7 @@ export default function CommunitiesPage() {
               {data.meta.total} {data.meta.total === 1 ? 'community' : 'communities'}
             </p>
           )}
-          <div className={cn('grid gap-4 sm:grid-cols-2 xl:grid-cols-3', isFetching && !isLoading && 'opacity-70')}>
+          <div className={cn('grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3', isFetching && !isLoading && 'opacity-70')}>
             {isLoading && Array.from({ length: 6 }, (_, index) => <CommunityCardSkeleton key={index} />)}
             {data?.items.map((community) => (
               <CommunityCard key={community.id} community={community} />

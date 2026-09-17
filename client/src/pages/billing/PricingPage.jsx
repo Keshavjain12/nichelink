@@ -98,7 +98,7 @@ export default function PricingPage() {
         </InlineAlert>
       )}
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {isLoading && [0, 1].map((index) => <Skeleton key={index} className="h-96 rounded-2xl" />)}
         {config?.plans.map((plan) => {
           const isProPlan = plan.id === 'pro';

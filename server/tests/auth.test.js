@@ -196,6 +196,19 @@ describe('auth API', () => {
       expect(rotated).not.toBe(cookie);
     });
 
+    it('answers "no session" without an error when there is no refresh cookie', async () => {
+      const res = await request(app).post('/api/v1/auth/refresh').set(CSRF_HEADERS).expect(200);
+      expect(res.body).toEqual({ success: true, data: null });
+    });
+
+    it('still rejects a present but invalid refresh cookie', async () => {
+      await request(app)
+        .post('/api/v1/auth/refresh')
+        .set('Cookie', 'nl_refresh=forged-token-value')
+        .set(CSRF_HEADERS)
+        .expect(401);
+    });
+
     it('requires the anti-CSRF header and a trusted origin', async () => {
       const { cookie } = await signIn();
       await request(app).post('/api/v1/auth/refresh').set('Cookie', cookie).expect(403);

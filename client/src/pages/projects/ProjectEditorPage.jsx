@@ -78,7 +78,7 @@ function ProjectForm({ project }) {
             <Controller control={control} name="requiredSkills" render={({ field }) => <TagInput {...fieldProps} value={field.value} onChange={field.onChange} max={12} />} />
           )}
         </FormField>
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <SelectField id="projectType" label="Type" required error={errors.projectType?.message} {...register('projectType')}>
             <option value="">Select…</option>
             {PROJECT_TYPES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}

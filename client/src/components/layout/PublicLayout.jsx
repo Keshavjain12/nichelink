@@ -82,7 +82,7 @@ export function PublicNavbar() {
 export function PublicFooter() {
   return (
     <footer className="border-t border-line bg-surface">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-4">
+      <div className="mx-auto grid grid-cols-1 max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-4">
         <div className="md:col-span-2">
           <Logo />
           <p className="mt-3 max-w-sm text-sm text-fg-muted">

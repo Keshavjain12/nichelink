@@ -122,7 +122,7 @@ export default function ProjectPage() {
         <ArrowLeft className="size-4" aria-hidden="true" /> All projects
       </Link>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="min-w-0 space-y-6">
           <Card as="article" className="p-5 sm:p-7">
             <div className="flex flex-wrap items-center gap-2">

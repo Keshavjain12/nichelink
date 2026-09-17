@@ -202,7 +202,7 @@ export default function MessagesPage() {
   }, [recipientId, startConversation, navigate]);
 
   return (
-    <div className="-mx-4 grid h-[calc(100dvh-7.25rem)] overflow-hidden border-line bg-surface sm:mx-0 sm:h-[calc(100dvh-8rem)] sm:rounded-2xl sm:border sm:shadow-card md:grid-cols-[320px_minmax(0,1fr)] lg:h-[calc(100dvh-6.5rem)]">
+    <div className="-mx-4 grid grid-cols-1 h-[calc(100dvh-7.25rem)] overflow-hidden border-line bg-surface sm:mx-0 sm:h-[calc(100dvh-8rem)] sm:rounded-2xl sm:border sm:shadow-card md:grid-cols-[320px_minmax(0,1fr)] lg:h-[calc(100dvh-6.5rem)]">
       <aside className={cn('min-h-0 border-line md:border-r', conversationId ? 'hidden md:block' : 'block')} aria-label="Conversations">
         <ConversationList activeId={conversationId} onCompose={() => setComposing(true)} />
       </aside>

@@ -50,7 +50,7 @@ export default function AccountSettings() {
     <div className="space-y-6">
       <Card className="space-y-4 p-5 sm:p-6">
         <h2 className="text-base font-semibold">Account</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <Label htmlFor="account-email">Email</Label>
             <Input id="account-email" value={user.email} readOnly disabled />
@@ -72,7 +72,7 @@ export default function AccountSettings() {
           <FormField id="currentPassword" label="Current password" error={errors.currentPassword?.message}>
             {(fieldProps) => <PasswordInput autoComplete="current-password" {...fieldProps} {...register('currentPassword')} />}
           </FormField>
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <FormField id="newPassword" label="New password" hint="8+ characters with upper, lower case and a number" error={errors.newPassword?.message}>
               {(fieldProps) => <PasswordInput autoComplete="new-password" {...fieldProps} {...register('newPassword')} />}
             </FormField>

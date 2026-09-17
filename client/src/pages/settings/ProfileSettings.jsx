@@ -130,7 +130,7 @@ export default function ProfileSettings() {
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <Card className="space-y-5 p-5 sm:p-6">
           <h2 className="text-base font-semibold">Public profile</h2>
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <TextField id="name" label="Full name" required error={errors.name?.message} {...register('name')} />
             <TextField id="headline" label="Headline" placeholder="e.g. Staff Engineer · Payments" error={errors.headline?.message} {...register('headline')} />
             <TextField id="location" label="Location" placeholder="City, country" error={errors.location?.message} {...register('location')} />

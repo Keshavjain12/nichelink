@@ -1,6 +1,21 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { useDismiss } from '../../hooks/common';
 import { cn } from '../../utils/misc';
+
+const GAP_PX = 6;
+
+/** Bottom edge of the nearest ancestor that clips overflow, or the viewport. */
+function clippingBottom(element) {
+  let bottom = window.innerHeight;
+  for (let node = element?.parentElement; node && node !== document.body; node = node.parentElement) {
+    const { overflowX, overflowY } = getComputedStyle(node);
+    if (overflowX !== 'visible' || overflowY !== 'visible') {
+      bottom = Math.min(bottom, node.getBoundingClientRect().bottom);
+      break;
+    }
+  }
+  return bottom;
+}
 
 /** Accessible dropdown menu with arrow-key navigation. */
 export function Menu({ label, trigger, children, align = 'end', className, menuClassName }) {
@@ -9,6 +24,20 @@ export function Menu({ label, trigger, children, align = 'end', className, menuC
   const menuRef = useRef(null);
   const menuId = useId();
   useDismiss(containerRef, () => setOpen(false), open);
+
+  // Open upwards when the menu would be cut off by a scroll container (e.g. the last rows of a
+  // table) or the bottom of the viewport. Applied as inline style so no re-render is needed.
+  useLayoutEffect(() => {
+    const menu = menuRef.current;
+    const container = containerRef.current;
+    if (!open || !menu || !container) return;
+    const menuHeight = menu.getBoundingClientRect().height;
+    const triggerRect = container.getBoundingClientRect();
+    const roomBelow = clippingBottom(container) - triggerRect.bottom;
+    if (roomBelow < menuHeight + GAP_PX && triggerRect.top > menuHeight + GAP_PX) {
+      Object.assign(menu.style, { top: 'auto', bottom: '100%', marginTop: '0', marginBottom: `${GAP_PX}px` });
+    }
+  }, [open]);
 
   useEffect(() => {
     if (open) menuRef.current?.querySelector('[role="menuitem"]:not([disabled])')?.focus();

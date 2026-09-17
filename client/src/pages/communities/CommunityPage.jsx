@@ -38,7 +38,7 @@ function CommunityHeaderSkeleton() {
 
 function AboutPanel({ community }) {
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
       <Card className="p-6">
         <h2 className="text-sm font-semibold">About this community</h2>
         <p className="mt-2 text-sm leading-6 whitespace-pre-line text-fg-muted">{community.description || community.tagline}</p>
@@ -107,7 +107,7 @@ function MembersPanel({ slug, isAuthenticated }) {
 
   return (
     <>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {isLoading && Array.from({ length: 6 }, (_, index) => <Skeleton key={index} className="h-20 rounded-2xl" />)}
         {data?.items.map((member) => (
           <Card key={member.id} className="p-4">

@@ -23,8 +23,14 @@ export async function login(req, res) {
 }
 
 export async function refresh(req, res) {
+  const rawToken = readRefreshCookie(req);
+  // No cookie simply means "not signed in" (every guest page load asks). That is not an
+  // authentication failure, so it must not surface as a 401 in the browser console.
+  // A cookie that is present but invalid, expired or reused still returns 401.
+  if (!rawToken) return sendSuccess(res, { data: null });
+
   try {
-    const session = await authService.refreshSession(readRefreshCookie(req), requestMeta(req));
+    const session = await authService.refreshSession(rawToken, requestMeta(req));
     sendSuccess(res, { data: sessionPayload(res, session) });
   } catch (error) {
     clearRefreshCookie(res);

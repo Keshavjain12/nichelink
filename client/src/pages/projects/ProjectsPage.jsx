@@ -61,7 +61,7 @@ export default function ProjectsPage() {
         />
       )}
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[2fr_1.5fr_1fr_1fr_1fr_1fr]">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[2fr_1.5fr_1fr_1fr_1fr_1fr]">
         <div className="relative sm:col-span-2 lg:col-span-1">
           <label htmlFor="project-search" className="sr-only">Search projects</label>
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-fg-subtle" aria-hidden="true" />
@@ -106,7 +106,7 @@ export default function ProjectsPage() {
         <ErrorState error={error} onRetry={refetch} />
       ) : (
         <>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {isLoading && Array.from({ length: 6 }, (_, index) => <ProjectCardSkeleton key={index} />)}
             {projects.map((project) => (
               <ProjectCard key={project.id} project={project} />

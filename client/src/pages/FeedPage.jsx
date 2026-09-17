@@ -49,7 +49,7 @@ export default function FeedPage() {
   };
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
+    <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
       <div className="min-w-0 space-y-5">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
@@ -67,7 +67,7 @@ export default function FeedPage() {
             >
               Start a discussion…
             </Link>
-            <Button as={Link} to="/posts/new" size="sm" leftIcon={PenSquare} className="hidden sm:inline-flex">
+            <Button as={Link} to="/posts/new" size="sm" leftIcon={PenSquare} className="max-sm:hidden">
               Post
             </Button>
           </Card>

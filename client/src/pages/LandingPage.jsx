@@ -107,7 +107,7 @@ function FeaturedCommunities() {
   const { data, isLoading } = useListCommunitiesQuery({ featured: true, limit: 6 });
 
   return (
-    <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {isLoading &&
         Array.from({ length: 3 }, (_, index) => <Skeleton key={index} className="h-40 rounded-2xl" />)}
       {data?.items.map((community) => (
@@ -136,7 +136,7 @@ function PlanComparison() {
   const plans = config?.plans ?? [];
 
   return (
-    <div className="mx-auto mt-10 grid max-w-4xl gap-6 md:grid-cols-2">
+    <div className="mx-auto mt-10 grid grid-cols-1 max-w-4xl gap-6 md:grid-cols-2">
       {plans.map((plan) => {
         const isPro = plan.id === 'pro';
         return (
@@ -192,7 +192,7 @@ export default function LandingPage() {
             className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.14),transparent_60%)]"
             aria-hidden="true"
           />
-          <div className="mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-2">
+          <div className="mx-auto grid grid-cols-1 max-w-6xl items-center gap-16 lg:grid-cols-2">
             <div>
               <Badge variant="brand" icon={Sparkles}>Built for remote professionals</Badge>
               <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-fg sm:text-5xl lg:text-6xl">
@@ -220,7 +220,7 @@ export default function LandingPage() {
         </section>
 
         <Section eyebrow="The problem" title="Remote work needs better places to belong" className="bg-surface">
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
+          <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
             {PROBLEMS.map((problem, index) => (
               <div key={problem.title} className="rounded-2xl border border-line bg-canvas p-6">
                 <span className="font-mono text-sm text-brand-600 dark:text-brand-400">0{index + 1}</span>
@@ -232,7 +232,7 @@ export default function LandingPage() {
         </Section>
 
         <Section id="how-it-works" eyebrow="How it works" title="From lurker to collaborator in three steps">
-          <ol className="mt-12 grid gap-6 md:grid-cols-3">
+          <ol className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
             {STEPS.map((step, index) => (
               <li key={step.title} className="relative rounded-2xl border border-line bg-surface p-6 shadow-card">
                 <span className="flex size-11 items-center justify-center rounded-xl bg-brand-600 text-white">
@@ -256,7 +256,7 @@ export default function LandingPage() {
         </Section>
 
         <Section id="features" eyebrow="Platform" title="Everything a professional community needs">
-          <div className="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map((feature) => (
               <div key={feature.title} className="flex gap-4">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400">
@@ -276,7 +276,7 @@ export default function LandingPage() {
         </Section>
 
         <Section eyebrow="Member stories" title="What early members say" description="Illustrative stories from our demo community personas.">
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
+          <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
             {STORIES.map((story) => (
               <figure key={story.name} className="rounded-2xl border border-line bg-surface p-6 shadow-card">
                 <Quote className="size-6 text-brand-300 dark:text-brand-700" aria-hidden="true" />

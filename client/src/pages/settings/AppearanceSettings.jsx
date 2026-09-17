@@ -15,7 +15,7 @@ export default function AppearanceSettings() {
     <Card className="p-5 sm:p-6">
       <h2 className="text-base font-semibold">Theme</h2>
       <p className="mt-1 text-sm text-fg-muted">Saved on this device.</p>
-      <div role="radiogroup" aria-label="Theme" className="mt-5 grid gap-3 sm:grid-cols-3">
+      <div role="radiogroup" aria-label="Theme" className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
         {OPTIONS.map((option) => (
           <button
             key={option.value}

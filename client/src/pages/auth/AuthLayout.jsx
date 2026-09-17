@@ -10,7 +10,7 @@ const HIGHLIGHTS = [
 
 export default function AuthLayout({ title, subtitle, children, footer }) {
   return (
-    <div className="grid min-h-dvh bg-canvas lg:grid-cols-[1fr_1.1fr]">
+    <div className="grid grid-cols-1 min-h-dvh bg-canvas lg:grid-cols-[1fr_1.1fr]">
       <main id="main-content" className="flex flex-col px-4 py-8 sm:px-10">
         <Link to="/" className="self-start rounded-lg" aria-label="NicheLink home">
           <Logo />

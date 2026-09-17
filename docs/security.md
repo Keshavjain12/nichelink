@@ -101,6 +101,28 @@ The refresh cookie is `SameSite=Lax` by default (first-party when the SPA proxie
   or a `SameSite=None` cookie without `Secure`. Secrets live only in the environment, and `.env` is ignored
   by git.
 
+## Known dependency advisories
+
+`npm audit` reports one advisory, reviewed and accepted:
+
+| Package | Advisory | Status |
+| --- | --- | --- |
+| `quill@2.0.3` (client) | [GHSA-v3m3-f69x-jf25](https://github.com/advisories/GHSA-v3m3-f69x-jf25) — XSS via the HTML export feature (`getSemanticHTML`) | **Mitigated; no patched release exists** |
+
+Why it does not expose NicheLink users:
+
+1. The editor's exported HTML is never inserted into the page. It is only sent to the API.
+2. The API re-sanitizes every post body with a strict `sanitize-html` allowlist (fixed tags, only
+   `href/target/rel` on links, `http/https/mailto` schemes) before storing it — any markup the export
+   emits outside that allowlist is discarded.
+3. Rendering sanitizes again with DOMPurify using the same allowlist.
+
+Because an attacker can bypass Quill entirely and call `POST /posts` directly, the server-side sanitizer
+is the real security boundary regardless of this advisory; `server/tests/posts.test.js` exercises it with
+script tags, event handlers, `javascript:` URLs and images. The suggested `npm audit fix --force`
+downgrades to 2.0.2, which is merely unlisted rather than known-safe, so it is not applied. Revisit when
+Quill publishes a patched version.
+
 ## Verified by tests
 
 `server/tests/` covers: generic login errors, suspended accounts, refresh rotation and family revocation,

@@ -88,7 +88,7 @@ export default function AdminUsersPage() {
         <ErrorState error={error} onRetry={refetch} />
       ) : (
         <Card className="overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="relative overflow-x-auto xl:overflow-visible">
             <table className="w-full min-w-[720px] text-left text-sm">
               <caption className="sr-only">Platform members</caption>
               <thead className="border-b border-line bg-surface-muted text-xs text-fg-subtle uppercase">

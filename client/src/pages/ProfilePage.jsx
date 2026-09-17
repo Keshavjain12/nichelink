@@ -23,7 +23,7 @@ function ProfileCommunities({ username }) {
   if (error) return <ErrorState error={error} onRetry={refetch} />;
   if (!isLoading && data.length === 0) return <EmptyState icon={Users} title="Not a member of any communities yet" />;
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       {isLoading && [0, 1].map((index) => <CommunityCardSkeleton key={index} />)}
       {data?.map((community) => <CommunityCard key={community.id} community={community} />)}
     </div>
@@ -37,7 +37,7 @@ function ProfileProjects({ userId }) {
   if (!isLoading && projects.length === 0) return <EmptyState icon={Briefcase} title="No collaboration requests yet" />;
   return (
     <>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {isLoading && [0, 1].map((index) => <Skeleton key={index} className="h-48 rounded-2xl" />)}
         {projects.map((project) => <ProjectCard key={project.id} project={project} />)}
       </div>
@@ -133,7 +133,7 @@ export default function ProfilePage() {
             </dl>
 
             {(profile.skills.length > 0 || profile.interests.length > 0) && (
-              <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {profile.skills.length > 0 && (
                   <div>
                     <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-subtle">Skills</h2>

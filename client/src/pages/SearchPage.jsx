@@ -39,10 +39,10 @@ function PersonRow({ person }) {
 }
 
 function ResultItems({ type, items }) {
-  if (type === 'communities') return <div className="grid gap-4 sm:grid-cols-2">{items.map((item) => <CommunityCard key={item.id} community={item} />)}</div>;
-  if (type === 'users') return <div className="grid gap-3 sm:grid-cols-2">{items.map((item) => <PersonRow key={item.id} person={item} />)}</div>;
+  if (type === 'communities') return <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">{items.map((item) => <CommunityCard key={item.id} community={item} />)}</div>;
+  if (type === 'users') return <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">{items.map((item) => <PersonRow key={item.id} person={item} />)}</div>;
   if (type === 'posts') return <div className="space-y-4">{items.map((item) => <PostCard key={item.id} post={item} />)}</div>;
-  return <div className="grid gap-4 sm:grid-cols-2">{items.map((item) => <ProjectCard key={item.id} project={item} />)}</div>;
+  return <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">{items.map((item) => <ProjectCard key={item.id} project={item} />)}</div>;
 }
 
 export default function SearchPage() {

@@ -103,7 +103,7 @@ export default function AdminReportsPage() {
               <span className="ml-auto text-xs text-fg-subtle">Reported <RelativeTime value={report.createdAt} /></span>
             </div>
 
-            <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_240px]">
+            <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_240px]">
               <div className="space-y-3">
                 <TargetPreview report={report} />
                 {report.details && (

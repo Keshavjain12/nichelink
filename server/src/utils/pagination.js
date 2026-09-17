@@ -15,5 +15,11 @@ export function splitPage(rows, { page, limit }) {
 }
 
 export function buildCountedMeta({ page, limit, total }) {
-  return { page, limit, total, totalPages: Math.max(1, Math.ceil(total / limit)), hasMore: page * limit < total };
+  return {
+    page,
+    limit,
+    total,
+    totalPages: Math.max(1, Math.ceil(total / limit)),
+    hasMore: page * limit < total,
+  };
 }

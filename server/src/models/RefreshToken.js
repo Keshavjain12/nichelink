@@ -7,7 +7,10 @@ const refreshTokenSchema = new mongoose.Schema(
     family: { type: String, required: true, index: true },
     expiresAt: { type: Date, required: true },
     revokedAt: { type: Date },
-    revokedReason: { type: String, enum: ['rotated', 'logout', 'reuse-detected', 'password-change', 'suspended'] },
+    revokedReason: {
+      type: String,
+      enum: ['rotated', 'logout', 'reuse-detected', 'password-change', 'suspended'],
+    },
     userAgent: { type: String, maxlength: 300 },
     ip: { type: String, maxlength: 64 },
   },

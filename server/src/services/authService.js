@@ -18,9 +18,13 @@ const invalidCredentials = () =>
   new ApiError(401, 'Invalid email or password', { code: ERROR_CODES.INVALID_CREDENTIALS });
 
 const suspendedAccount = () =>
-  new ApiError(403, 'This account has been suspended. Contact support if you believe this is a mistake.', {
-    code: ERROR_CODES.ACCOUNT_SUSPENDED,
-  });
+  new ApiError(
+    403,
+    'This account has been suspended. Contact support if you believe this is a mistake.',
+    {
+      code: ERROR_CODES.ACCOUNT_SUSPENDED,
+    },
+  );
 
 async function createRefreshToken(userId, { family, userAgent, ip }) {
   const token = generateOpaqueToken();
@@ -49,7 +53,11 @@ export async function register({ name, username, email, password }, meta) {
     const field = existing.email === email ? 'email' : 'username';
     throw ApiError.conflict(
       field === 'email' ? 'An account with this email already exists' : 'That username is taken',
-      { errors: [{ field, message: field === 'email' ? 'Email already registered' : 'Username is taken' }] },
+      {
+        errors: [
+          { field, message: field === 'email' ? 'Email already registered' : 'Username is taken' },
+        ],
+      },
     );
   }
 
@@ -113,7 +121,10 @@ export async function refreshSession(rawToken, meta) {
     if (!withinGrace) {
       if (existing?.revokedReason === 'rotated') {
         await revokeFamily(existing.family, 'reuse-detected');
-        logger.warn({ userId: String(existing.user) }, 'Refresh token reuse detected; session family revoked');
+        logger.warn(
+          { userId: String(existing.user) },
+          'Refresh token reuse detected; session family revoked',
+        );
       }
       throw ApiError.unauthorized('Session expired, please sign in again');
     }
@@ -136,7 +147,9 @@ export async function refreshSession(rawToken, meta) {
 
 export async function logout(rawToken) {
   if (!rawToken) return;
-  const record = await RefreshToken.findOne({ tokenHash: hashToken(rawToken) }).select('family').lean();
+  const record = await RefreshToken.findOne({ tokenHash: hashToken(rawToken) })
+    .select('family')
+    .lean();
   if (record) await revokeFamily(record.family, 'logout');
 }
 

@@ -62,13 +62,21 @@ export async function updateProfile(userId, updates) {
 
 export async function updateAvatar(userId, file) {
   const avatar = await uploadImage(file, { userId, purpose: 'avatar' });
-  const previous = await User.findByIdAndUpdate(userId, { $set: { avatar } }, { returnDocument: 'before' }).lean();
+  const previous = await User.findByIdAndUpdate(
+    userId,
+    { $set: { avatar } },
+    { returnDocument: 'before' },
+  ).lean();
   if (previous?.avatar?.publicId) await deleteImages([previous.avatar.publicId]);
   return toSessionUser(await User.findById(userId).lean());
 }
 
 export async function removeAvatar(userId) {
-  const previous = await User.findByIdAndUpdate(userId, { $unset: { avatar: 1 } }, { returnDocument: 'before' }).lean();
+  const previous = await User.findByIdAndUpdate(
+    userId,
+    { $unset: { avatar: 1 } },
+    { returnDocument: 'before' },
+  ).lean();
   if (previous?.avatar?.publicId) await deleteImages([previous.avatar.publicId]);
   return toSessionUser(await User.findById(userId).lean());
 }

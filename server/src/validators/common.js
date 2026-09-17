@@ -15,7 +15,14 @@ const TAG_PATTERN = /^[\p{L}\p{N}][\p{L}\p{N} .+#&/-]*$/u;
 
 export const tagArray = (max) =>
   z
-    .array(z.string().trim().min(1).max(40).regex(TAG_PATTERN, 'Tags may contain letters, numbers and - . + # & /'))
+    .array(
+      z
+        .string()
+        .trim()
+        .min(1)
+        .max(40)
+        .regex(TAG_PATTERN, 'Tags may contain letters, numbers and - . + # & /'),
+    )
     .max(max, `At most ${max} items`);
 
 export const tagList = (max) => tagArray(max).default([]);

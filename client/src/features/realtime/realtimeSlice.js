@@ -47,5 +47,7 @@ export const {
 export default realtimeSlice.reducer;
 
 export const selectSocketConnected = (state) => state.realtime.connected;
-export const selectIsOnline = (userId) => (state) => Boolean(userId && state.realtime.onlineUserIds[userId]);
-export const selectTypingUser = (conversationId) => (state) => state.realtime.typing[conversationId] ?? null;
+export const selectIsOnline = (userId) => (state) =>
+  Boolean(userId && state.realtime.onlineUserIds[userId]);
+export const selectTypingUser = (conversationId) => (state) =>
+  state.realtime.typing[conversationId] ?? null;

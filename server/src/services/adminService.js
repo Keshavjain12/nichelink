@@ -12,7 +12,10 @@ import {
   Report,
   User,
 } from '../models/index.js';
-import { COMMUNITY_SUMMARY_FIELDS, toCommunitySummary } from '../serializers/communitySerializer.js';
+import {
+  COMMUNITY_SUMMARY_FIELDS,
+  toCommunitySummary,
+} from '../serializers/communitySerializer.js';
 import { USER_SUMMARY_FIELDS, toAdminUser, toUserSummary } from '../serializers/userSerializer.js';
 import { disconnectUser } from '../sockets/realtime.js';
 import { ApiError } from '../utils/ApiError.js';
@@ -35,7 +38,12 @@ async function dailySeries(Model, match, days) {
   const since = startOfUtcDay(Date.now() - (days - 1) * DAY_MS);
   const rows = await Model.aggregate([
     { $match: { ...match, createdAt: { $gte: since } } },
-    { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, count: { $sum: 1 } } },
+    {
+      $group: {
+        _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+        count: { $sum: 1 },
+      },
+    },
   ]);
   const counts = new Map(rows.map((row) => [row._id, row.count]));
   return Array.from({ length: days }, (_, index) => {
@@ -86,7 +94,11 @@ export async function getDashboardStats() {
     dailySeries(Message, {}, 14),
     User.find().sort({ createdAt: -1 }).limit(6).lean(),
     Community.find().select(COMMUNITY_SUMMARY_FIELDS).sort({ createdAt: -1 }).limit(5).lean(),
-    Community.find({ status: 'active' }).select(COMMUNITY_SUMMARY_FIELDS).sort({ memberCount: -1 }).limit(5).lean(),
+    Community.find({ status: 'active' })
+      .select(COMMUNITY_SUMMARY_FIELDS)
+      .sort({ memberCount: -1 })
+      .limit(5)
+      .lean(),
   ]);
 
   return {
@@ -108,7 +120,10 @@ export async function getDashboardStats() {
     },
     series: { signups, posts: postsPerDay, messages: messagesPerDay },
     recentUsers: recentUsers.map(toAdminUser),
-    recentCommunities: recentCommunities.map((community) => ({ ...toCommunitySummary(community), status: community.status })),
+    recentCommunities: recentCommunities.map((community) => ({
+      ...toCommunitySummary(community),
+      status: community.status,
+    })),
     topCommunities: topCommunities.map((community) => toCommunitySummary(community)),
   };
 }
@@ -124,14 +139,19 @@ export async function listUsers({ q, role, status, page, limit }) {
   }
 
   const [rows, total] = await Promise.all([
-    User.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit).lean(),
+    User.find(filter)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean(),
     User.countDocuments(filter),
   ]);
   return { items: rows.map(toAdminUser), meta: buildCountedMeta({ page, limit, total }) };
 }
 
 async function loadManagedUser(admin, userId) {
-  if (userId === admin.id) throw ApiError.badRequest('You cannot change your own account from the admin panel');
+  if (userId === admin.id)
+    throw ApiError.badRequest('You cannot change your own account from the admin panel');
   const user = await User.findById(userId).lean();
   if (!user) throw ApiError.notFound('Member not found');
   return user;
@@ -145,7 +165,13 @@ export async function setUserStatus(admin, userId, { status, reason }) {
 
   const update =
     status === ACCOUNT_STATUS.SUSPENDED
-      ? { $set: { status, suspendedAt: new Date(), suspensionReason: reason ?? 'Violation of community guidelines' } }
+      ? {
+          $set: {
+            status,
+            suspendedAt: new Date(),
+            suspensionReason: reason ?? 'Violation of community guidelines',
+          },
+        }
       : { $set: { status }, $unset: { suspendedAt: 1, suspensionReason: 1 } };
   await User.updateOne({ _id: user._id }, update);
 
@@ -168,7 +194,10 @@ export async function setUserStatus(admin, userId, { status, reason }) {
     targetId: user._id,
     metadata: { reason: reason ?? null },
   });
-  logger.info({ adminId: admin.id, userId: String(user._id), status }, 'Admin changed account status');
+  logger.info(
+    { adminId: admin.id, userId: String(user._id), status },
+    'Admin changed account status',
+  );
 
   return toAdminUser(await User.findById(user._id).lean());
 }
@@ -193,7 +222,10 @@ export async function setUserAdmin(admin, userId, { isAdmin }) {
     targetType: 'User',
     targetId: user._id,
   });
-  logger.info({ adminId: admin.id, userId: String(user._id), isAdmin }, 'Admin changed admin access');
+  logger.info(
+    { adminId: admin.id, userId: String(user._id), isAdmin },
+    'Admin changed admin access',
+  );
 
   return toAdminUser(await User.findById(user._id).lean());
 }

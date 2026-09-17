@@ -27,7 +27,9 @@ function NewConversationDialog({ open, onClose }) {
   const { user } = useAuth();
   const [query, setQuery] = useState('');
   const debounced = useDebouncedValue(query.trim(), 250);
-  const { data, isFetching } = useGetSearchSuggestionsQuery(debounced, { skip: debounced.length < 2 });
+  const { data, isFetching } = useGetSearchSuggestionsQuery(debounced, {
+    skip: debounced.length < 2,
+  });
   const [startConversation, { isLoading }] = useStartConversationMutation();
   const people = (data?.users ?? []).filter((person) => person.id !== user.id);
 
@@ -42,12 +44,27 @@ function NewConversationDialog({ open, onClose }) {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} title="New message" description="Search members by username.">
-      <label htmlFor="new-conversation-search" className="sr-only">Search members</label>
-      <Input id="new-conversation-search" autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Type a username, e.g. daniel" />
+    <Dialog
+      open={open}
+      onClose={onClose}
+      title="New message"
+      description="Search members by username."
+    >
+      <label htmlFor="new-conversation-search" className="sr-only">
+        Search members
+      </label>
+      <Input
+        id="new-conversation-search"
+        autoFocus
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+        placeholder="Type a username, e.g. daniel"
+      />
       <ul className="mt-3 max-h-72 space-y-1 overflow-y-auto" aria-busy={isFetching}>
         {debounced.length >= 2 && !isFetching && people.length === 0 && (
-          <li className="px-3 py-6 text-center text-sm text-fg-subtle">No members found for “{debounced}”.</li>
+          <li className="px-3 py-6 text-center text-sm text-fg-subtle">
+            No members found for “{debounced}”.
+          </li>
         )}
         {people.map((person) => (
           <li key={person.id}>
@@ -59,8 +76,13 @@ function NewConversationDialog({ open, onClose }) {
             >
               <Avatar user={person} size="sm" showPresence />
               <span className="min-w-0 flex-1">
-                <span className="flex items-center gap-1.5 text-sm font-medium">{person.name} <UserBadges user={person} /></span>
-                <span className="block truncate text-xs text-fg-subtle">@{person.username}{person.headline ? ` · ${person.headline}` : ''}</span>
+                <span className="flex items-center gap-1.5 text-sm font-medium">
+                  {person.name} <UserBadges user={person} />
+                </span>
+                <span className="block truncate text-xs text-fg-subtle">
+                  @{person.username}
+                  {person.headline ? ` · ${person.headline}` : ''}
+                </span>
               </span>
             </button>
           </li>
@@ -82,7 +104,9 @@ function ConversationList({ activeId, onCompose }) {
     dispatch(
       presenceSynced({
         userIds: participants.map((participant) => participant.id),
-        online: participants.filter((participant) => participant.isOnline).map((participant) => participant.id),
+        online: participants
+          .filter((participant) => participant.isOnline)
+          .map((participant) => participant.id),
       }),
     );
   }, [data, dispatch]);
@@ -107,9 +131,20 @@ function ConversationList({ activeId, onCompose }) {
       </div>
       <div className="border-b border-line p-3">
         <div className="relative">
-          <label htmlFor="conversation-filter" className="sr-only">Filter conversations</label>
-          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-fg-subtle" aria-hidden="true" />
-          <Input id="conversation-filter" value={filter} onChange={(event) => setFilter(event.target.value)} placeholder="Filter conversations" className="h-9 pl-9" />
+          <label htmlFor="conversation-filter" className="sr-only">
+            Filter conversations
+          </label>
+          <Search
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-fg-subtle"
+            aria-hidden="true"
+          />
+          <Input
+            id="conversation-filter"
+            value={filter}
+            onChange={(event) => setFilter(event.target.value)}
+            placeholder="Filter conversations"
+            className="h-9 pl-9"
+          />
         </div>
       </div>
 
@@ -129,8 +164,16 @@ function ConversationList({ activeId, onCompose }) {
           <EmptyState
             icon={MessagesSquare}
             title={filter ? 'No matches' : 'No conversations yet'}
-            description={filter ? undefined : 'Say hello to someone whose post or project caught your eye.'}
-            action={!filter && <Button size="sm" onClick={onCompose}>Start a conversation</Button>}
+            description={
+              filter ? undefined : 'Say hello to someone whose post or project caught your eye.'
+            }
+            action={
+              !filter && (
+                <Button size="sm" onClick={onCompose}>
+                  Start a conversation
+                </Button>
+              )
+            }
             className="py-10"
           />
         )}
@@ -145,20 +188,39 @@ function ConversationList({ activeId, onCompose }) {
                   aria-current={conversation.id === activeId ? 'page' : undefined}
                   className={cn(
                     'flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors',
-                    conversation.id === activeId ? 'bg-brand-50 dark:bg-brand-500/10' : 'hover:bg-surface-hover',
+                    conversation.id === activeId
+                      ? 'bg-brand-50 dark:bg-brand-500/10'
+                      : 'hover:bg-surface-hover',
                   )}
                 >
                   <Avatar user={participant} showPresence />
                   <span className="min-w-0 flex-1">
                     <span className="flex items-baseline justify-between gap-2">
-                      <span className={cn('truncate text-sm', unreadCount ? 'font-semibold text-fg' : 'font-medium text-fg')}>
+                      <span
+                        className={cn(
+                          'truncate text-sm',
+                          unreadCount ? 'font-semibold text-fg' : 'font-medium text-fg',
+                        )}
+                      >
                         {participant?.name ?? 'Deleted member'}
                       </span>
-                      {lastMessage && <RelativeTime value={lastMessage.createdAt} className="shrink-0 text-xs text-fg-subtle" />}
+                      {lastMessage && (
+                        <RelativeTime
+                          value={lastMessage.createdAt}
+                          className="shrink-0 text-xs text-fg-subtle"
+                        />
+                      )}
                     </span>
                     <span className="flex items-center justify-between gap-2">
-                      <span className={cn('truncate text-sm', unreadCount ? 'text-fg' : 'text-fg-subtle')}>
-                        {lastMessage ? `${fromMe ? 'You: ' : ''}${lastMessage.body}` : 'No messages yet'}
+                      <span
+                        className={cn(
+                          'truncate text-sm',
+                          unreadCount ? 'text-fg' : 'text-fg-subtle',
+                        )}
+                      >
+                        {lastMessage
+                          ? `${fromMe ? 'You: ' : ''}${lastMessage.body}`
+                          : 'No messages yet'}
                       </span>
                       {unreadCount > 0 && (
                         <span className="inline-flex min-w-5 shrink-0 items-center justify-center rounded-full bg-brand-600 px-1.5 text-[11px] font-bold leading-5 text-white">
@@ -203,10 +265,19 @@ export default function MessagesPage() {
 
   return (
     <div className="-mx-4 grid grid-cols-1 h-[calc(100dvh-7.25rem)] overflow-hidden border-line bg-surface sm:mx-0 sm:h-[calc(100dvh-8rem)] sm:rounded-2xl sm:border sm:shadow-card md:grid-cols-[320px_minmax(0,1fr)] lg:h-[calc(100dvh-6.5rem)]">
-      <aside className={cn('min-h-0 border-line md:border-r', conversationId ? 'hidden md:block' : 'block')} aria-label="Conversations">
+      <aside
+        className={cn(
+          'min-h-0 border-line md:border-r',
+          conversationId ? 'hidden md:block' : 'block',
+        )}
+        aria-label="Conversations"
+      >
         <ConversationList activeId={conversationId} onCompose={() => setComposing(true)} />
       </aside>
-      <section className={cn('min-h-0', conversationId ? 'block' : 'hidden md:block')} aria-label="Conversation">
+      <section
+        className={cn('min-h-0', conversationId ? 'block' : 'hidden md:block')}
+        aria-label="Conversation"
+      >
         {conversationId ? (
           <ChatPanel key={conversationId} conversationId={conversationId} />
         ) : (
@@ -214,7 +285,11 @@ export default function MessagesPage() {
             icon={MessagesSquare}
             title="Your conversations"
             description="Pick a conversation or start a new one. Messages arrive in real time."
-            action={<Button leftIcon={PenSquare} onClick={() => setComposing(true)}>New message</Button>}
+            action={
+              <Button leftIcon={PenSquare} onClick={() => setComposing(true)}>
+                New message
+              </Button>
+            }
             className="h-full justify-center"
           />
         )}

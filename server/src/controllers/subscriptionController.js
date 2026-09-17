@@ -10,7 +10,9 @@ export async function checkout(req, res) {
 }
 
 export async function confirm(req, res) {
-  sendSuccess(res, { data: await subscriptionService.confirmCheckoutSession(req.user, req.body.sessionId) });
+  sendSuccess(res, {
+    data: await subscriptionService.confirmCheckoutSession(req.user, req.body.sessionId),
+  });
 }
 
 export async function portal(req, res) {
@@ -19,7 +21,10 @@ export async function portal(req, res) {
 
 export async function cancel(req, res) {
   const status = await subscriptionService.setCancelAtPeriodEnd(req.user, true);
-  sendSuccess(res, { data: status, message: 'Your Pro membership will end at the close of this billing period' });
+  sendSuccess(res, {
+    data: status,
+    message: 'Your Pro membership will end at the close of this billing period',
+  });
 }
 
 export async function resume(req, res) {

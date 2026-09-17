@@ -8,7 +8,11 @@ import { StatPill } from '../common/Misc';
 import JoinButton from './JoinButton';
 
 export function CommunityIcon({ community, size = 'md' }) {
-  const sizes = { sm: 'size-8 text-base rounded-lg', md: 'size-12 text-2xl rounded-xl', lg: 'size-16 text-4xl rounded-2xl' };
+  const sizes = {
+    sm: 'size-8 text-base rounded-lg',
+    md: 'size-12 text-2xl rounded-xl',
+    lg: 'size-16 text-4xl rounded-2xl',
+  };
   return (
     <span
       className={`flex shrink-0 items-center justify-center ${sizes[size]}`}
@@ -43,14 +47,25 @@ export default function CommunityCard({ community }) {
         <CommunityIcon community={community} />
         <div className="min-w-0 flex-1">
           <h3 className="flex items-center gap-2 font-semibold text-fg">
-            <Link to={`/communities/${community.slug}`} className="truncate after:absolute after:inset-0 after:rounded-2xl">
+            <Link
+              to={`/communities/${community.slug}`}
+              className="truncate after:absolute after:inset-0 after:rounded-2xl"
+            >
               {community.name}
             </Link>
           </h3>
           <div className="mt-1 flex flex-wrap items-center gap-1.5">
             <Badge>{community.category}</Badge>
-            {community.accessType === 'pro' && <Badge variant="pro" icon={Lock}>Pro</Badge>}
-            {community.isFeatured && <Badge variant="brand" icon={Star}>Featured</Badge>}
+            {community.accessType === 'pro' && (
+              <Badge variant="pro" icon={Lock}>
+                Pro
+              </Badge>
+            )}
+            {community.isFeatured && (
+              <Badge variant="brand" icon={Star}>
+                Featured
+              </Badge>
+            )}
           </div>
         </div>
       </div>

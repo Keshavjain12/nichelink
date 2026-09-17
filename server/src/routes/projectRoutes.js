@@ -27,7 +27,12 @@ export function createProjectRouter({ limiters }) {
   );
 
   router.get('/:id', validate({ params: idParams }), projectController.detail);
-  router.patch('/:id', limiters.write, validate({ params: idParams, body: updateProjectBody }), projectController.update);
+  router.patch(
+    '/:id',
+    limiters.write,
+    validate({ params: idParams, body: updateProjectBody }),
+    projectController.update,
+  );
   router.delete('/:id', validate({ params: idParams }), projectController.remove);
 
   router.post(
@@ -37,8 +42,16 @@ export function createProjectRouter({ limiters }) {
     validate({ params: idParams, body: interestBody }),
     projectController.expressInterest,
   );
-  router.delete('/:id/interests/me', validate({ params: idParams }), projectController.withdrawInterest);
-  router.get('/:id/interests', validate({ params: idParams, query: paginationQuery }), projectController.listInterests);
+  router.delete(
+    '/:id/interests/me',
+    validate({ params: idParams }),
+    projectController.withdrawInterest,
+  );
+  router.get(
+    '/:id/interests',
+    validate({ params: idParams, query: paginationQuery }),
+    projectController.listInterests,
+  );
   router.patch(
     '/:id/interests/:interestId',
     validate({ params: interestParams, body: interestStatusBody }),

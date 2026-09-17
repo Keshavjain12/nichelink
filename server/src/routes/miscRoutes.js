@@ -4,12 +4,21 @@ import * as searchController from '../controllers/searchController.js';
 import { authenticate, optionalAuthenticate } from '../middleware/authenticate.js';
 import { validate } from '../middleware/validate.js';
 import { idParams } from '../validators/common.js';
-import { listNotificationsQuery, searchQuery, suggestionsQuery } from '../validators/searchValidators.js';
+import {
+  listNotificationsQuery,
+  searchQuery,
+  suggestionsQuery,
+} from '../validators/searchValidators.js';
 
 export function createSearchRouter() {
   const router = Router();
   router.get('/', optionalAuthenticate, validate({ query: searchQuery }), searchController.search);
-  router.get('/suggestions', optionalAuthenticate, validate({ query: suggestionsQuery }), searchController.suggestions);
+  router.get(
+    '/suggestions',
+    optionalAuthenticate,
+    validate({ query: suggestionsQuery }),
+    searchController.suggestions,
+  );
   return router;
 }
 

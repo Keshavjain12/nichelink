@@ -67,7 +67,13 @@ export default function FeedPage() {
             >
               Start a discussion…
             </Link>
-            <Button as={Link} to="/posts/new" size="sm" leftIcon={PenSquare} className="max-sm:hidden">
+            <Button
+              as={Link}
+              to="/posts/new"
+              size="sm"
+              leftIcon={PenSquare}
+              className="max-sm:hidden"
+            >
               Post
             </Button>
           </Card>

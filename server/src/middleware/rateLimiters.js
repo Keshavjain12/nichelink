@@ -35,12 +35,35 @@ export const limiterFactories = {
     skipSuccessfulRequests: true,
     message: 'Too many sign-in attempts. Try again in 15 minutes.',
   }),
-  register: limiter({ windowMs: 60 * MINUTE, limit: 10, message: 'Too many accounts created. Try again later.' }),
-  sensitive: limiter({ windowMs: 15 * MINUTE, limit: 10, message: 'Too many attempts. Try again later.' }),
+  register: limiter({
+    windowMs: 60 * MINUTE,
+    limit: 10,
+    message: 'Too many accounts created. Try again later.',
+  }),
+  sensitive: limiter({
+    windowMs: 15 * MINUTE,
+    limit: 10,
+    message: 'Too many attempts. Try again later.',
+  }),
   refresh: limiter({ windowMs: 15 * MINUTE, limit: 120, message: 'Too many session refreshes.' }),
-  write: limiter({ windowMs: 10 * MINUTE, limit: 60, keyByUser: true, message: 'You are posting too quickly.' }),
-  message: limiter({ windowMs: MINUTE, limit: 40, keyByUser: true, message: 'You are sending messages too quickly.' }),
-  upload: limiter({ windowMs: 60 * MINUTE, limit: 40, keyByUser: true, message: 'Upload limit reached. Try again later.' }),
+  write: limiter({
+    windowMs: 10 * MINUTE,
+    limit: 60,
+    keyByUser: true,
+    message: 'You are posting too quickly.',
+  }),
+  message: limiter({
+    windowMs: MINUTE,
+    limit: 40,
+    keyByUser: true,
+    message: 'You are sending messages too quickly.',
+  }),
+  upload: limiter({
+    windowMs: 60 * MINUTE,
+    limit: 40,
+    keyByUser: true,
+    message: 'Upload limit reached. Try again later.',
+  }),
 };
 
 export function createRateLimiters({ enabled }) {

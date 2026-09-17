@@ -30,8 +30,13 @@ function PersonRow({ person }) {
       <Link to={`/profile/${person.username}`} className="flex items-center gap-3">
         <Avatar user={person} />
         <span className="min-w-0">
-          <span className="flex items-center gap-1.5 text-sm font-semibold">{person.name} <UserBadges user={person} /></span>
-          <span className="block truncate text-xs text-fg-subtle">@{person.username}{person.headline ? ` · ${person.headline}` : ''}</span>
+          <span className="flex items-center gap-1.5 text-sm font-semibold">
+            {person.name} <UserBadges user={person} />
+          </span>
+          <span className="block truncate text-xs text-fg-subtle">
+            @{person.username}
+            {person.headline ? ` · ${person.headline}` : ''}
+          </span>
         </span>
       </Link>
     </Card>
@@ -39,10 +44,37 @@ function PersonRow({ person }) {
 }
 
 function ResultItems({ type, items }) {
-  if (type === 'communities') return <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">{items.map((item) => <CommunityCard key={item.id} community={item} />)}</div>;
-  if (type === 'users') return <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">{items.map((item) => <PersonRow key={item.id} person={item} />)}</div>;
-  if (type === 'posts') return <div className="space-y-4">{items.map((item) => <PostCard key={item.id} post={item} />)}</div>;
-  return <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">{items.map((item) => <ProjectCard key={item.id} project={item} />)}</div>;
+  if (type === 'communities')
+    return (
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {items.map((item) => (
+          <CommunityCard key={item.id} community={item} />
+        ))}
+      </div>
+    );
+  if (type === 'users')
+    return (
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {items.map((item) => (
+          <PersonRow key={item.id} person={item} />
+        ))}
+      </div>
+    );
+  if (type === 'posts')
+    return (
+      <div className="space-y-4">
+        {items.map((item) => (
+          <PostCard key={item.id} post={item} />
+        ))}
+      </div>
+    );
+  return (
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      {items.map((item) => (
+        <ProjectCard key={item.id} project={item} />
+      ))}
+    </div>
+  );
 }
 
 export default function SearchPage() {
@@ -63,14 +95,22 @@ export default function SearchPage() {
   }
 
   const { data, isFetching, error, refetch } = useSearchQuery({ q, type, page }, { skip: !q });
-  const update = (changes) => setSearchParams(Object.fromEntries(Object.entries({ q, type, ...changes }).filter(([, value]) => value && value !== 1)));
+  const update = (changes) =>
+    setSearchParams(
+      Object.fromEntries(
+        Object.entries({ q, type, ...changes }).filter(([, value]) => value && value !== 1),
+      ),
+    );
 
   const sections = data ? Object.entries(data) : [];
   const totalResults = sections.reduce((sum, [, result]) => sum + result.items.length, 0);
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
-      <PageHeader title="Search" description="Find communities, people, discussions and projects." />
+      <PageHeader
+        title="Search"
+        description="Find communities, people, discussions and projects."
+      />
       <form
         role="search"
         onSubmit={(event) => {
@@ -80,26 +120,70 @@ export default function SearchPage() {
         className="flex gap-2"
       >
         <div className="relative flex-1">
-          <label htmlFor="search-page-input" className="sr-only">Search</label>
-          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-fg-subtle" aria-hidden="true" />
-          <Input id="search-page-input" type="search" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Search NicheLink" className="h-11 pl-9" />
+          <label htmlFor="search-page-input" className="sr-only">
+            Search
+          </label>
+          <Search
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-fg-subtle"
+            aria-hidden="true"
+          />
+          <Input
+            id="search-page-input"
+            type="search"
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            placeholder="Search NicheLink"
+            className="h-11 pl-9"
+          />
         </div>
-        <Button type="submit" size="lg" className="h-11">Search</Button>
+        <Button type="submit" size="lg" className="h-11">
+          Search
+        </Button>
       </form>
 
       {isAuthenticated ? (
-        <Tabs label="Result type" value={type} onChange={(value) => update({ type: value, page: 1 })} tabs={TYPES} />
+        <Tabs
+          label="Result type"
+          value={type}
+          onChange={(value) => update({ type: value, page: 1 })}
+          tabs={TYPES}
+        />
       ) : (
-        <InlineAlert variant="info" action={<Button as={Link} to="/register" size="sm">Join free</Button>}>
+        <InlineAlert
+          variant="info"
+          action={
+            <Button as={Link} to="/register" size="sm">
+              Join free
+            </Button>
+          }
+        >
           Guests can search communities. Sign in to search people, posts and projects.
         </InlineAlert>
       )}
 
-      {!q && <EmptyState icon={Search} title="Start typing to search" description="Try “stripe”, “kubernetes” or “technical writing”." />}
+      {!q && (
+        <EmptyState
+          icon={Search}
+          title="Start typing to search"
+          description="Try “stripe”, “kubernetes” or “technical writing”."
+        />
+      )}
       {error && <ErrorState error={error} onRetry={refetch} />}
-      {q && isFetching && !data && <div className="space-y-3">{[0, 1, 2].map((index) => <Skeleton key={index} className="h-24 rounded-2xl" />)}</div>}
+      {q && isFetching && !data && (
+        <div className="space-y-3">
+          {[0, 1, 2].map((index) => (
+            <Skeleton key={index} className="h-24 rounded-2xl" />
+          ))}
+        </div>
+      )}
 
-      {data && totalResults === 0 && <EmptyState icon={Search} title={`No results for “${q}”`} description="Check the spelling or try a broader term." />}
+      {data && totalResults === 0 && (
+        <EmptyState
+          icon={Search}
+          title={`No results for “${q}”`}
+          description="Check the spelling or try a broader term."
+        />
+      )}
 
       {data && totalResults > 0 && (
         <div className="space-y-10" aria-busy={isFetching}>
@@ -112,7 +196,12 @@ export default function SearchPage() {
                     {TYPES.find((option) => option.value === sectionType)?.label}
                   </h2>
                   {type === 'all' && result.meta.hasMore && (
-                    <Button variant="ghost" size="xs" rightIcon={ArrowRight} onClick={() => update({ type: sectionType, page: 1 })}>
+                    <Button
+                      variant="ghost"
+                      size="xs"
+                      rightIcon={ArrowRight}
+                      onClick={() => update({ type: sectionType, page: 1 })}
+                    >
                       See all
                     </Button>
                   )}
@@ -120,8 +209,22 @@ export default function SearchPage() {
                 <ResultItems type={sectionType} items={result.items} />
                 {type !== 'all' && (page > 1 || result.meta.hasMore) && (
                   <div className="mt-6 flex justify-center gap-2">
-                    <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => update({ page: page - 1 })}>Previous</Button>
-                    <Button variant="secondary" size="sm" disabled={!result.meta.hasMore} onClick={() => update({ page: page + 1 })}>Next</Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      disabled={page <= 1}
+                      onClick={() => update({ page: page - 1 })}
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      disabled={!result.meta.hasMore}
+                      onClick={() => update({ page: page + 1 })}
+                    >
+                      Next
+                    </Button>
                   </div>
                 )}
               </section>

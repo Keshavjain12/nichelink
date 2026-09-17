@@ -43,29 +43,68 @@ function InterestsPanel({ projectId }) {
       <div className="p-3">
         {isLoading && <Skeleton className="h-24 rounded-xl" />}
         {error && <ErrorState error={error} onRetry={refetch} className="py-6" />}
-        {data?.items.length === 0 && <EmptyState title="No interest yet" description="Share your project in a relevant community to reach more people." className="py-6" />}
+        {data?.items.length === 0 && (
+          <EmptyState
+            title="No interest yet"
+            description="Share your project in a relevant community to reach more people."
+            className="py-6"
+          />
+        )}
         <ul className="divide-y divide-line">
           {data?.items.map((interest) => (
-            <li key={interest.id} className="flex flex-col gap-3 px-2 py-4 sm:flex-row sm:items-start">
+            <li
+              key={interest.id}
+              className="flex flex-col gap-3 px-2 py-4 sm:flex-row sm:items-start"
+            >
               <Link to={`/profile/${interest.user.username}`} className="flex min-w-0 flex-1 gap-3">
                 <Avatar user={interest.user} size="sm" />
                 <span className="min-w-0">
-                  <span className="flex items-center gap-1.5 text-sm font-semibold">{interest.user.name} <UserBadges user={interest.user} /></span>
+                  <span className="flex items-center gap-1.5 text-sm font-semibold">
+                    {interest.user.name} <UserBadges user={interest.user} />
+                  </span>
                   <span className="block text-xs text-fg-subtle">{interest.user.headline}</span>
-                  {interest.message && <span className="mt-1.5 block text-sm whitespace-pre-wrap text-fg-muted">{interest.message}</span>}
-                  <RelativeTime value={interest.createdAt} className="mt-1 block text-xs text-fg-subtle" />
+                  {interest.message && (
+                    <span className="mt-1.5 block text-sm whitespace-pre-wrap text-fg-muted">
+                      {interest.message}
+                    </span>
+                  )}
+                  <RelativeTime
+                    value={interest.createdAt}
+                    className="mt-1 block text-xs text-fg-subtle"
+                  />
                 </span>
               </Link>
               <div className="flex shrink-0 items-center gap-2">
                 {interest.status === 'pending' ? (
                   <>
-                    <Button size="xs" variant="secondary" leftIcon={X} disabled={updating} onClick={() => decide(interest.id, 'declined')}>Decline</Button>
-                    <Button size="xs" leftIcon={Check} disabled={updating} onClick={() => decide(interest.id, 'accepted')}>Accept</Button>
+                    <Button
+                      size="xs"
+                      variant="secondary"
+                      leftIcon={X}
+                      disabled={updating}
+                      onClick={() => decide(interest.id, 'declined')}
+                    >
+                      Decline
+                    </Button>
+                    <Button
+                      size="xs"
+                      leftIcon={Check}
+                      disabled={updating}
+                      onClick={() => decide(interest.id, 'accepted')}
+                    >
+                      Accept
+                    </Button>
                   </>
                 ) : (
                   <InterestBadge status={interest.status} />
                 )}
-                <Button as={Link} to={`/messages?to=${interest.user.id}`} size="icon-sm" variant="ghost" aria-label={`Message ${interest.user.name}`}>
+                <Button
+                  as={Link}
+                  to={`/messages?to=${interest.user.id}`}
+                  size="icon-sm"
+                  variant="ghost"
+                  aria-label={`Message ${interest.user.name}`}
+                >
                   <MessagesSquare className="size-4" aria-hidden="true" />
                 </Button>
               </div>
@@ -91,7 +130,14 @@ export default function ProjectPage() {
   useDocumentTitle(project?.title ?? 'Project');
 
   if (isLoading) return <PageLoader />;
-  if (error) return <ErrorState error={error} title={error.status === 404 ? 'Project not found' : 'Could not load project'} onRetry={error.status === 404 ? undefined : refetch} />;
+  if (error)
+    return (
+      <ErrorState
+        error={error}
+        title={error.status === 404 ? 'Project not found' : 'Could not load project'}
+        onRetry={error.status === 404 ? undefined : refetch}
+      />
+    );
 
   const { viewer } = project;
 
@@ -109,8 +155,13 @@ export default function ProjectPage() {
 
   const toggleStatus = async () => {
     try {
-      await updateProject({ id: project.id, status: project.status === 'open' ? 'closed' : 'open' }).unwrap();
-      toast.success(project.status === 'open' ? 'Project closed to new interest' : 'Project reopened');
+      await updateProject({
+        id: project.id,
+        status: project.status === 'open' ? 'closed' : 'open',
+      }).unwrap();
+      toast.success(
+        project.status === 'open' ? 'Project closed to new interest' : 'Project reopened',
+      );
     } catch (statusError) {
       toast.error(getErrorMessage(statusError));
     }
@@ -118,7 +169,10 @@ export default function ProjectPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
-      <Link to="/projects" className="inline-flex items-center gap-1.5 text-sm font-medium text-fg-muted hover:text-fg">
+      <Link
+        to="/projects"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-fg-muted hover:text-fg"
+      >
         <ArrowLeft className="size-4" aria-hidden="true" /> All projects
       </Link>
 
@@ -127,19 +181,31 @@ export default function ProjectPage() {
           <Card as="article" className="p-5 sm:p-7">
             <div className="flex flex-wrap items-center gap-2">
               <Badge variant="brand">{labelFor(PROJECT_TYPES, project.projectType)}</Badge>
-              <Badge variant={project.status === 'open' ? 'success' : 'neutral'}>{project.status === 'open' ? 'Open' : 'Closed'}</Badge>
+              <Badge variant={project.status === 'open' ? 'success' : 'neutral'}>
+                {project.status === 'open' ? 'Open' : 'Closed'}
+              </Badge>
               <InterestBadge status={viewer.interestStatus} />
             </div>
             <h1 className="mt-4 text-2xl font-bold tracking-tight sm:text-3xl">{project.title}</h1>
             {project.summary && <p className="mt-2 text-base text-fg-muted">{project.summary}</p>}
-            <div className="mt-5"><ProjectMeta project={project} /></div>
+            <div className="mt-5">
+              <ProjectMeta project={project} />
+            </div>
             <h2 className="mt-8 text-sm font-semibold">About the project</h2>
-            <p className="mt-2 text-[15px] leading-7 whitespace-pre-wrap wrap-break-word text-fg">{project.description}</p>
+            <p className="mt-2 text-[15px] leading-7 whitespace-pre-wrap wrap-break-word text-fg">
+              {project.description}
+            </p>
             <h2 className="mt-8 text-sm font-semibold">Skills needed</h2>
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {project.requiredSkills.map((skill) => <Tag key={skill} className="text-sm">{skill}</Tag>)}
+              {project.requiredSkills.map((skill) => (
+                <Tag key={skill} className="text-sm">
+                  {skill}
+                </Tag>
+              ))}
             </div>
-            <p className="mt-8 text-xs text-fg-subtle">Posted <RelativeTime value={project.createdAt} /></p>
+            <p className="mt-8 text-xs text-fg-subtle">
+              Posted <RelativeTime value={project.createdAt} />
+            </p>
           </Card>
 
           {viewer.isAuthor && <InterestsPanel projectId={project.id} />}
@@ -150,14 +216,20 @@ export default function ProjectPage() {
             <Link to={`/profile/${project.author.username}`} className="flex items-center gap-3">
               <Avatar user={project.author} showPresence />
               <span className="min-w-0">
-                <span className="flex items-center gap-1.5 text-sm font-semibold">{project.author.name} <UserBadges user={project.author} /></span>
-                <span className="block truncate text-xs text-fg-subtle">{project.author.headline}</span>
+                <span className="flex items-center gap-1.5 text-sm font-semibold">
+                  {project.author.name} <UserBadges user={project.author} />
+                </span>
+                <span className="block truncate text-xs text-fg-subtle">
+                  {project.author.headline}
+                </span>
               </span>
             </Link>
 
             <div className="mt-5 space-y-2">
               {viewer.canExpressInterest && (
-                <Button className="w-full" onClick={() => setInterestOpen(true)}>I'm interested</Button>
+                <Button className="w-full" onClick={() => setInterestOpen(true)}>
+                  I'm interested
+                </Button>
               )}
               {viewer.interestStatus === 'pending' && (
                 <Button
@@ -177,27 +249,58 @@ export default function ProjectPage() {
                 </Button>
               )}
               {!viewer.isAuthor && (
-                <Button as={Link} to={`/messages?to=${project.author.id}`} variant="secondary" leftIcon={MessagesSquare} className="w-full">
+                <Button
+                  as={Link}
+                  to={`/messages?to=${project.author.id}`}
+                  variant="secondary"
+                  leftIcon={MessagesSquare}
+                  className="w-full"
+                >
                   Message {project.author.name.split(' ')[0]}
                 </Button>
               )}
               {viewer.canEdit && (
                 <>
-                  <Button as={Link} to={`/projects/${project.id}/edit`} variant="secondary" leftIcon={Pencil} className="w-full">Edit project</Button>
-                  <Button variant="secondary" className="w-full" loading={updating} onClick={toggleStatus}>
+                  <Button
+                    as={Link}
+                    to={`/projects/${project.id}/edit`}
+                    variant="secondary"
+                    leftIcon={Pencil}
+                    className="w-full"
+                  >
+                    Edit project
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    className="w-full"
+                    loading={updating}
+                    onClick={toggleStatus}
+                  >
                     {project.status === 'open' ? 'Close to new interest' : 'Reopen project'}
                   </Button>
                 </>
               )}
               {viewer.canDelete && (
-                <Button variant="danger-ghost" leftIcon={Trash2} className="w-full" onClick={() => setConfirmDelete(true)}>Delete project</Button>
+                <Button
+                  variant="danger-ghost"
+                  leftIcon={Trash2}
+                  className="w-full"
+                  onClick={() => setConfirmDelete(true)}
+                >
+                  Delete project
+                </Button>
               )}
             </div>
           </Card>
         </aside>
       </div>
 
-      <Dialog open={interestOpen} onClose={() => setInterestOpen(false)} title="Express interest" description={`Introduce yourself to ${project.author.name}. They'll be notified right away.`}>
+      <Dialog
+        open={interestOpen}
+        onClose={() => setInterestOpen(false)}
+        title="Express interest"
+        description={`Introduce yourself to ${project.author.name}. They'll be notified right away.`}
+      >
         <form onSubmit={submitInterest} className="space-y-4">
           <TextareaField
             id="interest-message"
@@ -209,8 +312,12 @@ export default function ProjectPage() {
             className="[&_textarea]:min-h-32"
           />
           <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={() => setInterestOpen(false)}>Cancel</Button>
-            <Button type="submit" loading={sending}>Send</Button>
+            <Button variant="secondary" onClick={() => setInterestOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" loading={sending}>
+              Send
+            </Button>
           </div>
         </form>
       </Dialog>

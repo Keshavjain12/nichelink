@@ -23,32 +23,32 @@ and every collection is emptied after each test. Requests go through the real Ex
 Only two things are mocked: Cloudinary's SDK and Stripe's network calls. Stripe webhook **signatures are
 generated and verified with the real SDK**, so signature handling is genuinely tested.
 
-| Suite | Covers |
-| --- | --- |
-| `auth.test.js` | registration, login, generic errors, suspension, refresh rotation and reuse detection, CSRF headers, password change, rate limiting, malformed JSON, injection payloads |
-| `rbac.test.js` | effective-role derivation, permission map, `requirePermission` semantics including `PRO_REQUIRED` |
-| `communities.test.js` | admin-only creation, duplicate slugs, guest browsing, joining (idempotent, Pro-gated), leaving, members, access-type propagation, trending/recommended |
-| `posts.test.js` | Pro + membership gating, HTML sanitization, image ownership, Pro-community reads, guest previews, pagination/sort/search, edit/delete permissions, moderator removal, reactions |
-| `comments.test.js` | nesting and depth limit, counters, notifications, cross-post replies, edit/delete permissions, deleted-comment placeholders |
-| `messaging.test.js` | conversation creation, unread counts, read state, IDOR, Free-tier quota, `clientId` idempotency, cursor pagination, suspended recipients |
-| `socket.test.js` | handshake rejection, real-time delivery (socket and REST), room authorization, typing indicators, read receipts, presence |
-| `projects.test.js` | Pro-only creation, filters, author-only editing, interest lifecycle and privacy |
-| `subscriptions.test.js` | checkout, webhook signature rejection, end-to-end upgrade, idempotency, retry on failure, downgrade, stale events, confirmation ownership, cancel/resume, expiry job |
-| `users.test.js` | profiles, privileged-field stripping, unsafe URLs, avatar and post-image uploads, magic-byte and size rejection, search, notifications |
-| `admin.test.js` | admin-only access, metrics, user management rules, report lifecycle and moderation actions |
+| Suite                   | Covers                                                                                                                                                                          |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth.test.js`          | registration, login, generic errors, suspension, refresh rotation and reuse detection, CSRF headers, password change, rate limiting, malformed JSON, injection payloads         |
+| `rbac.test.js`          | effective-role derivation, permission map, `requirePermission` semantics including `PRO_REQUIRED`                                                                               |
+| `communities.test.js`   | admin-only creation, duplicate slugs, guest browsing, joining (idempotent, Pro-gated), leaving, members, access-type propagation, trending/recommended                          |
+| `posts.test.js`         | Pro + membership gating, HTML sanitization, image ownership, Pro-community reads, guest previews, pagination/sort/search, edit/delete permissions, moderator removal, reactions |
+| `comments.test.js`      | nesting and depth limit, counters, notifications, cross-post replies, edit/delete permissions, deleted-comment placeholders                                                     |
+| `messaging.test.js`     | conversation creation, unread counts, read state, IDOR, Free-tier quota, `clientId` idempotency, cursor pagination, suspended recipients                                        |
+| `socket.test.js`        | handshake rejection, real-time delivery (socket and REST), room authorization, typing indicators, read receipts, presence                                                       |
+| `projects.test.js`      | Pro-only creation, filters, author-only editing, interest lifecycle and privacy                                                                                                 |
+| `subscriptions.test.js` | checkout, webhook signature rejection, end-to-end upgrade, idempotency, retry on failure, downgrade, stale events, confirmation ownership, cancel/resume, expiry job            |
+| `users.test.js`         | profiles, privileged-field stripping, unsafe URLs, avatar and post-image uploads, magic-byte and size rejection, search, notifications                                          |
+| `admin.test.js`         | admin-only access, metrics, user management rules, report lifecycle and moderation actions                                                                                      |
 
 ## Frontend (Vitest + Testing Library)
 
 `jsdom`, with `global.fetch` stubbed by a small route table (`src/test/utils.jsx`). Tests drive real
 components through a real Redux store, so RTK Query cache behaviour and optimistic updates are covered.
 
-| Suite | Covers |
-| --- | --- |
-| `routes/guards.test.jsx` | guest redirect with return path, loading state, admin-only routes, guest-only routes, open-redirect rejection |
-| `pages/auth/LoginPage.test.jsx` | client validation before any request, session storage on success, server error rendering |
-| `pages/billing/PricingPage.test.jsx` | checkout redirect, current-plan state for Pro, disabled upgrade when payments are unconfigured |
-| `pages/FeedPage.test.jsx` | composer vs upgrade prompt by permission, feed rendering, sort/scope requests, optimistic likes |
-| `components/messaging/ChatPanel.test.jsx` | thread rendering, optimistic send with REST fallback, failed-send retry affordance, Free-tier quota blocking |
+| Suite                                     | Covers                                                                                                        |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `routes/guards.test.jsx`                  | guest redirect with return path, loading state, admin-only routes, guest-only routes, open-redirect rejection |
+| `pages/auth/LoginPage.test.jsx`           | client validation before any request, session storage on success, server error rendering                      |
+| `pages/billing/PricingPage.test.jsx`      | checkout redirect, current-plan state for Pro, disabled upgrade when payments are unconfigured                |
+| `pages/FeedPage.test.jsx`                 | composer vs upgrade prompt by permission, feed rendering, sort/scope requests, optimistic likes               |
+| `components/messaging/ChatPanel.test.jsx` | thread rendering, optimistic send with REST fallback, failed-send retry affordance, Free-tier quota blocking  |
 
 ## Workflows verified end to end
 

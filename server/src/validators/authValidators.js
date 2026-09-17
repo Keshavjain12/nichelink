@@ -2,7 +2,11 @@ import { z } from 'zod';
 
 const BCRYPT_MAX_BYTES = 72;
 
-export const emailSchema = z.string().trim().toLowerCase().pipe(z.email('Enter a valid email address').max(254));
+export const emailSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .pipe(z.email('Enter a valid email address').max(254));
 
 export const passwordSchema = z
   .string()

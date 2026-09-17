@@ -2,7 +2,8 @@
 export function getErrorMessage(error, fallback = 'Something went wrong. Please try again.') {
   if (!error) return fallback;
   if (typeof error === 'string') return error;
-  if (error.status === 'FETCH_ERROR') return 'Unable to reach NicheLink. Check your connection and try again.';
+  if (error.status === 'FETCH_ERROR')
+    return 'Unable to reach NicheLink. Check your connection and try again.';
   if (error.status === 'PARSING_ERROR') return 'The server returned an unexpected response.';
   return error.data?.message ?? error.message ?? fallback;
 }

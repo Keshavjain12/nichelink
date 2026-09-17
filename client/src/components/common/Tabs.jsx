@@ -10,13 +10,19 @@ const tabClass = (active) =>
 
 function Count({ value }) {
   if (value === undefined || value === null) return null;
-  return <span className="rounded-full bg-surface-muted px-1.5 text-xs text-fg-muted">{value}</span>;
+  return (
+    <span className="rounded-full bg-surface-muted px-1.5 text-xs text-fg-muted">{value}</span>
+  );
 }
 
 /** Stateful tabs for in-page filters. */
 export function Tabs({ tabs, value, onChange, label, className }) {
   return (
-    <div role="tablist" aria-label={label} className={cn('flex gap-6 overflow-x-auto border-b border-line', className)}>
+    <div
+      role="tablist"
+      aria-label={label}
+      className={cn('flex gap-6 overflow-x-auto border-b border-line', className)}
+    >
       {tabs.map((tab) => (
         <button
           key={tab.value}
@@ -38,9 +44,17 @@ export function Tabs({ tabs, value, onChange, label, className }) {
 /** Route-backed tabs. */
 export function NavTabs({ tabs, label, className }) {
   return (
-    <nav aria-label={label} className={cn('flex gap-6 overflow-x-auto border-b border-line', className)}>
+    <nav
+      aria-label={label}
+      className={cn('flex gap-6 overflow-x-auto border-b border-line', className)}
+    >
       {tabs.map((tab) => (
-        <NavLink key={tab.to} to={tab.to} end={tab.end} className={({ isActive }) => tabClass(isActive)}>
+        <NavLink
+          key={tab.to}
+          to={tab.to}
+          end={tab.end}
+          className={({ isActive }) => tabClass(isActive)}
+        >
           {tab.icon && <tab.icon className="size-4" aria-hidden="true" />}
           {tab.label}
           <Count value={tab.count} />
@@ -53,7 +67,11 @@ export function NavTabs({ tabs, label, className }) {
 /** Compact pill switcher (e.g. sort order). */
 export function SegmentedControl({ options, value, onChange, label, className }) {
   return (
-    <div role="radiogroup" aria-label={label} className={cn('inline-flex rounded-lg bg-surface-muted p-0.5', className)}>
+    <div
+      role="radiogroup"
+      aria-label={label}
+      className={cn('inline-flex rounded-lg bg-surface-muted p-0.5', className)}
+    >
       {options.map((option) => (
         <button
           key={option.value}
@@ -63,7 +81,9 @@ export function SegmentedControl({ options, value, onChange, label, className })
           onClick={() => onChange(option.value)}
           className={cn(
             'inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors',
-            option.value === value ? 'bg-surface text-fg shadow-card' : 'text-fg-subtle hover:text-fg',
+            option.value === value
+              ? 'bg-surface text-fg shadow-card'
+              : 'text-fg-subtle hover:text-fg',
           )}
         >
           {option.icon && <option.icon className="size-3.5" aria-hidden="true" />}

@@ -20,7 +20,11 @@ export default function LikeButton({ post }) {
 
   if (!isAuthenticated || !can(PERMISSIONS.REACTION_TOGGLE)) {
     return (
-      <Link to="/login" className={cn(baseClass, 'text-fg-subtle hover:bg-surface-hover')} aria-label={`${label} likes. Sign in to like`}>
+      <Link
+        to="/login"
+        className={cn(baseClass, 'text-fg-subtle hover:bg-surface-hover')}
+        aria-label={`${label} likes. Sign in to like`}
+      >
         <Heart className="size-4" aria-hidden="true" />
         {label}
       </Link>
@@ -43,10 +47,15 @@ export default function LikeButton({ post }) {
       aria-label={liked ? `Unlike. ${label} likes` : `Like. ${label} likes`}
       className={cn(
         baseClass,
-        liked ? 'text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-500/10' : 'text-fg-subtle hover:bg-surface-hover hover:text-fg',
+        liked
+          ? 'text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-500/10'
+          : 'text-fg-subtle hover:bg-surface-hover hover:text-fg',
       )}
     >
-      <Heart className={cn('size-4 transition-transform', liked && 'scale-110 fill-current')} aria-hidden="true" />
+      <Heart
+        className={cn('size-4 transition-transform', liked && 'scale-110 fill-current')}
+        aria-hidden="true"
+      />
       {label}
     </button>
   );

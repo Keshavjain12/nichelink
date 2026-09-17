@@ -51,7 +51,12 @@ describe('Socket.io real-time messaging', () => {
   });
 
   function connect(auth) {
-    const client = connectClient(baseUrl, { auth, transports: ['websocket'], forceNew: true, reconnection: false });
+    const client = connectClient(baseUrl, {
+      auth,
+      transports: ['websocket'],
+      forceNew: true,
+      reconnection: false,
+    });
     clients.push(client);
     return client;
   }
@@ -96,7 +101,10 @@ describe('Socket.io real-time messaging', () => {
 
     expect(ack.ok).toBe(true);
     const event = await received;
-    expect(event.message).toMatchObject({ body: 'Real-time hello 👋', senderId: String(alice._id) });
+    expect(event.message).toMatchObject({
+      body: 'Real-time hello 👋',
+      senderId: String(alice._id),
+    });
     expect(event.conversation.unreadCount).toBe(1);
     expect(await Message.countDocuments({ conversation: conversationId })).toBe(1);
   });
@@ -123,13 +131,21 @@ describe('Socket.io real-time messaging', () => {
     const conversationId = await openConversation(alice, bob);
     const mallorySocket = await connectAs(mallory);
 
-    const join = await emitWithAck(mallorySocket, SOCKET_EVENTS.JOIN_CONVERSATION, { conversationId });
+    const join = await emitWithAck(mallorySocket, SOCKET_EVENTS.JOIN_CONVERSATION, {
+      conversationId,
+    });
     expect(join).toMatchObject({ ok: false, error: { code: 'NOT_FOUND' } });
 
-    const sendAttempt = await emitWithAck(mallorySocket, SOCKET_EVENTS.SEND_MESSAGE, { conversationId, body: 'Injected' });
+    const sendAttempt = await emitWithAck(mallorySocket, SOCKET_EVENTS.SEND_MESSAGE, {
+      conversationId,
+      body: 'Injected',
+    });
     expect(sendAttempt.ok).toBe(false);
 
-    const invalid = await emitWithAck(mallorySocket, SOCKET_EVENTS.SEND_MESSAGE, { conversationId: { $ne: null }, body: 'x' });
+    const invalid = await emitWithAck(mallorySocket, SOCKET_EVENTS.SEND_MESSAGE, {
+      conversationId: { $ne: null },
+      body: 'x',
+    });
     expect(invalid.error.code).toBe('VALIDATION_ERROR');
     expect(await Message.countDocuments()).toBe(0);
   });
@@ -140,12 +156,20 @@ describe('Socket.io real-time messaging', () => {
     const conversationId = await openConversation(alice, bob);
     const [aliceSocket, bobSocket] = await Promise.all([connectAs(alice), connectAs(bob)]);
 
-    expect((await emitWithAck(aliceSocket, SOCKET_EVENTS.JOIN_CONVERSATION, { conversationId })).ok).toBe(true);
-    expect((await emitWithAck(bobSocket, SOCKET_EVENTS.JOIN_CONVERSATION, { conversationId })).ok).toBe(true);
+    expect(
+      (await emitWithAck(aliceSocket, SOCKET_EVENTS.JOIN_CONVERSATION, { conversationId })).ok,
+    ).toBe(true);
+    expect(
+      (await emitWithAck(bobSocket, SOCKET_EVENTS.JOIN_CONVERSATION, { conversationId })).ok,
+    ).toBe(true);
 
     const typing = waitForEvent(bobSocket, SOCKET_EVENTS.USER_TYPING);
     aliceSocket.emit(SOCKET_EVENTS.TYPING_START, { conversationId });
-    expect(await typing).toMatchObject({ conversationId, userId: String(alice._id), isTyping: true });
+    expect(await typing).toMatchObject({
+      conversationId,
+      userId: String(alice._id),
+      isTyping: true,
+    });
 
     const readReceipt = waitForEvent(aliceSocket, SOCKET_EVENTS.CONVERSATION_READ);
     const ack = await emitWithAck(bobSocket, SOCKET_EVENTS.MESSAGE_READ, { conversationId });
@@ -159,14 +183,24 @@ describe('Socket.io real-time messaging', () => {
     await openConversation(alice, bob);
     const bobSocket = await connectAs(bob);
 
-    const online = waitForEvent(bobSocket, SOCKET_EVENTS.USER_ONLINE, (payload) => payload.userId === String(alice._id));
+    const online = waitForEvent(
+      bobSocket,
+      SOCKET_EVENTS.USER_ONLINE,
+      (payload) => payload.userId === String(alice._id),
+    );
     const aliceSocket = await connectAs(alice);
     await online;
 
-    const presence = await emitWithAck(bobSocket, SOCKET_EVENTS.PRESENCE_QUERY, { userIds: [String(alice._id)] });
+    const presence = await emitWithAck(bobSocket, SOCKET_EVENTS.PRESENCE_QUERY, {
+      userIds: [String(alice._id)],
+    });
     expect(presence.data.online).toEqual([String(alice._id)]);
 
-    const offline = waitForEvent(bobSocket, SOCKET_EVENTS.USER_OFFLINE, (payload) => payload.userId === String(alice._id));
+    const offline = waitForEvent(
+      bobSocket,
+      SOCKET_EVENTS.USER_OFFLINE,
+      (payload) => payload.userId === String(alice._id),
+    );
     aliceSocket.disconnect();
     await offline;
   });

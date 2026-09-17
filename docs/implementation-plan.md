@@ -4,12 +4,12 @@
 
 ## 0. Discovery (2026-09-16)
 
-| Item | Finding |
-| --- | --- |
-| Repository | Empty — greenfield build |
-| Runtime | Node 24.14, npm 11.11 (workspaces available) |
-| Database | Local MongoDB 8.3 standalone (no replica set → no multi-document transactions) |
-| Tooling | git 2.53, Docker 29.6, mongosh |
+| Item           | Finding                                                                                                     |
+| -------------- | ----------------------------------------------------------------------------------------------------------- |
+| Repository     | Empty — greenfield build                                                                                    |
+| Runtime        | Node 24.14, npm 11.11 (workspaces available)                                                                |
+| Database       | Local MongoDB 8.3 standalone (no replica set → no multi-document transactions)                              |
+| Tooling        | git 2.53, Docker 29.6, mongosh                                                                              |
 | Library majors | Express 5, Mongoose 9, Zod 4, Stripe SDK 22, Socket.io 4.8, Vite 8, React 19, Tailwind 4, ESLint 10, Vitest |
 
 Consequences:
@@ -42,16 +42,16 @@ Consequences:
 
 ### Backend layering
 
-| Layer | Responsibility | Must not |
-| --- | --- | --- |
-| `routes/` | URL → middleware chain → controller | contain logic |
-| `middleware/` | authentication, permissions, validation, rate limits, errors | query business data beyond auth |
-| `validators/` | Zod schemas for body / query / params | — |
-| `controllers/` | translate HTTP ↔ service calls, shape responses | talk to Mongoose directly for business rules |
-| `services/` | business rules, authorization on resources, side effects (notifications, sockets) | know about `req`/`res` |
-| `models/` | schema, indexes, serialization | — |
-| `sockets/` | authenticated socket gateway, presence, event handlers (reuse services) | duplicate service logic |
-| `jobs/` | periodic maintenance (expired subscriptions) | — |
+| Layer          | Responsibility                                                                    | Must not                                     |
+| -------------- | --------------------------------------------------------------------------------- | -------------------------------------------- |
+| `routes/`      | URL → middleware chain → controller                                               | contain logic                                |
+| `middleware/`  | authentication, permissions, validation, rate limits, errors                      | query business data beyond auth              |
+| `validators/`  | Zod schemas for body / query / params                                             | —                                            |
+| `controllers/` | translate HTTP ↔ service calls, shape responses                                   | talk to Mongoose directly for business rules |
+| `services/`    | business rules, authorization on resources, side effects (notifications, sockets) | know about `req`/`res`                       |
+| `models/`      | schema, indexes, serialization                                                    | —                                            |
+| `sockets/`     | authenticated socket gateway, presence, event handlers (reuse services)           | duplicate service logic                      |
+| `jobs/`        | periodic maintenance (expired subscriptions)                                      | —                                            |
 
 Services emit real-time events through a small `realtime` facade so they stay testable without a socket server.
 
@@ -71,7 +71,7 @@ Services emit real-time events through a small `realtime` facade so they stay te
   `Authorization: Bearer`. Bearer headers are not sent automatically by browsers, so API calls are not CSRF-able.
 - **Refresh token**: 256-bit random value in an **httpOnly, Secure (prod), SameSite** cookie scoped to
   `/api/v1/auth`. Only its SHA-256 hash is stored (`RefreshToken` collection, TTL index).
-  - Rotated on every use; tokens belong to a *family*. Re-use of a rotated token outside a short grace
+  - Rotated on every use; tokens belong to a _family_. Re-use of a rotated token outside a short grace
     window (concurrent tabs) revokes the whole family (token theft detection).
   - Cookie-authenticated endpoints (`/auth/refresh`, `/auth/logout`) additionally require an allowed
     `Origin` and a custom `X-Requested-With` header → forces a CORS preflight, defeating CSRF.
@@ -92,17 +92,17 @@ Services emit real-time events through a small `realtime` facade so they stay te
   moderator) live in services. `/auth/me` returns the computed permission list so the UI can adapt
   without hardcoding role checks — the server still enforces everything.
 
-| Capability | Guest | Free | Pro | Admin |
-| --- | :-: | :-: | :-: | :-: |
-| Landing, community directory & previews | ✓ | ✓ | ✓ | ✓ |
-| Read public boards, profiles, projects | — | ✓ | ✓ | ✓ |
-| Join public communities, like posts, report | — | ✓ | ✓ | ✓ |
-| Direct messages | — | 10 / 24h | unlimited | unlimited |
-| Express interest in a project | — | ✓ | ✓ | ✓ |
-| Create posts & comments, upload post images | — | — | ✓ | ✓ |
-| Join / read Pro communities | — | — | ✓ | ✓ |
-| Create collaboration requests | — | — | ✓ | ✓ |
-| Create communities, moderation, admin dashboard | — | — | — | ✓ |
+| Capability                                      | Guest |   Free   |    Pro    |   Admin   |
+| ----------------------------------------------- | :---: | :------: | :-------: | :-------: |
+| Landing, community directory & previews         |   ✓   |    ✓     |     ✓     |     ✓     |
+| Read public boards, profiles, projects          |   —   |    ✓     |     ✓     |     ✓     |
+| Join public communities, like posts, report     |   —   |    ✓     |     ✓     |     ✓     |
+| Direct messages                                 |   —   | 10 / 24h | unlimited | unlimited |
+| Express interest in a project                   |   —   |    ✓     |     ✓     |     ✓     |
+| Create posts & comments, upload post images     |   —   |    —     |     ✓     |     ✓     |
+| Join / read Pro communities                     |   —   |    —     |     ✓     |     ✓     |
+| Create collaboration requests                   |   —   |    —     |     ✓     |     ✓     |
+| Create communities, moderation, admin dashboard |   —   |    —     |     —     |     ✓     |
 
 Community moderators/owners (per-community role in `Membership`) can moderate content in their community.
 
@@ -114,7 +114,7 @@ Community moderators/owners (per-community role in `Membership`) can moderate co
 - **Membership** is its own collection (unique `user+community`) — membership lists are unbounded, so they
   are not embedded in users or communities. `Community.memberCount` is an atomic counter.
 - **Comments**: adjacency list with `parent`, `root` and `depth` (max depth 4). A post page loads one page of
-  root comments and then *all* descendants of those roots in a single `root ∈ [...]` query, building the
+  root comments and then _all_ descendants of those roots in a single `root ∈ [...]` query, building the
   tree in memory — two queries, no recursion.
 - **Reactions**: separate collection with a unique `user+post` index; toggle is create-or-delete with an
   atomic `$inc` on the post. Feed pages fetch the viewer's reactions for the page in one `$in` query.
@@ -170,32 +170,32 @@ no stack traces in production responses, env validation at startup. See [securit
 
 ## 3. Phased delivery
 
-| # | Phase | Scope | Tests |
-| --- | --- | --- | --- |
-| 0 | Discovery | repo/tooling inspection, this plan | — |
-| 1 | Foundation | monorepo, env config, logger, error handling, app shell, routing, lint/format | health check |
-| 2 | Auth & RBAC | register/login/logout/refresh/me, password change, permissions, guards | auth + RBAC suites |
-| 3 | Communities & content | communities, memberships, posts (rich text, images), comments, reactions, feed, search | community/post/comment suites |
-| 4 | Real-time | conversations, messages, Socket.io gateway, presence, typing, read state, notifications | messaging + socket suites |
-| 5 | Project Match | Pro-only projects, filters, interests | project suite |
-| 6 | Stripe | pricing, checkout, confirm, webhooks, lifecycle, expiry job | subscription + webhook suites |
-| 7 | Admin & moderation | dashboard metrics, users, communities, reports | admin suite |
-| 8 | UI/UX polish | responsive, skeletons, empty/error states, a11y, dark mode, SEO | client component tests |
-| 9 | Security audit | endpoint-by-endpoint authorization review, fixes | regression tests |
-| 10 | QA | lint, tests, production build, dependency audit | full run |
-| 11 | Deployment & docs | README, docs, Render/Vercel config, Dockerfile, CI | — |
+| #   | Phase                 | Scope                                                                                   | Tests                         |
+| --- | --------------------- | --------------------------------------------------------------------------------------- | ----------------------------- |
+| 0   | Discovery             | repo/tooling inspection, this plan                                                      | —                             |
+| 1   | Foundation            | monorepo, env config, logger, error handling, app shell, routing, lint/format           | health check                  |
+| 2   | Auth & RBAC           | register/login/logout/refresh/me, password change, permissions, guards                  | auth + RBAC suites            |
+| 3   | Communities & content | communities, memberships, posts (rich text, images), comments, reactions, feed, search  | community/post/comment suites |
+| 4   | Real-time             | conversations, messages, Socket.io gateway, presence, typing, read state, notifications | messaging + socket suites     |
+| 5   | Project Match         | Pro-only projects, filters, interests                                                   | project suite                 |
+| 6   | Stripe                | pricing, checkout, confirm, webhooks, lifecycle, expiry job                             | subscription + webhook suites |
+| 7   | Admin & moderation    | dashboard metrics, users, communities, reports                                          | admin suite                   |
+| 8   | UI/UX polish          | responsive, skeletons, empty/error states, a11y, dark mode, SEO                         | client component tests        |
+| 9   | Security audit        | endpoint-by-endpoint authorization review, fixes                                        | regression tests              |
+| 10  | QA                    | lint, tests, production build, dependency audit                                         | full run                      |
+| 11  | Deployment & docs     | README, docs, Render/Vercel config, Dockerfile, CI                                      | —                             |
 
 ## 3a. Delivery log
 
 All phases are implemented and verified. Notable corrections found during the build:
 
-| Found | Issue | Fix |
-| --- | --- | --- |
-| Phase 4 | `registerConnection` awaited a presence broadcast **before** attaching socket listeners, so events emitted immediately after `connect` were dropped (an intermittent test failure that was a real race). | Listeners are attached synchronously; presence broadcasts afterwards. |
-| Phase 4 | Test helpers created Pro users with a plan snapshot but no `Subscription` record, so entitlement re-derivation correctly downgraded them. | Helpers now create a complimentary subscription record, matching production data. |
-| Phase 9 | `SearchPage` synced its input with `setState` inside an effect (cascading renders). | Derived during render via the previous-value pattern. |
-| Phase 9 | Project skill filters used case-insensitive regexes that could not use an index. | Added a stored lowercase `skillKeys` array with a compound index. |
-| Phase 9 | `window.location.assign` could not be stubbed in jsdom. | Extracted a `redirectTo` helper — testable, and the component reads more clearly. |
+| Found   | Issue                                                                                                                                                                                                    | Fix                                                                               |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Phase 4 | `registerConnection` awaited a presence broadcast **before** attaching socket listeners, so events emitted immediately after `connect` were dropped (an intermittent test failure that was a real race). | Listeners are attached synchronously; presence broadcasts afterwards.             |
+| Phase 4 | Test helpers created Pro users with a plan snapshot but no `Subscription` record, so entitlement re-derivation correctly downgraded them.                                                                | Helpers now create a complimentary subscription record, matching production data. |
+| Phase 9 | `SearchPage` synced its input with `setState` inside an effect (cascading renders).                                                                                                                      | Derived during render via the previous-value pattern.                             |
+| Phase 9 | Project skill filters used case-insensitive regexes that could not use an index.                                                                                                                         | Added a stored lowercase `skillKeys` array with a compound index.                 |
+| Phase 9 | `window.location.assign` could not be stubbed in jsdom.                                                                                                                                                  | Extracted a `redirectTo` helper — testable, and the component reads more clearly. |
 
 ## 4. Out of scope (deliberately)
 

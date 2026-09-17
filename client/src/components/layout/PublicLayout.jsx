@@ -24,7 +24,11 @@ export function PublicNavbar() {
         </Link>
         <nav aria-label="Main" className="hidden items-center gap-8 md:flex">
           {LINKS.map((link) => (
-            <a key={link.href} href={link.href} className="text-sm font-medium text-fg-muted transition-colors hover:text-fg">
+            <a
+              key={link.href}
+              href={link.href}
+              className="text-sm font-medium text-fg-muted transition-colors hover:text-fg"
+            >
               {link.label}
             </a>
           ))}
@@ -53,14 +57,26 @@ export function PublicNavbar() {
           aria-expanded={open}
           onClick={() => setOpen((value) => !value)}
         >
-          {open ? <X className="size-5" aria-hidden="true" /> : <MenuIcon className="size-5" aria-hidden="true" />}
+          {open ? (
+            <X className="size-5" aria-hidden="true" />
+          ) : (
+            <MenuIcon className="size-5" aria-hidden="true" />
+          )}
         </Button>
       </div>
       {open && (
-        <nav aria-label="Mobile main" className="animate-fade-in border-t border-line bg-surface px-4 py-4 md:hidden">
+        <nav
+          aria-label="Mobile main"
+          className="animate-fade-in border-t border-line bg-surface px-4 py-4 md:hidden"
+        >
           <div className="flex flex-col gap-1">
             {LINKS.map((link) => (
-              <a key={link.href} href={link.href} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-medium text-fg-muted hover:bg-surface-hover">
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className="rounded-lg px-3 py-2.5 text-sm font-medium text-fg-muted hover:bg-surface-hover"
+              >
                 {link.label}
               </a>
             ))}
@@ -86,23 +102,46 @@ export function PublicFooter() {
         <div className="md:col-span-2">
           <Logo />
           <p className="mt-3 max-w-sm text-sm text-fg-muted">
-            Persistent, high-quality micro-communities for remote professionals. Find your people. Build your niche.
+            Persistent, high-quality micro-communities for remote professionals. Find your people.
+            Build your niche.
           </p>
         </div>
         <div>
           <h2 className="text-sm font-semibold text-fg">Product</h2>
           <ul className="mt-3 space-y-2 text-sm text-fg-muted">
-            <li><Link to="/communities" className="hover:text-fg">Communities</Link></li>
-            <li><Link to="/pricing" className="hover:text-fg">Pricing</Link></li>
-            <li><Link to="/register" className="hover:text-fg">Create an account</Link></li>
+            <li>
+              <Link to="/communities" className="hover:text-fg">
+                Communities
+              </Link>
+            </li>
+            <li>
+              <Link to="/pricing" className="hover:text-fg">
+                Pricing
+              </Link>
+            </li>
+            <li>
+              <Link to="/register" className="hover:text-fg">
+                Create an account
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
           <h2 className="text-sm font-semibold text-fg">Company</h2>
           <ul className="mt-3 space-y-2 text-sm text-fg-muted">
-            <li><a href="#how-it-works" className="hover:text-fg">How it works</a></li>
-            <li><a href="#features" className="hover:text-fg">Features</a></li>
-            <li><span>Community guidelines</span></li>
+            <li>
+              <a href="#how-it-works" className="hover:text-fg">
+                How it works
+              </a>
+            </li>
+            <li>
+              <a href="#features" className="hover:text-fg">
+                Features
+              </a>
+            </li>
+            <li>
+              <span>Community guidelines</span>
+            </li>
           </ul>
         </div>
       </div>

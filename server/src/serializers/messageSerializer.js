@@ -13,8 +13,12 @@ export function toMessage(message) {
 }
 
 export function toConversation(conversation, viewerId) {
-  const self = conversation.members.find((member) => String(member.user?._id ?? member.user) === viewerId);
-  const other = conversation.members.find((member) => String(member.user?._id ?? member.user) !== viewerId);
+  const self = conversation.members.find(
+    (member) => String(member.user?._id ?? member.user) === viewerId,
+  );
+  const other = conversation.members.find(
+    (member) => String(member.user?._id ?? member.user) !== viewerId,
+  );
   const participant = toUserSummary(other?.user);
 
   return {

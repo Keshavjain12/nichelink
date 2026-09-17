@@ -2,19 +2,35 @@ import request from 'supertest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Notification, User } from '../src/models/index.js';
 import { createPost } from './fixtures.js';
-import { bearer, buildApp, createCommunity, createFreeUser, createProUser, joinCommunity } from './helpers.js';
+import {
+  bearer,
+  buildApp,
+  createCommunity,
+  createFreeUser,
+  createProUser,
+  joinCommunity,
+} from './helpers.js';
 
 vi.mock('cloudinary', () => {
   const uploader = {
     upload_stream: vi.fn((options, callback) => ({
-      end: () => callback(null, { public_id: `${options.folder}/image-${Date.now()}`, version: 1, width: 800, height: 600 }),
+      end: () =>
+        callback(null, {
+          public_id: `${options.folder}/image-${Date.now()}`,
+          version: 1,
+          width: 800,
+          height: 600,
+        }),
     })),
   };
   return {
     v2: {
       config: vi.fn(),
       uploader,
-      url: vi.fn((publicId) => `https://res.cloudinary.com/nichelink-test/image/upload/f_auto,q_auto/v1/${publicId}`),
+      url: vi.fn(
+        (publicId) =>
+          `https://res.cloudinary.com/nichelink-test/image/upload/f_auto,q_auto/v1/${publicId}`,
+      ),
       api: { delete_resources: vi.fn(async () => ({})) },
     },
   };
@@ -43,7 +59,10 @@ describe('users & profiles API', () => {
     await createPost({ author: user, community });
     const viewer = await createFreeUser();
 
-    const res = await request(app).get(`/api/v1/users/${user.username}`).set(bearer(viewer)).expect(200);
+    const res = await request(app)
+      .get(`/api/v1/users/${user.username}`)
+      .set(bearer(viewer))
+      .expect(200);
     expect(res.body.data).toMatchObject({
       username: user.username,
       headline: 'Staff engineer',
@@ -54,7 +73,10 @@ describe('users & profiles API', () => {
     expect(res.body.data.email).toBeUndefined();
     expect(res.body.data.subscription).toBeUndefined();
 
-    const communities = await request(app).get(`/api/v1/users/${user.username}/communities`).set(bearer(viewer)).expect(200);
+    const communities = await request(app)
+      .get(`/api/v1/users/${user.username}/communities`)
+      .set(bearer(viewer))
+      .expect(200);
     expect(communities.body.data).toHaveLength(1);
   });
 
@@ -72,7 +94,11 @@ describe('users & profiles API', () => {
       })
       .expect(200);
 
-    expect(res.body.data.user).toMatchObject({ headline: 'Developer advocate', skills: ['React', 'GraphQL'], role: 'FreeMember' });
+    expect(res.body.data.user).toMatchObject({
+      headline: 'Developer advocate',
+      skills: ['React', 'GraphQL'],
+      role: 'FreeMember',
+    });
     const stored = await User.findById(user._id).lean();
     expect(stored).toMatchObject({ role: 'FreeMember', email: user.email });
     expect(stored.subscription.status).toBe('none');
@@ -80,7 +106,11 @@ describe('users & profiles API', () => {
 
   it('rejects unsafe website URLs', async () => {
     const user = await createFreeUser();
-    await request(app).patch('/api/v1/users/me').set(bearer(user)).send({ website: 'javascript:alert(1)' }).expect(400);
+    await request(app)
+      .patch('/api/v1/users/me')
+      .set(bearer(user))
+      .send({ website: 'javascript:alert(1)' })
+      .expect(400);
   });
 
   describe('uploads', () => {
@@ -93,7 +123,9 @@ describe('users & profiles API', () => {
         .expect(200);
 
       expect(res.body.data.user.avatarUrl).toMatch(
-        new RegExp(`^https://res.cloudinary.com/nichelink-test/.+nichelink/users/${user._id}/avatars/`),
+        new RegExp(
+          `^https://res.cloudinary.com/nichelink-test/.+nichelink/users/${user._id}/avatars/`,
+        ),
       );
     });
 
@@ -125,7 +157,10 @@ describe('users & profiles API', () => {
       await request(app)
         .post('/api/v1/uploads/images')
         .set(bearer(pro))
-        .attach('image', Buffer.from('<svg></svg>'), { filename: 'vector.svg', contentType: 'image/svg+xml' })
+        .attach('image', Buffer.from('<svg></svg>'), {
+          filename: 'vector.svg',
+          contentType: 'image/svg+xml',
+        })
         .expect(400);
     });
 
@@ -167,10 +202,16 @@ describe('search API', () => {
     expect(res.body.data.posts.items[0].title).toBe('Writing a compiler in a weekend');
     expect(Object.keys(res.body.data)).toEqual(['communities', 'users', 'posts', 'projects']);
 
-    const suggestions = await request(app).get('/api/v1/search/suggestions?q=compi').set(bearer(user)).expect(200);
+    const suggestions = await request(app)
+      .get('/api/v1/search/suggestions?q=compi')
+      .set(bearer(user))
+      .expect(200);
     expect(suggestions.body.data.communities[0].slug).toBe('compiler-nerds');
 
-    const users = await request(app).get('/api/v1/search/suggestions?q=grace').set(bearer(user)).expect(200);
+    const users = await request(app)
+      .get('/api/v1/search/suggestions?q=grace')
+      .set(bearer(user))
+      .expect(200);
     expect(users.body.data.users[0].username).toBe('grace_compiler');
   });
 
@@ -199,12 +240,21 @@ describe('notifications API', () => {
     expect(list.body.data).toHaveLength(2);
     expect(list.body.meta.unreadCount).toBe(2);
 
-    await request(app).patch(`/api/v1/notifications/${first._id}/read`).set(bearer(other)).expect(404);
-    const read = await request(app).patch(`/api/v1/notifications/${first._id}/read`).set(bearer(user)).expect(200);
+    await request(app)
+      .patch(`/api/v1/notifications/${first._id}/read`)
+      .set(bearer(other))
+      .expect(404);
+    const read = await request(app)
+      .patch(`/api/v1/notifications/${first._id}/read`)
+      .set(bearer(user))
+      .expect(200);
     expect(read.body.data.unreadCount).toBe(1);
 
     await request(app).patch('/api/v1/notifications/read-all').set(bearer(user)).expect(200);
-    const count = await request(app).get('/api/v1/notifications/unread-count').set(bearer(user)).expect(200);
+    const count = await request(app)
+      .get('/api/v1/notifications/unread-count')
+      .set(bearer(user))
+      .expect(200);
     expect(count.body.data.unreadCount).toBe(0);
     expect(await Notification.countDocuments({ recipient: other._id, readAt: null })).toBe(1);
   });

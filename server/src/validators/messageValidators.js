@@ -6,7 +6,10 @@ const body = z
   .string()
   .trim()
   .min(1, 'Message cannot be empty')
-  .max(CONTENT_LIMITS.MESSAGE_MAX, `Messages are limited to ${CONTENT_LIMITS.MESSAGE_MAX} characters`);
+  .max(
+    CONTENT_LIMITS.MESSAGE_MAX,
+    `Messages are limited to ${CONTENT_LIMITS.MESSAGE_MAX} characters`,
+  );
 
 const clientId = z
   .string()

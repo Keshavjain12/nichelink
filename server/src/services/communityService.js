@@ -26,7 +26,9 @@ const LIST_SORTS = Object.freeze({
 });
 
 export async function findCommunity(idOrSlug, { includeArchived = false } = {}) {
-  const filter = OBJECT_ID_PATTERN.test(idOrSlug) ? { _id: idOrSlug } : { slug: String(idOrSlug).toLowerCase() };
+  const filter = OBJECT_ID_PATTERN.test(idOrSlug)
+    ? { _id: idOrSlug }
+    : { slug: String(idOrSlug).toLowerCase() };
   if (!includeArchived) filter.status = 'active';
   const community = await Community.findOne(filter).lean();
   if (!community) throw ApiError.notFound('Community not found');
@@ -58,7 +60,9 @@ function buildViewerState(viewer, community, membership) {
   const isAdmin = can(viewer, PERMISSIONS.CONTENT_MODERATE);
   const canRead = canAccessCommunityContent(viewer, community);
   const joinPermission =
-    community.accessType === COMMUNITY_ACCESS.PRO ? PERMISSIONS.COMMUNITY_JOIN_PRO : PERMISSIONS.COMMUNITY_JOIN;
+    community.accessType === COMMUNITY_ACCESS.PRO
+      ? PERMISSIONS.COMMUNITY_JOIN_PRO
+      : PERMISSIONS.COMMUNITY_JOIN;
 
   return {
     isAuthenticated: Boolean(viewer),
@@ -75,7 +79,10 @@ function buildViewerState(viewer, community, membership) {
 
 async function viewerMemberships(viewer, communityIds) {
   if (!viewer || communityIds.length === 0) return new Map();
-  const memberships = await Membership.find({ user: viewer.id, community: { $in: communityIds } }).lean();
+  const memberships = await Membership.find({
+    user: viewer.id,
+    community: { $in: communityIds },
+  }).lean();
   return new Map(memberships.map((membership) => [String(membership.community), membership]));
 }
 
@@ -85,11 +92,17 @@ async function summarizeForViewer(communities, viewer) {
     communities.map((community) => community._id),
   );
   return communities.map((community) =>
-    toCommunitySummary(community, buildViewerState(viewer, community, memberships.get(String(community._id)))),
+    toCommunitySummary(
+      community,
+      buildViewerState(viewer, community, memberships.get(String(community._id))),
+    ),
   );
 }
 
-export async function listCommunities({ q, category, access, featured, sort = 'popular', page, limit }, viewer) {
+export async function listCommunities(
+  { q, category, access, featured, sort = 'popular', page, limit },
+  viewer,
+) {
   const filter = { status: 'active' };
   if (category) filter.category = category;
   if (access) filter.accessType = access;
@@ -109,7 +122,10 @@ export async function listCommunities({ q, category, access, featured, sort = 'p
     Community.countDocuments(filter),
   ]);
 
-  return { items: await summarizeForViewer(rows, viewer), meta: buildCountedMeta({ page, limit, total }) };
+  return {
+    items: await summarizeForViewer(rows, viewer),
+    meta: buildCountedMeta({ page, limit, total }),
+  };
 }
 
 export async function getCommunityDetail(idOrSlug, viewer) {
@@ -151,13 +167,22 @@ export async function createCommunity(data, actor) {
   });
 
   try {
-    await Membership.create({ user: actor.id, community: community._id, role: COMMUNITY_ROLES.OWNER });
+    await Membership.create({
+      user: actor.id,
+      community: community._id,
+      role: COMMUNITY_ROLES.OWNER,
+    });
   } catch (error) {
     await Community.deleteOne({ _id: community._id });
     throw error;
   }
 
-  await AuditLog.create({ actor: actor.id, action: 'community.create', targetType: 'Community', targetId: community._id });
+  await AuditLog.create({
+    actor: actor.id,
+    action: 'community.create',
+    targetType: 'Community',
+    targetId: community._id,
+  });
   return getCommunityDetail(community.slug, actor);
 }
 
@@ -169,7 +194,10 @@ export async function updateCommunity(idOrSlug, updates, actor) {
   await Community.updateOne({ _id: community._id }, { $set: changes }, { runValidators: true });
 
   if (changes.accessType && changes.accessType !== community.accessType) {
-    await Post.updateMany({ community: community._id }, { $set: { communityAccess: changes.accessType } });
+    await Post.updateMany(
+      { community: community._id },
+      { $set: { communityAccess: changes.accessType } },
+    );
   }
 
   await AuditLog.create({
@@ -188,8 +216,13 @@ export async function updateCommunity(idOrSlug, updates, actor) {
 export async function joinCommunity(idOrSlug, viewer) {
   const community = await findCommunity(idOrSlug);
 
-  if (community.accessType === COMMUNITY_ACCESS.PRO && !can(viewer, PERMISSIONS.COMMUNITY_JOIN_PRO)) {
-    throw ApiError.forbidden('Pro communities are available to Pro members', { code: ERROR_CODES.PRO_REQUIRED });
+  if (
+    community.accessType === COMMUNITY_ACCESS.PRO &&
+    !can(viewer, PERMISSIONS.COMMUNITY_JOIN_PRO)
+  ) {
+    throw ApiError.forbidden('Pro communities are available to Pro members', {
+      code: ERROR_CODES.PRO_REQUIRED,
+    });
   }
 
   const existing = await getMembership(viewer.id, community._id);
@@ -219,7 +252,10 @@ export async function leaveCommunity(idOrSlug, viewer) {
 
   const { deletedCount } = await Membership.deleteOne({ _id: membership._id });
   if (deletedCount > 0) {
-    await Community.updateOne({ _id: community._id, memberCount: { $gt: 0 } }, { $inc: { memberCount: -1 } });
+    await Community.updateOne(
+      { _id: community._id, memberCount: { $gt: 0 } },
+      { $inc: { memberCount: -1 } },
+    );
   }
   return getCommunityDetail(community.slug, viewer);
 }
@@ -256,7 +292,10 @@ export async function listViewerCommunities(viewer) {
   return memberships
     .filter((membership) => membership.community)
     .map((membership) =>
-      toCommunitySummary(membership.community, buildViewerState(viewer, membership.community, membership)),
+      toCommunitySummary(
+        membership.community,
+        buildViewerState(viewer, membership.community, membership),
+      ),
     );
 }
 

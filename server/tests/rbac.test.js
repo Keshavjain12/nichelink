@@ -12,28 +12,54 @@ describe('resolveEffectiveRole', () => {
   });
 
   it('keeps Admin regardless of subscription', () => {
-    expect(resolveEffectiveRole({ role: ROLES.ADMIN, subscription: { status: 'none' } })).toBe(ROLES.ADMIN);
+    expect(resolveEffectiveRole({ role: ROLES.ADMIN, subscription: { status: 'none' } })).toBe(
+      ROLES.ADMIN,
+    );
   });
 
   it('grants Pro only for entitled subscription states', () => {
     const future = new Date(Date.now() + 10 * DAY_MS);
-    expect(resolveEffectiveRole({ role: ROLES.FREE, subscription: { status: 'active', currentPeriodEnd: future } })).toBe(ROLES.PRO);
-    expect(resolveEffectiveRole({ role: ROLES.FREE, subscription: { status: 'past_due', currentPeriodEnd: future } })).toBe(ROLES.PRO);
-    expect(resolveEffectiveRole({ role: ROLES.PRO, subscription: { status: 'canceled', currentPeriodEnd: future } })).toBe(ROLES.FREE);
-    expect(resolveEffectiveRole({ role: ROLES.PRO, subscription: { status: 'unpaid' } })).toBe(ROLES.FREE);
+    expect(
+      resolveEffectiveRole({
+        role: ROLES.FREE,
+        subscription: { status: 'active', currentPeriodEnd: future },
+      }),
+    ).toBe(ROLES.PRO);
+    expect(
+      resolveEffectiveRole({
+        role: ROLES.FREE,
+        subscription: { status: 'past_due', currentPeriodEnd: future },
+      }),
+    ).toBe(ROLES.PRO);
+    expect(
+      resolveEffectiveRole({
+        role: ROLES.PRO,
+        subscription: { status: 'canceled', currentPeriodEnd: future },
+      }),
+    ).toBe(ROLES.FREE);
+    expect(resolveEffectiveRole({ role: ROLES.PRO, subscription: { status: 'unpaid' } })).toBe(
+      ROLES.FREE,
+    );
   });
 
   it('does not trust a stale persisted ProMember role once the period has long ended', () => {
     const longAgo = new Date(Date.now() - 10 * DAY_MS);
-    expect(resolveEffectiveRole({ role: ROLES.PRO, subscription: { status: 'active', currentPeriodEnd: longAgo } })).toBe(
-      ROLES.FREE,
-    );
+    expect(
+      resolveEffectiveRole({
+        role: ROLES.PRO,
+        subscription: { status: 'active', currentPeriodEnd: longAgo },
+      }),
+    ).toBe(ROLES.FREE);
   });
 });
 
 describe('permission map', () => {
   it('reserves posting, commenting and Pro communities for Pro and Admin', () => {
-    for (const permission of [PERMISSIONS.POST_CREATE, PERMISSIONS.COMMENT_CREATE, PERMISSIONS.COMMUNITY_JOIN_PRO]) {
+    for (const permission of [
+      PERMISSIONS.POST_CREATE,
+      PERMISSIONS.COMMENT_CREATE,
+      PERMISSIONS.COMMUNITY_JOIN_PRO,
+    ]) {
       expect(permissionsForRole(ROLES.GUEST)).not.toContain(permission);
       expect(permissionsForRole(ROLES.FREE)).not.toContain(permission);
       expect(permissionsForRole(ROLES.PRO)).toContain(permission);

@@ -26,12 +26,16 @@ export function createApp({ rateLimitEnabled = env.RATE_LIMIT_ENABLED } = {}) {
       logger,
       genReqId: (req, res) => {
         const incoming = req.headers['x-request-id'];
-        const id = typeof incoming === 'string' && /^[\w-]{8,64}$/.test(incoming) ? incoming : crypto.randomUUID();
+        const id =
+          typeof incoming === 'string' && /^[\w-]{8,64}$/.test(incoming)
+            ? incoming
+            : crypto.randomUUID();
         res.setHeader('X-Request-Id', id);
         return id;
       },
       autoLogging: { ignore: (req) => req.url === `${API_PREFIX}/health` },
-      customLogLevel: (_req, res, error) => (error || res.statusCode >= 500 ? 'error' : res.statusCode >= 400 ? 'warn' : 'info'),
+      customLogLevel: (_req, res, error) =>
+        error || res.statusCode >= 500 ? 'error' : res.statusCode >= 400 ? 'warn' : 'info',
     }),
   );
 

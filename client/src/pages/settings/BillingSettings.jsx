@@ -38,7 +38,10 @@ export default function BillingSettings() {
 
   const isPro = subscription.plan === 'pro';
   const isAdmin = subscription.role === 'Admin';
-  const status = STATUS_BADGES[subscription.status] ?? { variant: 'neutral', label: subscription.status };
+  const status = STATUS_BADGES[subscription.status] ?? {
+    variant: 'neutral',
+    label: subscription.status,
+  };
   const managedByStripe = subscription.provider === 'stripe';
   const stripeBillingLabel = subscription.paymentsMode === 'test' ? 'Stripe (test mode)' : 'Stripe';
 
@@ -75,42 +78,66 @@ export default function BillingSettings() {
         <dl className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {subscription.currentPeriodEnd && (
             <div>
-              <dt className="text-xs text-fg-subtle">{subscription.cancelAtPeriodEnd ? 'Access ends' : 'Renews on'}</dt>
-              <dd className="mt-0.5 text-sm font-medium">{formatDate(subscription.currentPeriodEnd, { dateStyle: 'long' })}</dd>
+              <dt className="text-xs text-fg-subtle">
+                {subscription.cancelAtPeriodEnd ? 'Access ends' : 'Renews on'}
+              </dt>
+              <dd className="mt-0.5 text-sm font-medium">
+                {formatDate(subscription.currentPeriodEnd, { dateStyle: 'long' })}
+              </dd>
             </div>
           )}
           {subscription.provider && (
             <div>
               <dt className="text-xs text-fg-subtle">Billing</dt>
-              <dd className="mt-0.5 text-sm font-medium">{managedByStripe ? stripeBillingLabel : 'Complimentary membership'}</dd>
+              <dd className="mt-0.5 text-sm font-medium">
+                {managedByStripe ? stripeBillingLabel : 'Complimentary membership'}
+              </dd>
             </div>
           )}
         </dl>
 
         {isPro && subscription.cancelAtPeriodEnd && (
           <InlineAlert variant="info" className="mt-5">
-            Your membership is set to end on {formatDate(subscription.currentPeriodEnd)}. Resume to keep Pro features.
+            Your membership is set to end on {formatDate(subscription.currentPeriodEnd)}. Resume to
+            keep Pro features.
           </InlineAlert>
         )}
 
         <div className="mt-6 flex flex-wrap gap-2 border-t border-line pt-5">
           {!isPro && !isAdmin && (
-            <Button as={Link} to="/pricing" variant="pro" leftIcon={Crown}>Upgrade to Pro</Button>
+            <Button as={Link} to="/pricing" variant="pro" leftIcon={Crown}>
+              Upgrade to Pro
+            </Button>
           )}
           {subscription.canManageBilling && (
-            <Button variant="secondary" leftIcon={ExternalLink} loading={openingPortal} onClick={() => run(openPortal)}>
+            <Button
+              variant="secondary"
+              leftIcon={ExternalLink}
+              loading={openingPortal}
+              onClick={() => run(openPortal)}
+            >
               Manage payment methods & invoices
             </Button>
           )}
           {isPro && managedByStripe && !subscription.cancelAtPeriodEnd && (
-            <Button variant="danger-ghost" onClick={() => setConfirmCancel(true)}>Cancel subscription</Button>
+            <Button variant="danger-ghost" onClick={() => setConfirmCancel(true)}>
+              Cancel subscription
+            </Button>
           )}
           {isPro && managedByStripe && subscription.cancelAtPeriodEnd && (
-            <Button leftIcon={CreditCard} loading={resuming} onClick={() => run(resume, 'Your Pro membership will renew')}>Resume subscription</Button>
+            <Button
+              leftIcon={CreditCard}
+              loading={resuming}
+              onClick={() => run(resume, 'Your Pro membership will renew')}
+            >
+              Resume subscription
+            </Button>
           )}
         </div>
         {!subscription.paymentsEnabled && (
-          <p className="mt-4 text-xs text-fg-subtle">Payments are not configured on this server, so billing actions are unavailable.</p>
+          <p className="mt-4 text-xs text-fg-subtle">
+            Payments are not configured on this server, so billing actions are unavailable.
+          </p>
         )}
       </Card>
 

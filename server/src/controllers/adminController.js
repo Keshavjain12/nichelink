@@ -13,12 +13,18 @@ export async function users(req, res) {
 
 export async function updateUserStatus(req, res) {
   const user = await adminService.setUserStatus(req.user, req.params.id, req.body);
-  sendSuccess(res, { data: user, message: user.status === 'suspended' ? 'Account suspended' : 'Account reactivated' });
+  sendSuccess(res, {
+    data: user,
+    message: user.status === 'suspended' ? 'Account suspended' : 'Account reactivated',
+  });
 }
 
 export async function updateUserAdmin(req, res) {
   const user = await adminService.setUserAdmin(req.user, req.params.id, req.body);
-  sendSuccess(res, { data: user, message: req.body.isAdmin ? 'Admin access granted' : 'Admin access revoked' });
+  sendSuccess(res, {
+    data: user,
+    message: req.body.isAdmin ? 'Admin access granted' : 'Admin access revoked',
+  });
 }
 
 export async function communities(req, res) {

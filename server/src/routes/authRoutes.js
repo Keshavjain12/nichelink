@@ -8,7 +8,12 @@ import { changePasswordBody, loginBody, registerBody } from '../validators/authV
 export function createAuthRouter({ limiters }) {
   const router = Router();
 
-  router.post('/register', limiters.register, validate({ body: registerBody }), authController.register);
+  router.post(
+    '/register',
+    limiters.register,
+    validate({ body: registerBody }),
+    authController.register,
+  );
   router.post('/login', limiters.login, validate({ body: loginBody }), authController.login);
   router.post('/refresh', limiters.refresh, requireTrustedOrigin, authController.refresh);
   router.post('/logout', requireTrustedOrigin, authController.logout);

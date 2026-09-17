@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import * as communityController from '../controllers/communityController.js';
 import { PERMISSIONS } from '../constants/permissions.js';
-import { authenticate, optionalAuthenticate, requirePermission } from '../middleware/authenticate.js';
+import {
+  authenticate,
+  optionalAuthenticate,
+  requirePermission,
+} from '../middleware/authenticate.js';
 import { validate } from '../middleware/validate.js';
 import {
   communityParams,
@@ -15,7 +19,12 @@ import { listPostsQuery } from '../validators/postValidators.js';
 export function createCommunityRouter({ limiters }) {
   const router = Router();
 
-  router.get('/', optionalAuthenticate, validate({ query: listCommunitiesQuery }), communityController.list);
+  router.get(
+    '/',
+    optionalAuthenticate,
+    validate({ query: listCommunitiesQuery }),
+    communityController.list,
+  );
   router.get('/trending', optionalAuthenticate, communityController.trending);
   router.get('/recommended', authenticate, communityController.recommended);
   router.post(
@@ -27,7 +36,12 @@ export function createCommunityRouter({ limiters }) {
     communityController.create,
   );
 
-  router.get('/:community', optionalAuthenticate, validate({ params: communityParams }), communityController.detail);
+  router.get(
+    '/:community',
+    optionalAuthenticate,
+    validate({ params: communityParams }),
+    communityController.detail,
+  );
   router.patch(
     '/:community',
     authenticate,
@@ -43,7 +57,12 @@ export function createCommunityRouter({ limiters }) {
     validate({ params: communityParams }),
     communityController.join,
   );
-  router.delete('/:community/membership', authenticate, validate({ params: communityParams }), communityController.leave);
+  router.delete(
+    '/:community/membership',
+    authenticate,
+    validate({ params: communityParams }),
+    communityController.leave,
+  );
   router.get(
     '/:community/members',
     authenticate,

@@ -13,7 +13,10 @@ const conversationSchema = new mongoose.Schema(
   {
     members: {
       type: [memberStateSchema],
-      validate: [(members) => members.length === 2, 'A direct conversation has exactly two members'],
+      validate: [
+        (members) => members.length === 2,
+        'A direct conversation has exactly two members',
+      ],
     },
     // Sorted "<idA>:<idB>" — guarantees a single conversation per pair of users.
     participantKey: { type: String, required: true, unique: true },

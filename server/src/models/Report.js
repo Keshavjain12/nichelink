@@ -14,7 +14,12 @@ const reportSchema = new mongoose.Schema(
     // Owner of the reported content, stored so moderators can act on the user directly.
     targetOwner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     reason: { type: String, enum: REPORT_REASONS, required: true },
-    details: { type: String, trim: true, maxlength: CONTENT_LIMITS.REPORT_DETAILS_MAX, default: '' },
+    details: {
+      type: String,
+      trim: true,
+      maxlength: CONTENT_LIMITS.REPORT_DETAILS_MAX,
+      default: '',
+    },
     status: { type: String, enum: Object.values(REPORT_STATUS), default: REPORT_STATUS.OPEN },
     resolution: {
       type: new mongoose.Schema(

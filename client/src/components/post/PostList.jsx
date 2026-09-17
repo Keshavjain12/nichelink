@@ -7,8 +7,16 @@ import { LoadMore } from '../common/Misc';
 import PostCard, { PostCardSkeleton } from './PostCard';
 
 export default function PostList({ params, showCommunity = true, emptyState }) {
-  const { data, error, isLoading, isFetching, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useListPostsInfiniteQuery(params);
+  const {
+    data,
+    error,
+    isLoading,
+    isFetching,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useListPostsInfiniteQuery(params);
 
   if (isLoading) {
     return (
@@ -20,7 +28,8 @@ export default function PostList({ params, showCommunity = true, emptyState }) {
     );
   }
 
-  if (error) return <ErrorState error={error} title="Couldn't load discussions" onRetry={refetch} />;
+  if (error)
+    return <ErrorState error={error} title="Couldn't load discussions" onRetry={refetch} />;
 
   const posts = data.pages.flatMap((page) => page.items);
   const previewOnly = data.pages[0]?.meta.previewOnly;
@@ -28,7 +37,11 @@ export default function PostList({ params, showCommunity = true, emptyState }) {
   if (posts.length === 0) {
     return (
       emptyState ?? (
-        <EmptyState icon={MessageSquare} title="No discussions yet" description="Be the first to start a conversation here." />
+        <EmptyState
+          icon={MessageSquare}
+          title="No discussions yet"
+          description="Be the first to start a conversation here."
+        />
       )
     );
   }

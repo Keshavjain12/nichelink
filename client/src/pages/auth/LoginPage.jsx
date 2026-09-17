@@ -37,7 +37,11 @@ export function PasswordInput({ ref, ...props }) {
         className="absolute inset-y-0 right-0 flex w-10 items-center justify-center rounded-r-lg text-fg-subtle hover:text-fg"
         aria-label={visible ? 'Hide password' : 'Show password'}
       >
-        {visible ? <EyeOff className="size-4" aria-hidden="true" /> : <Eye className="size-4" aria-hidden="true" />}
+        {visible ? (
+          <EyeOff className="size-4" aria-hidden="true" />
+        ) : (
+          <Eye className="size-4" aria-hidden="true" />
+        )}
       </button>
     </div>
   );
@@ -73,7 +77,10 @@ export default function LoginPage() {
       footer={
         <>
           New to NicheLink?{' '}
-          <Link to="/register" className="font-semibold text-brand-600 hover:underline dark:text-brand-400">
+          <Link
+            to="/register"
+            className="font-semibold text-brand-600 hover:underline dark:text-brand-400"
+          >
             Create a free account
           </Link>
         </>
@@ -82,10 +89,23 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
         {error && <InlineAlert variant="danger">{getErrorMessage(error)}</InlineAlert>}
 
-        <TextField id="email" label="Email" type="email" autoComplete="email" error={errors.email?.message} {...register('email')} />
+        <TextField
+          id="email"
+          label="Email"
+          type="email"
+          autoComplete="email"
+          error={errors.email?.message}
+          {...register('email')}
+        />
 
         <FormField id="password" label="Password" error={errors.password?.message}>
-          {(fieldProps) => <PasswordInput autoComplete="current-password" {...fieldProps} {...register('password')} />}
+          {(fieldProps) => (
+            <PasswordInput
+              autoComplete="current-password"
+              {...fieldProps}
+              {...register('password')}
+            />
+          )}
         </FormField>
 
         <Button type="submit" className="w-full" size="lg" loading={isLoading}>
@@ -96,7 +116,10 @@ export default function LoginPage() {
       {SHOW_DEMO_ACCOUNTS && (
         <div className="mt-8 rounded-xl border border-dashed border-line-strong p-4">
           <p className="text-xs font-semibold text-fg">Demo accounts</p>
-          <p className="mt-0.5 text-xs text-fg-subtle">Fill an account seeded by <code className="font-mono">npm run seed</code>. The password is in the README.</p>
+          <p className="mt-0.5 text-xs text-fg-subtle">
+            Fill an account seeded by <code className="font-mono">npm run seed</code>. The password
+            is in the README.
+          </p>
           <div className="mt-3 flex flex-wrap gap-2">
             {DEMO_ACCOUNTS.map((account) => (
               <Button

@@ -1,4 +1,13 @@
-import { Bell, Briefcase, Compass, Crown, House, LayoutDashboard, MessagesSquare, Settings } from 'lucide-react';
+import {
+  Bell,
+  Briefcase,
+  Compass,
+  Crown,
+  House,
+  LayoutDashboard,
+  MessagesSquare,
+  Settings,
+} from 'lucide-react';
 import { Link, NavLink } from 'react-router-dom';
 import { useGetMyCommunitiesQuery } from '../../features/communities/communitiesApi';
 import { useAuth } from '../../hooks/useAuth';
@@ -29,8 +38,13 @@ function MyCommunities() {
   return (
     <div className="mt-6">
       <div className="flex items-center justify-between px-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-subtle">Your communities</h2>
-        <Link to="/communities" className="text-xs font-medium text-brand-600 hover:underline dark:text-brand-400">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-subtle">
+          Your communities
+        </h2>
+        <Link
+          to="/communities"
+          className="text-xs font-medium text-brand-600 hover:underline dark:text-brand-400"
+        >
           Browse
         </Link>
       </div>
@@ -122,7 +136,9 @@ export default function Sidebar() {
         </Link>
       )}
 
-      <p className="mt-auto px-3 pt-6 text-xs text-fg-subtle">© {new Date().getFullYear()} NicheLink</p>
+      <p className="mt-auto px-3 pt-6 text-xs text-fg-subtle">
+        © {new Date().getFullYear()} NicheLink
+      </p>
     </nav>
   );
 }

@@ -20,7 +20,13 @@ import { Textarea } from '../common/Field';
 import { RelativeTime } from '../common/Misc';
 import ReportDialog from '../moderation/ReportDialog';
 
-export function CommentComposer({ postId, parentId, onDone, autoFocus = false, placeholder = 'Add to the discussion…' }) {
+export function CommentComposer({
+  postId,
+  parentId,
+  onDone,
+  autoFocus = false,
+  placeholder = 'Add to the discussion…',
+}) {
   const [content, setContent] = useState('');
   const [createComment, { isLoading }] = useCreateCommentMutation();
   const trimmed = content.trim();
@@ -82,7 +88,8 @@ function CommentItem({ comment, postId }) {
   const highlighted = location.hash === `#${anchor}`;
 
   useEffect(() => {
-    if (highlighted) document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (highlighted)
+      document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, [highlighted, anchor]);
 
   const save = async () => {
@@ -97,7 +104,12 @@ function CommentItem({ comment, postId }) {
 
   return (
     <li id={anchor} className="scroll-mt-24">
-      <div className={cn('flex gap-3 rounded-xl p-2 transition-colors', highlighted && 'bg-brand-50 dark:bg-brand-500/10')}>
+      <div
+        className={cn(
+          'flex gap-3 rounded-xl p-2 transition-colors',
+          highlighted && 'bg-brand-50 dark:bg-brand-500/10',
+        )}
+      >
         {comment.isDeleted ? (
           <span className="size-8 shrink-0 rounded-full bg-surface-muted" aria-hidden="true" />
         ) : (
@@ -111,47 +123,90 @@ function CommentItem({ comment, postId }) {
           ) : (
             <>
               <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm">
-                <Link to={`/profile/${comment.author.username}`} className="font-medium text-fg hover:underline">
+                <Link
+                  to={`/profile/${comment.author.username}`}
+                  className="font-medium text-fg hover:underline"
+                >
                   {comment.author.name}
                 </Link>
                 <UserBadges user={comment.author} />
-                <span className="text-fg-subtle" aria-hidden="true">·</span>
+                <span className="text-fg-subtle" aria-hidden="true">
+                  ·
+                </span>
                 <RelativeTime value={comment.createdAt} className="text-xs text-fg-subtle" />
                 {comment.editedAt && <span className="text-xs text-fg-subtle">(edited)</span>}
               </div>
 
               {editing ? (
                 <div className="mt-2 space-y-2">
-                  <label htmlFor={`edit-${comment.id}`} className="sr-only">Edit comment</label>
-                  <Textarea id={`edit-${comment.id}`} value={draft} onChange={(event) => setDraft(event.target.value)} maxLength={LIMITS.COMMENT_MAX} autoFocus />
+                  <label htmlFor={`edit-${comment.id}`} className="sr-only">
+                    Edit comment
+                  </label>
+                  <Textarea
+                    id={`edit-${comment.id}`}
+                    value={draft}
+                    onChange={(event) => setDraft(event.target.value)}
+                    maxLength={LIMITS.COMMENT_MAX}
+                    autoFocus
+                  />
                   <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>Cancel</Button>
-                    <Button size="sm" onClick={save} loading={saving} disabled={!draft.trim()}>Save</Button>
+                    <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>
+                      Cancel
+                    </Button>
+                    <Button size="sm" onClick={save} loading={saving} disabled={!draft.trim()}>
+                      Save
+                    </Button>
                   </div>
                 </div>
               ) : (
-                <p className="mt-1 text-sm leading-6 whitespace-pre-wrap wrap-break-word text-fg">{comment.content}</p>
+                <p className="mt-1 text-sm leading-6 whitespace-pre-wrap wrap-break-word text-fg">
+                  {comment.content}
+                </p>
               )}
 
               {!editing && (
                 <div className="mt-1 -ml-2 flex flex-wrap items-center gap-0.5">
                   {comment.permissions.canReply && (
-                    <Button variant="ghost" size="xs" leftIcon={Reply} onClick={() => setReplying((value) => !value)} aria-expanded={replying}>
+                    <Button
+                      variant="ghost"
+                      size="xs"
+                      leftIcon={Reply}
+                      onClick={() => setReplying((value) => !value)}
+                      aria-expanded={replying}
+                    >
                       Reply
                     </Button>
                   )}
                   {comment.permissions.canEdit && (
-                    <Button variant="ghost" size="xs" leftIcon={Pencil} onClick={() => { setDraft(comment.content); setEditing(true); }}>
+                    <Button
+                      variant="ghost"
+                      size="xs"
+                      leftIcon={Pencil}
+                      onClick={() => {
+                        setDraft(comment.content);
+                        setEditing(true);
+                      }}
+                    >
                       Edit
                     </Button>
                   )}
                   {comment.permissions.canDelete && (
-                    <Button variant="ghost" size="xs" leftIcon={Trash2} onClick={() => setConfirmDelete(true)}>
+                    <Button
+                      variant="ghost"
+                      size="xs"
+                      leftIcon={Trash2}
+                      onClick={() => setConfirmDelete(true)}
+                    >
                       Delete
                     </Button>
                   )}
                   {comment.permissions.canReport && (
-                    <Button variant="ghost" size="xs" leftIcon={Flag} onClick={() => setReporting(true)}>
+                    <Button
+                      variant="ghost"
+                      size="xs"
+                      leftIcon={Flag}
+                      onClick={() => setReporting(true)}
+                    >
                       Report
                     </Button>
                   )}
@@ -199,7 +254,14 @@ function CommentItem({ comment, postId }) {
           }
         }}
       />
-      {reporting && <ReportDialog open onClose={() => setReporting(false)} targetType="Comment" targetId={comment.id} />}
+      {reporting && (
+        <ReportDialog
+          open
+          onClose={() => setReporting(false)}
+          targetType="Comment"
+          targetId={comment.id}
+        />
+      )}
     </li>
   );
 }
@@ -224,7 +286,14 @@ export default function CommentThread({ postId }) {
   }
   if (error) return <ErrorState error={error} title="Couldn't load comments" onRetry={refetch} />;
   if (data.items.length === 0) {
-    return <EmptyState icon={MessageCircle} title="No comments yet" description="Share your experience or ask a follow-up question." className="py-8" />;
+    return (
+      <EmptyState
+        icon={MessageCircle}
+        title="No comments yet"
+        description="Share your experience or ask a follow-up question."
+        className="py-8"
+      />
+    );
   }
 
   return (

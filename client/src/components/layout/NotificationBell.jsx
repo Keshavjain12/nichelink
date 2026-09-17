@@ -21,7 +21,13 @@ function NotificationPanel({ onNavigate }) {
     <div className="absolute right-0 z-50 mt-2 w-[min(24rem,calc(100vw-2rem))] animate-fade-in overflow-hidden rounded-2xl border border-line bg-surface shadow-elevated">
       <div className="flex items-center justify-between border-b border-line px-4 py-3">
         <h2 className="text-sm font-semibold">Notifications</h2>
-        <Button variant="ghost" size="xs" leftIcon={CheckCheck} loading={marking} onClick={() => markAllRead()}>
+        <Button
+          variant="ghost"
+          size="xs"
+          leftIcon={CheckCheck}
+          loading={marking}
+          onClick={() => markAllRead()}
+        >
           Mark all read
         </Button>
       </div>
@@ -37,10 +43,20 @@ function NotificationPanel({ onNavigate }) {
             </div>
           ))}
         {!isLoading && items.length === 0 && (
-          <EmptyState icon={Bell} title="You're all caught up" description="Replies, likes and messages will show up here." className="py-8" />
+          <EmptyState
+            icon={Bell}
+            title="You're all caught up"
+            description="Replies, likes and messages will show up here."
+            className="py-8"
+          />
         )}
         {items.map((notification) => (
-          <NotificationItem key={notification.id} notification={notification} onNavigate={onNavigate} compact />
+          <NotificationItem
+            key={notification.id}
+            notification={notification}
+            onNavigate={onNavigate}
+            compact
+          />
         ))}
       </div>
       <Link
@@ -57,7 +73,9 @@ function NotificationPanel({ onNavigate }) {
 export default function NotificationBell() {
   const [open, setOpen] = useState(false);
   const containerRef = useRef(null);
-  const { data: unread = 0 } = useGetUnreadNotificationCountQuery(undefined, { pollingInterval: 120_000 });
+  const { data: unread = 0 } = useGetUnreadNotificationCountQuery(undefined, {
+    pollingInterval: 120_000,
+  });
   useDismiss(containerRef, () => setOpen(false), open);
 
   return (

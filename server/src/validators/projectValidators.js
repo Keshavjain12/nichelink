@@ -26,7 +26,11 @@ const projectFields = z.object({
   location: z.string().trim().max(80),
 });
 
-export const createProjectBody = projectFields.partial({ summary: true, location: true, remote: true });
+export const createProjectBody = projectFields.partial({
+  summary: true,
+  location: true,
+  remote: true,
+});
 
 export const updateProjectBody = projectFields
   .partial()
@@ -45,7 +49,9 @@ export const listProjectsQuery = paginationQuery.extend({
   author: objectId.optional(),
 });
 
-export const interestBody = z.object({ message: z.string().trim().max(1000).optional().default('') });
+export const interestBody = z.object({
+  message: z.string().trim().max(1000).optional().default(''),
+});
 
 export const interestStatusBody = z.object({ status: z.enum(['accepted', 'declined']) });
 

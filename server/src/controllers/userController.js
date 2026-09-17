@@ -7,7 +7,9 @@ export async function profile(req, res) {
 }
 
 export async function communities(req, res) {
-  sendSuccess(res, { data: await userService.getProfileCommunities(req.params.username, req.user) });
+  sendSuccess(res, {
+    data: await userService.getProfileCommunities(req.params.username, req.user),
+  });
 }
 
 export async function updateMe(req, res) {

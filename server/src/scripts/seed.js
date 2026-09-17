@@ -43,12 +43,16 @@ const hoursAgo = (hours) => new Date(Date.now() - hours * HOUR_MS);
 
 function assertSafeToSeed() {
   if (env.isProduction && !env.ALLOW_PRODUCTION_SEED) {
-    throw new Error('Refusing to seed a production database. Set ALLOW_PRODUCTION_SEED=true to override.');
+    throw new Error(
+      'Refusing to seed a production database. Set ALLOW_PRODUCTION_SEED=true to override.',
+    );
   }
 }
 
 async function resetDatabase() {
-  await Promise.all(Object.values(mongoose.connection.collections).map((collection) => collection.deleteMany({})));
+  await Promise.all(
+    Object.values(mongoose.connection.collections).map((collection) => collection.deleteMany({})),
+  );
   await Promise.all(
     Object.values(models)
       .filter((model) => typeof model?.syncIndexes === 'function')
@@ -101,16 +105,29 @@ async function seedCommunities(users) {
     updatedAt: new Date(),
   }));
   const inserted = await Community.insertMany(docs, { timestamps: false });
-  const byKey = Object.fromEntries(COMMUNITIES.map((community, index) => [community.key, inserted[index]]));
+  const byKey = Object.fromEntries(
+    COMMUNITIES.map((community, index) => [community.key, inserted[index]]),
+  );
 
   const memberships = [];
   for (const [communityKey, { moderators, members }] of Object.entries(MEMBERSHIPS)) {
     const community = byKey[communityKey];
-    memberships.push({ user: owner._id, community: community._id, role: COMMUNITY_ROLES.OWNER, joinedAt: community.createdAt });
+    memberships.push({
+      user: owner._id,
+      community: community._id,
+      role: COMMUNITY_ROLES.OWNER,
+      joinedAt: community.createdAt,
+    });
     moderators.forEach((userKey) =>
-      memberships.push({ user: users[userKey]._id, community: community._id, role: COMMUNITY_ROLES.MODERATOR }),
+      memberships.push({
+        user: users[userKey]._id,
+        community: community._id,
+        role: COMMUNITY_ROLES.MODERATOR,
+      }),
     );
-    members.forEach((userKey) => memberships.push({ user: users[userKey]._id, community: community._id }));
+    members.forEach((userKey) =>
+      memberships.push({ user: users[userKey]._id, community: community._id }),
+    );
   }
   await Membership.insertMany(memberships);
   return byKey;
@@ -139,7 +156,12 @@ async function seedPosts(users, communities) {
   return Object.fromEntries(POSTS.map((post, index) => [post.key, inserted[index]]));
 }
 
-async function insertCommentTree(post, nodes, users, { parent = null, root = null, depth = 0, baseHours }) {
+async function insertCommentTree(
+  post,
+  nodes,
+  users,
+  { parent = null, root = null, depth = 0, baseHours },
+) {
   let offset = 0;
   for (const node of nodes) {
     offset += 1;
@@ -178,22 +200,34 @@ async function seedEngagement(users, posts) {
 
 async function recomputeCounters() {
   const [memberCounts, postCounts, commentCounts, reactionCounts] = await Promise.all([
-    Membership.aggregate([{ $match: { status: 'active' } }, { $group: { _id: '$community', count: { $sum: 1 } } }]),
+    Membership.aggregate([
+      { $match: { status: 'active' } },
+      { $group: { _id: '$community', count: { $sum: 1 } } },
+    ]),
     Post.aggregate([
       { $match: { status: 'published' } },
       { $group: { _id: '$community', count: { $sum: 1 }, last: { $max: '$createdAt' } } },
     ]),
-    Comment.aggregate([{ $match: { status: 'published' } }, { $group: { _id: '$post', count: { $sum: 1 } } }]),
+    Comment.aggregate([
+      { $match: { status: 'published' } },
+      { $group: { _id: '$post', count: { $sum: 1 } } },
+    ]),
     Reaction.aggregate([{ $group: { _id: '$post', count: { $sum: 1 } } }]),
   ]);
 
   await Promise.all([
-    ...memberCounts.map(({ _id, count }) => Community.updateOne({ _id }, { $set: { memberCount: count } })),
+    ...memberCounts.map(({ _id, count }) =>
+      Community.updateOne({ _id }, { $set: { memberCount: count } }),
+    ),
     ...postCounts.map(({ _id, count, last }) =>
       Community.updateOne({ _id }, { $set: { postCount: count, lastActivityAt: last } }),
     ),
-    ...commentCounts.map(({ _id, count }) => Post.updateOne({ _id }, { $set: { commentCount: count } })),
-    ...reactionCounts.map(({ _id, count }) => Post.updateOne({ _id }, { $set: { reactionCount: count } })),
+    ...commentCounts.map(({ _id, count }) =>
+      Post.updateOne({ _id }, { $set: { commentCount: count } }),
+    ),
+    ...reactionCounts.map(({ _id, count }) =>
+      Post.updateOne({ _id }, { $set: { reactionCount: count } }),
+    ),
   ]);
 }
 
@@ -209,10 +243,27 @@ async function seedProjects(users) {
   }
 
   const interests = [
-    { project: projects[0], user: 'sofia', message: 'I would love to help with the docs — I specialise in API documentation.' },
-    { project: projects[0], user: 'ethan', message: 'I have built a lot of Stripe integrations for clients and can contribute TypeScript.' },
-    { project: projects[1], user: 'hannah', message: 'Happy to help design the labelling guidelines.' },
-    { project: projects[3], user: 'tomas', message: 'Designer here — accessible civic forms are close to my heart.' },
+    {
+      project: projects[0],
+      user: 'sofia',
+      message: 'I would love to help with the docs — I specialise in API documentation.',
+    },
+    {
+      project: projects[0],
+      user: 'ethan',
+      message:
+        'I have built a lot of Stripe integrations for clients and can contribute TypeScript.',
+    },
+    {
+      project: projects[1],
+      user: 'hannah',
+      message: 'Happy to help design the labelling guidelines.',
+    },
+    {
+      project: projects[3],
+      user: 'tomas',
+      message: 'Designer here — accessible civic forms are close to my heart.',
+    },
   ];
   for (const { project, user, message } of interests) {
     await ProjectInterest.create({ project: project._id, user: users[user]._id, message });
@@ -226,7 +277,8 @@ async function seedConversations(users) {
     const last = messages.at(-1);
     const lastAt = hoursAgo(last.hoursAgo);
     // The recipient has not read the trailing run of messages from the last sender.
-    const unreadForLastRecipient = messages.length - 1 - messages.findLastIndex((message) => message.from !== last.from);
+    const unreadForLastRecipient =
+      messages.length - 1 - messages.findLastIndex((message) => message.from !== last.from);
 
     const conversation = await Conversation.create({
       participantKey: buildParticipantKey(a._id, b._id),
@@ -236,7 +288,11 @@ async function seedConversations(users) {
         lastReadAt: key === last.from ? lastAt : hoursAgo(last.hoursAgo + 1),
       })),
       createdBy: users[messages[0].from]._id,
-      lastMessage: { body: truncate(last.body, 140), sender: users[last.from]._id, createdAt: lastAt },
+      lastMessage: {
+        body: truncate(last.body, 140),
+        sender: users[last.from]._id,
+        createdAt: lastAt,
+      },
       lastMessageAt: lastAt,
     });
 

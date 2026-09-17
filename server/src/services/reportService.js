@@ -13,13 +13,15 @@ import { deletePost } from './postService.js';
 async function resolveTargetOwner(viewer, targetType, targetId) {
   if (targetType === 'Post') {
     const post = await Post.findById(targetId).select('author status communityAccess').lean();
-    if (!post || post.status !== CONTENT_STATUS.PUBLISHED) throw ApiError.notFound('Post not found');
+    if (!post || post.status !== CONTENT_STATUS.PUBLISHED)
+      throw ApiError.notFound('Post not found');
     assertCanReadCommunity(viewer, { accessType: post.communityAccess });
     return post.author;
   }
   if (targetType === 'Comment') {
     const comment = await Comment.findById(targetId).select('author status').lean();
-    if (!comment || comment.status !== CONTENT_STATUS.PUBLISHED) throw ApiError.notFound('Comment not found');
+    if (!comment || comment.status !== CONTENT_STATUS.PUBLISHED)
+      throw ApiError.notFound('Comment not found');
     return comment.author;
   }
   const user = await User.findById(targetId).select('_id').lean();
@@ -29,23 +31,40 @@ async function resolveTargetOwner(viewer, targetType, targetId) {
 
 export async function createReport(viewer, { targetType, targetId, reason, details }) {
   const targetOwner = await resolveTargetOwner(viewer, targetType, targetId);
-  if (String(targetOwner) === viewer.id) throw ApiError.badRequest('You cannot report your own content');
+  if (String(targetOwner) === viewer.id)
+    throw ApiError.badRequest('You cannot report your own content');
 
   try {
-    const report = await Report.create({ reporter: viewer.id, targetType, target: targetId, targetOwner, reason, details });
+    const report = await Report.create({
+      reporter: viewer.id,
+      targetType,
+      target: targetId,
+      targetOwner,
+      reason,
+      details,
+    });
     return { id: String(report._id), status: report.status };
   } catch (error) {
-    if (error?.code === 11000) throw ApiError.conflict('You have already reported this. Our moderators will review it.');
+    if (error?.code === 11000)
+      throw ApiError.conflict('You have already reported this. Our moderators will review it.');
     throw error;
   }
 }
 
 async function loadTargetPreviews(reports) {
-  const idsOf = (type) => reports.filter((report) => report.targetType === type).map((report) => report.target);
+  const idsOf = (type) =>
+    reports.filter((report) => report.targetType === type).map((report) => report.target);
   const [posts, comments, users] = await Promise.all([
-    Post.find({ _id: { $in: idsOf('Post') } }).select('title excerpt status community').populate('community', 'name slug').lean(),
-    Comment.find({ _id: { $in: idsOf('Comment') } }).select('content status post').lean(),
-    User.find({ _id: { $in: idsOf('User') } }).select(USER_SUMMARY_FIELDS).lean(),
+    Post.find({ _id: { $in: idsOf('Post') } })
+      .select('title excerpt status community')
+      .populate('community', 'name slug')
+      .lean(),
+    Comment.find({ _id: { $in: idsOf('Comment') } })
+      .select('content status post')
+      .lean(),
+    User.find({ _id: { $in: idsOf('User') } })
+      .select(USER_SUMMARY_FIELDS)
+      .lean(),
   ]);
   return new Map([...posts, ...comments, ...users].map((doc) => [String(doc._id), doc]));
 }
@@ -95,12 +114,16 @@ const RESOLUTION_ACTIONS = Object.freeze({
 export async function resolveReport(admin, reportId, { action, note }) {
   const report = await Report.findById(reportId).lean();
   if (!report) throw ApiError.notFound('Report not found');
-  if (report.status !== REPORT_STATUS.OPEN) throw ApiError.conflict('This report has already been reviewed');
+  if (report.status !== REPORT_STATUS.OPEN)
+    throw ApiError.conflict('This report has already been reviewed');
 
   if (action === 'remove_content') await applyContentRemoval(report, admin, note);
   if (action === 'suspend_user') {
     if (!report.targetOwner) throw ApiError.badRequest('This report has no member to suspend');
-    await setUserStatus(admin, String(report.targetOwner), { status: 'suspended', reason: note || `Reported for ${report.reason}` });
+    await setUserStatus(admin, String(report.targetOwner), {
+      status: 'suspended',
+      reason: note || `Reported for ${report.reason}`,
+    });
   }
 
   const { status, recorded } = RESOLUTION_ACTIONS[action];
@@ -114,7 +137,10 @@ export async function resolveReport(admin, reportId, { action, note }) {
   })
     .select('reporter')
     .lean();
-  await Report.updateMany({ _id: { $in: related.map((item) => item._id) } }, { $set: { status, resolution } });
+  await Report.updateMany(
+    { _id: { $in: related.map((item) => item._id) } },
+    { $set: { status, resolution } },
+  );
 
   await AuditLog.create({
     actor: admin.id,

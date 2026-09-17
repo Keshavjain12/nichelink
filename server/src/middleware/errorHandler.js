@@ -23,9 +23,12 @@ function normalizeError(error) {
 
   if (error?.code === 11000) {
     const field = Object.keys(error.keyPattern ?? error.keyValue ?? {})[0];
-    return ApiError.conflict(field ? `That ${field} is already in use` : 'Resource already exists', {
-      errors: field ? [{ field, message: `${field} is already in use` }] : undefined,
-    });
+    return ApiError.conflict(
+      field ? `That ${field} is already in use` : 'Resource already exists',
+      {
+        errors: field ? [{ field, message: `${field} is already in use` }] : undefined,
+      },
+    );
   }
 
   if (error instanceof multer.MulterError) {
@@ -57,7 +60,8 @@ function normalizeError(error) {
 export function errorHandler(error, req, res, next) {
   const known = normalizeError(error);
   const apiError =
-    known ?? new ApiError(500, 'Something went wrong on our side', { code: ERROR_CODES.INTERNAL_ERROR });
+    known ??
+    new ApiError(500, 'Something went wrong on our side', { code: ERROR_CODES.INTERNAL_ERROR });
 
   const log = req.log ?? logger;
   if (apiError.statusCode >= 500) {

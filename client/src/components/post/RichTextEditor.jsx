@@ -11,13 +11,30 @@ const TOOLBAR = [
   ['clean'],
 ];
 
-const FORMATS = ['header', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block', 'list', 'link'];
+const FORMATS = [
+  'header',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'blockquote',
+  'code-block',
+  'list',
+  'link',
+];
 
 /**
  * Thin wrapper around Quill 2. Emits semantic HTML (sanitized again on the server) plus plain text
  * for validation. `initialValue` is only read on mount; Quill owns the document afterwards.
  */
-export default function RichTextEditor({ id, initialValue = '', onChange, placeholder, ariaLabel, invalid }) {
+export default function RichTextEditor({
+  id,
+  initialValue = '',
+  onChange,
+  placeholder,
+  ariaLabel,
+  invalid,
+}) {
   const containerRef = useRef(null);
   const onChangeRef = useRef(onChange);
   const initialValueRef = useRef(initialValue);

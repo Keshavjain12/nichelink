@@ -11,10 +11,16 @@ export default function BillingCancelPage() {
       <Card className="p-10 text-center">
         <CircleX className="mx-auto size-12 text-fg-subtle" aria-hidden="true" />
         <h1 className="mt-4 text-2xl font-bold tracking-tight">Checkout cancelled</h1>
-        <p className="mt-2 text-sm text-fg-muted">No payment was taken and your plan hasn't changed.</p>
+        <p className="mt-2 text-sm text-fg-muted">
+          No payment was taken and your plan hasn't changed.
+        </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <Button as={Link} to="/pricing">Review plans</Button>
-          <Button as={Link} to="/feed" variant="secondary">Back to your feed</Button>
+          <Button as={Link} to="/pricing">
+            Review plans
+          </Button>
+          <Button as={Link} to="/feed" variant="secondary">
+            Back to your feed
+          </Button>
         </div>
       </Card>
     </div>

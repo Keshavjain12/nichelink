@@ -9,7 +9,10 @@ const DIVISIONS = [
 ];
 
 const relativeFormatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto', style: 'short' });
-const compactFormatter = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 });
+const compactFormatter = new Intl.NumberFormat('en', {
+  notation: 'compact',
+  maximumFractionDigits: 1,
+});
 
 export function formatRelativeTime(value, now = Date.now()) {
   if (!value) return '';
@@ -30,7 +33,9 @@ export function formatDate(value, options = { dateStyle: 'medium' }) {
 }
 
 export function formatTime(value) {
-  return value ? new Intl.DateTimeFormat('en', { hour: 'numeric', minute: '2-digit' }).format(new Date(value)) : '';
+  return value
+    ? new Intl.DateTimeFormat('en', { hour: 'numeric', minute: '2-digit' }).format(new Date(value))
+    : '';
 }
 
 export function formatCompactNumber(value) {
@@ -64,7 +69,11 @@ export function formatDayLabel(value) {
 }
 
 export function formatCurrency(amount, currency) {
-  return new Intl.NumberFormat('en', { style: 'currency', currency, trailingZeroDisplay: 'stripIfInteger' }).format(amount);
+  return new Intl.NumberFormat('en', {
+    style: 'currency',
+    currency,
+    trailingZeroDisplay: 'stripIfInteger',
+  }).format(amount);
 }
 
 /** Stripe billing interval as a phrase: `month`, `3 months`. */

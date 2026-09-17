@@ -24,7 +24,12 @@ const profileSchema = z.object({
   headline: z.string().trim().max(120),
   bio: z.string().trim().max(600),
   location: z.string().trim().max(80),
-  website: z.union([z.literal(''), z.url('Enter a full URL, including https://').refine((value) => /^https?:\/\//i.test(value), 'Use an http(s) link')]),
+  website: z.union([
+    z.literal(''),
+    z
+      .url('Enter a full URL, including https://')
+      .refine((value) => /^https?:\/\//i.test(value), 'Use an http(s) link'),
+  ]),
   skills: z.array(z.string()).max(20),
   interests: z.array(z.string()).max(20),
 });
@@ -62,7 +67,15 @@ export default function ProfileSettings() {
   const onSubmit = async (values) => {
     try {
       const { user: updated } = await updateProfile(values).unwrap();
-      reset({ name: updated.name, headline: updated.headline, bio: updated.bio, location: updated.location, website: updated.website, skills: updated.skills, interests: updated.interests });
+      reset({
+        name: updated.name,
+        headline: updated.headline,
+        bio: updated.bio,
+        location: updated.location,
+        website: updated.website,
+        skills: updated.skills,
+        interests: updated.interests,
+      });
       toast.success('Profile updated');
     } catch (error) {
       if (!applyFieldErrors(error, setError)) toast.error(getErrorMessage(error));
@@ -94,8 +107,21 @@ export default function ProfileSettings() {
           <div className="space-y-2">
             {config?.features.uploads ? (
               <div className="flex flex-wrap gap-2">
-                <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="sr-only" tabIndex={-1} onChange={onAvatarSelected} />
-                <Button variant="secondary" size="sm" leftIcon={Upload} loading={uploading} onClick={() => fileRef.current?.click()}>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="sr-only"
+                  tabIndex={-1}
+                  onChange={onAvatarSelected}
+                />
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  leftIcon={Upload}
+                  loading={uploading}
+                  onClick={() => fileRef.current?.click()}
+                >
                   Upload photo
                 </Button>
                 {user.avatarUrl && (
@@ -104,22 +130,41 @@ export default function ProfileSettings() {
                     size="sm"
                     leftIcon={Trash2}
                     loading={removing}
-                    onClick={() => removeAvatar().unwrap().then(() => toast.success('Avatar removed')).catch((error) => toast.error(getErrorMessage(error)))}
+                    onClick={() =>
+                      removeAvatar()
+                        .unwrap()
+                        .then(() => toast.success('Avatar removed'))
+                        .catch((error) => toast.error(getErrorMessage(error)))
+                    }
                   >
                     Remove
                   </Button>
                 )}
               </div>
             ) : (
-              <p className="text-sm text-fg-subtle">Photo uploads are not configured on this server.</p>
+              <p className="text-sm text-fg-subtle">
+                Photo uploads are not configured on this server.
+              </p>
             )}
-            <p className="text-xs text-fg-subtle">JPEG, PNG, WebP or GIF, up to 5 MB. Cropped to a square.</p>
+            <p className="text-xs text-fg-subtle">
+              JPEG, PNG, WebP or GIF, up to 5 MB. Cropped to a square.
+            </p>
           </div>
           <div className="ml-auto min-w-40">
             <p className="text-xs font-medium text-fg-subtle">Profile completion</p>
             <div className="mt-1.5 flex items-center gap-2">
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-muted" role="progressbar" aria-valuenow={user.profileCompletion} aria-valuemin={0} aria-valuemax={100} aria-label="Profile completion">
-                <div className="h-full rounded-full bg-linear-to-r from-brand-500 to-violet-500" style={{ width: `${user.profileCompletion}%` }} />
+              <div
+                className="h-2 flex-1 overflow-hidden rounded-full bg-surface-muted"
+                role="progressbar"
+                aria-valuenow={user.profileCompletion}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label="Profile completion"
+              >
+                <div
+                  className="h-full rounded-full bg-linear-to-r from-brand-500 to-violet-500"
+                  style={{ width: `${user.profileCompletion}%` }}
+                />
               </div>
               <span className="text-sm font-semibold">{user.profileCompletion}%</span>
             </div>
@@ -131,23 +176,88 @@ export default function ProfileSettings() {
         <Card className="space-y-5 p-5 sm:p-6">
           <h2 className="text-base font-semibold">Public profile</h2>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <TextField id="name" label="Full name" required error={errors.name?.message} {...register('name')} />
-            <TextField id="headline" label="Headline" placeholder="e.g. Staff Engineer · Payments" error={errors.headline?.message} {...register('headline')} />
-            <TextField id="location" label="Location" placeholder="City, country" error={errors.location?.message} {...register('location')} />
-            <TextField id="website" label="Website" type="url" placeholder="https://" error={errors.website?.message} {...register('website')} />
+            <TextField
+              id="name"
+              label="Full name"
+              required
+              error={errors.name?.message}
+              {...register('name')}
+            />
+            <TextField
+              id="headline"
+              label="Headline"
+              placeholder="e.g. Staff Engineer · Payments"
+              error={errors.headline?.message}
+              {...register('headline')}
+            />
+            <TextField
+              id="location"
+              label="Location"
+              placeholder="City, country"
+              error={errors.location?.message}
+              {...register('location')}
+            />
+            <TextField
+              id="website"
+              label="Website"
+              type="url"
+              placeholder="https://"
+              error={errors.website?.message}
+              {...register('website')}
+            />
           </div>
           <div>
-            <TextareaField id="bio" label="Bio" maxLength={600} error={errors.bio?.message} placeholder="What do you work on? What can people ask you about?" {...register('bio')} />
+            <TextareaField
+              id="bio"
+              label="Bio"
+              maxLength={600}
+              error={errors.bio?.message}
+              placeholder="What do you work on? What can people ask you about?"
+              {...register('bio')}
+            />
             <p className="mt-1 text-right text-xs text-fg-subtle">{bio.length}/600</p>
           </div>
-          <FormField id="skills" label="Skills" hint="Used to recommend communities and match projects" error={errors.skills?.message}>
-            {(fieldProps) => <Controller control={control} name="skills" render={({ field }) => <TagInput {...fieldProps} value={field.value} onChange={field.onChange} max={20} />} />}
+          <FormField
+            id="skills"
+            label="Skills"
+            hint="Used to recommend communities and match projects"
+            error={errors.skills?.message}
+          >
+            {(fieldProps) => (
+              <Controller
+                control={control}
+                name="skills"
+                render={({ field }) => (
+                  <TagInput
+                    {...fieldProps}
+                    value={field.value}
+                    onChange={field.onChange}
+                    max={20}
+                  />
+                )}
+              />
+            )}
           </FormField>
           <FormField id="interests" label="Interests" error={errors.interests?.message}>
-            {(fieldProps) => <Controller control={control} name="interests" render={({ field }) => <TagInput {...fieldProps} value={field.value} onChange={field.onChange} max={20} />} />}
+            {(fieldProps) => (
+              <Controller
+                control={control}
+                name="interests"
+                render={({ field }) => (
+                  <TagInput
+                    {...fieldProps}
+                    value={field.value}
+                    onChange={field.onChange}
+                    max={20}
+                  />
+                )}
+              />
+            )}
           </FormField>
           <div className="flex justify-end border-t border-line pt-5">
-            <Button type="submit" loading={saving} disabled={!isDirty}>Save profile</Button>
+            <Button type="submit" loading={saving} disabled={!isDirty}>
+              Save profile
+            </Button>
           </div>
         </Card>
       </form>

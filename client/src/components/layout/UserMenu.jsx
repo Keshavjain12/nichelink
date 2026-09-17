@@ -1,4 +1,13 @@
-import { Crown, LayoutDashboard, LogOut, Monitor, Moon, Settings, Sun, UserRound } from 'lucide-react';
+import {
+  Crown,
+  LayoutDashboard,
+  LogOut,
+  Monitor,
+  Moon,
+  Settings,
+  Sun,
+  UserRound,
+} from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -33,7 +42,11 @@ export default function UserMenu() {
     <Menu
       label="Account menu"
       trigger={(props) => (
-        <button type="button" className="ml-1 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2" {...props}>
+        <button
+          type="button"
+          className="ml-1 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2"
+          {...props}
+        >
           <Avatar user={user} size="sm" />
         </button>
       )}
@@ -51,7 +64,12 @@ export default function UserMenu() {
         Settings
       </MenuItem>
       {!isPro && !isAdmin && (
-        <MenuItem as={Link} to="/pricing" icon={Crown} className="text-amber-700 dark:text-amber-300">
+        <MenuItem
+          as={Link}
+          to="/pricing"
+          icon={Crown}
+          className="text-amber-700 dark:text-amber-300"
+        >
           Upgrade to Pro
         </MenuItem>
       )}

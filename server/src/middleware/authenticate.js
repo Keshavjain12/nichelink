@@ -55,10 +55,16 @@ export async function loadRequestUser(userId, { issuedAtMs } = {}) {
   if (!user) throw ApiError.unauthorized('Invalid access token');
 
   if (user.status === ACCOUNT_STATUS.SUSPENDED) {
-    throw ApiError.forbidden('This account has been suspended', { code: ERROR_CODES.ACCOUNT_SUSPENDED });
+    throw ApiError.forbidden('This account has been suspended', {
+      code: ERROR_CODES.ACCOUNT_SUSPENDED,
+    });
   }
 
-  if (issuedAtMs && user.passwordChangedAt && issuedAtMs + IAT_TOLERANCE_MS < user.passwordChangedAt.getTime()) {
+  if (
+    issuedAtMs &&
+    user.passwordChangedAt &&
+    issuedAtMs + IAT_TOLERANCE_MS < user.passwordChangedAt.getTime()
+  ) {
     throw ApiError.unauthorized('Session is no longer valid', { code: ERROR_CODES.TOKEN_EXPIRED });
   }
 
@@ -97,7 +103,9 @@ export function requirePermission(...permissions) {
 
     const proWouldGrant = missing.every((permission) => roleHasPermission(ROLES.PRO, permission));
     if (proWouldGrant && req.user.role === ROLES.FREE) {
-      throw ApiError.forbidden('Upgrade to Pro to unlock this feature', { code: ERROR_CODES.PRO_REQUIRED });
+      throw ApiError.forbidden('Upgrade to Pro to unlock this feature', {
+        code: ERROR_CODES.PRO_REQUIRED,
+      });
     }
     throw ApiError.forbidden();
   };

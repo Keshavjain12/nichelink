@@ -23,7 +23,10 @@ function dedupeSkills(skills = []) {
 
 async function viewerInterests(viewer, projectIds) {
   if (!viewer || projectIds.length === 0) return new Map();
-  const interests = await ProjectInterest.find({ user: viewer.id, project: { $in: projectIds } }).lean();
+  const interests = await ProjectInterest.find({
+    user: viewer.id,
+    project: { $in: projectIds },
+  }).lean();
   return new Map(interests.map((interest) => [String(interest.project), interest]));
 }
 
@@ -32,10 +35,15 @@ async function summarize(rows, viewer) {
     viewer,
     rows.map((project) => project._id),
   );
-  return rows.map((project) => toProjectSummary(project, viewer, interests.get(String(project._id))));
+  return rows.map((project) =>
+    toProjectSummary(project, viewer, interests.get(String(project._id))),
+  );
 }
 
-export async function listProjects({ q, skills, projectType, commitment, compensation, remote, status, author, mine, page, limit }, viewer) {
+export async function listProjects(
+  { q, skills, projectType, commitment, compensation, remote, status, author, mine, page, limit },
+  viewer,
+) {
   const filter = { status: status === 'all' ? { $in: VISIBLE_STATUSES } : (status ?? 'open') };
   if (skills?.length) filter.skillKeys = { $in: skills };
   if (projectType) filter.projectType = projectType;
@@ -64,7 +72,8 @@ export function searchProjects(q, { page, limit }, viewer) {
 
 async function loadProject(projectId) {
   const project = await Project.findById(projectId).populate('author', USER_SUMMARY_FIELDS);
-  if (!project || !VISIBLE_STATUSES.includes(project.status)) throw ApiError.notFound('Project not found');
+  if (!project || !VISIBLE_STATUSES.includes(project.status))
+    throw ApiError.notFound('Project not found');
   return project;
 }
 
@@ -93,7 +102,9 @@ export async function updateProject(projectId, viewer, updates) {
   const project = await loadProject(projectId);
   assertAuthor(project, viewer);
   if (!can(viewer, PERMISSIONS.PROJECT_CREATE)) {
-    throw ApiError.forbidden('Upgrade to Pro to manage collaboration requests', { code: ERROR_CODES.PRO_REQUIRED });
+    throw ApiError.forbidden('Upgrade to Pro to manage collaboration requests', {
+      code: ERROR_CODES.PRO_REQUIRED,
+    });
   }
 
   const changes = { ...updates };
@@ -118,13 +129,15 @@ export async function expressInterest(projectId, viewer, { message }) {
   if (String(project.author._id) === viewer.id) {
     throw ApiError.badRequest('You cannot express interest in your own project');
   }
-  if (project.status !== 'open') throw ApiError.conflict('This project is no longer accepting collaborators');
+  if (project.status !== 'open')
+    throw ApiError.conflict('This project is no longer accepting collaborators');
 
   let interest;
   try {
     interest = await ProjectInterest.create({ project: project._id, user: viewer.id, message });
   } catch (error) {
-    if (error?.code === 11000) throw ApiError.conflict('You have already expressed interest in this project');
+    if (error?.code === 11000)
+      throw ApiError.conflict('You have already expressed interest in this project');
     throw error;
   }
 
@@ -146,9 +159,16 @@ export async function expressInterest(projectId, viewer, { message }) {
 
 export async function withdrawInterest(projectId, viewer) {
   const project = await loadProject(projectId);
-  const { deletedCount } = await ProjectInterest.deleteOne({ project: project._id, user: viewer.id });
-  if (deletedCount === 0) throw ApiError.notFound('You have not expressed interest in this project');
-  await Project.updateOne({ _id: project._id, interestCount: { $gt: 0 } }, { $inc: { interestCount: -1 } });
+  const { deletedCount } = await ProjectInterest.deleteOne({
+    project: project._id,
+    user: viewer.id,
+  });
+  if (deletedCount === 0)
+    throw ApiError.notFound('You have not expressed interest in this project');
+  await Project.updateOne(
+    { _id: project._id, interestCount: { $gt: 0 } },
+    { $inc: { interestCount: -1 } },
+  );
   return { withdrawn: true };
 }
 

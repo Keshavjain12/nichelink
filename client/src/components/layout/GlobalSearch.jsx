@@ -23,7 +23,11 @@ export default function GlobalSearch() {
       to: `/communities/${community.slug}`,
       label: community.name,
       meta: `${community.memberCount} members`,
-      icon: <span className="flex size-7 items-center justify-center rounded-lg bg-surface-muted text-sm">{community.icon}</span>,
+      icon: (
+        <span className="flex size-7 items-center justify-center rounded-lg bg-surface-muted text-sm">
+          {community.icon}
+        </span>
+      ),
     })),
     ...(data?.users ?? []).map((user) => ({
       key: `u-${user.id}`,
@@ -61,7 +65,10 @@ export default function GlobalSearch() {
       <label htmlFor="global-search" className="sr-only">
         Search NicheLink
       </label>
-      <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-fg-subtle" aria-hidden="true" />
+      <Search
+        className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-fg-subtle"
+        aria-hidden="true"
+      />
       <input
         id="global-search"
         type="search"
@@ -106,7 +113,9 @@ export default function GlobalSearch() {
               )}
             >
               {item.icon}
-              <span className="min-w-0 flex-1 truncate text-sm font-medium text-fg">{item.label}</span>
+              <span className="min-w-0 flex-1 truncate text-sm font-medium text-fg">
+                {item.label}
+              </span>
               <span className="text-xs text-fg-subtle">{item.meta}</span>
             </div>
           ))}

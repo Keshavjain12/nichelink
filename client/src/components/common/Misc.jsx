@@ -13,7 +13,12 @@ export function Logo({ className, compact = false }) {
   // does not render if the first element with that id sits inside a display:none subtree.
   const gradientId = `nl-logo-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   return (
-    <span className={cn('inline-flex items-center gap-2 font-semibold tracking-tight text-fg', className)}>
+    <span
+      className={cn(
+        'inline-flex items-center gap-2 font-semibold tracking-tight text-fg',
+        className,
+      )}
+    >
       <svg viewBox="0 0 64 64" className="size-7 shrink-0" aria-hidden="true">
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
@@ -34,7 +39,11 @@ export function Logo({ className, compact = false }) {
 export function RelativeTime({ value, className }) {
   if (!value) return null;
   return (
-    <time dateTime={new Date(value).toISOString()} title={formatDate(value, { dateStyle: 'full', timeStyle: 'short' })} className={className}>
+    <time
+      dateTime={new Date(value).toISOString()}
+      title={formatDate(value, { dateStyle: 'full', timeStyle: 'short' })}
+      className={className}
+    >
       {formatRelativeTime(value)}
     </time>
   );
@@ -42,9 +51,15 @@ export function RelativeTime({ value, className }) {
 
 export function PageHeader({ title, description, actions, eyebrow, className }) {
   return (
-    <header className={cn('flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between', className)}>
+    <header
+      className={cn('flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between', className)}
+    >
       <div className="min-w-0">
-        {eyebrow && <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-400">{eyebrow}</p>}
+        {eyebrow && (
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-400">
+            {eyebrow}
+          </p>
+        )}
         <h1 className="text-2xl font-bold tracking-tight text-fg sm:text-[28px]">{title}</h1>
         {description && <p className="mt-1 max-w-2xl text-sm text-fg-muted">{description}</p>}
       </div>
@@ -55,10 +70,20 @@ export function PageHeader({ title, description, actions, eyebrow, className }) 
 
 export function Tag({ children, onRemove, className }) {
   return (
-    <span className={cn('inline-flex items-center gap-1 rounded-md bg-surface-muted px-2 py-0.5 text-xs font-medium text-fg-muted', className)}>
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 rounded-md bg-surface-muted px-2 py-0.5 text-xs font-medium text-fg-muted',
+        className,
+      )}
+    >
       {children}
       {onRemove && (
-        <button type="button" onClick={onRemove} className="rounded hover:text-fg" aria-label={`Remove ${children}`}>
+        <button
+          type="button"
+          onClick={onRemove}
+          className="rounded hover:text-fg"
+          aria-label={`Remove ${children}`}
+        >
           <X className="size-3" aria-hidden="true" />
         </button>
       )}
@@ -67,13 +92,21 @@ export function Tag({ children, onRemove, className }) {
 }
 
 /** Chip input for tags and skills. Enter or comma adds, Backspace on empty removes the last chip. */
-export function TagInput({ id, value = [], onChange, max = 10, placeholder = 'Type and press Enter', ...props }) {
+export function TagInput({
+  id,
+  value = [],
+  onChange,
+  max = 10,
+  placeholder = 'Type and press Enter',
+  ...props
+}) {
   const [draft, setDraft] = useState('');
 
   const add = (raw) => {
     const next = raw.trim().replace(/,$/, '');
     if (!next || value.length >= max) return;
-    if (!value.some((item) => item.toLowerCase() === next.toLowerCase())) onChange([...value, next]);
+    if (!value.some((item) => item.toLowerCase() === next.toLowerCase()))
+      onChange([...value, next]);
     setDraft('');
   };
 
@@ -107,7 +140,23 @@ export function TagInput({ id, value = [], onChange, max = 10, placeholder = 'Ty
 }
 
 const PURIFY_CONFIG = {
-  ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 's', 'h2', 'h3', 'blockquote', 'pre', 'code', 'ul', 'ol', 'li', 'a'],
+  ALLOWED_TAGS: [
+    'p',
+    'br',
+    'strong',
+    'em',
+    'u',
+    's',
+    'h2',
+    'h3',
+    'blockquote',
+    'pre',
+    'code',
+    'ul',
+    'ol',
+    'li',
+    'a',
+  ],
   ALLOWED_ATTR: ['href', 'target', 'rel'],
   ALLOWED_URI_REGEXP: /^(?:https?:|mailto:)/i,
 };
@@ -122,10 +171,17 @@ DOMPurify.addHook('afterSanitizeAttributes', (node) => {
 /** Renders server-sanitized HTML, sanitized again client-side as defence in depth. */
 export function RichTextContent({ html, className }) {
   const clean = useMemo(() => DOMPurify.sanitize(html ?? '', PURIFY_CONFIG), [html]);
-  return <div className={cn('rich-content', className)} dangerouslySetInnerHTML={{ __html: clean }} />;
+  return (
+    <div className={cn('rich-content', className)} dangerouslySetInnerHTML={{ __html: clean }} />
+  );
 }
 
-export function UpgradeCallout({ title = 'Unlock with Pro', description, compact = false, className }) {
+export function UpgradeCallout({
+  title = 'Unlock with Pro',
+  description,
+  compact = false,
+  className,
+}) {
   return (
     <div
       className={cn(
@@ -178,13 +234,25 @@ export function Pagination({ page, totalPages, onPageChange }) {
   if (!totalPages || totalPages <= 1) return null;
   return (
     <nav aria-label="Pagination" className="flex items-center justify-between gap-3 pt-4">
-      <Button variant="secondary" size="sm" leftIcon={ChevronLeft} disabled={page <= 1} onClick={() => onPageChange(page - 1)}>
+      <Button
+        variant="secondary"
+        size="sm"
+        leftIcon={ChevronLeft}
+        disabled={page <= 1}
+        onClick={() => onPageChange(page - 1)}
+      >
         Previous
       </Button>
       <span className="text-sm text-fg-muted">
         Page <span className="font-medium text-fg">{page}</span> of {totalPages}
       </span>
-      <Button variant="secondary" size="sm" rightIcon={ChevronRight} disabled={page >= totalPages} onClick={() => onPageChange(page + 1)}>
+      <Button
+        variant="secondary"
+        size="sm"
+        rightIcon={ChevronRight}
+        disabled={page >= totalPages}
+        onClick={() => onPageChange(page + 1)}
+      >
         Next
       </Button>
     </nav>

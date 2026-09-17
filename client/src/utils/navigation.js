@@ -5,6 +5,7 @@ export function redirectTo(url) {
 
 /** Only allows same-site relative redirects, so `?redirect=` cannot become an open redirect. */
 export function safeRedirectPath(value, fallback = '/feed') {
-  if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) return fallback;
+  if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//'))
+    return fallback;
   return value;
 }

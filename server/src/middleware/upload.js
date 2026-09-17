@@ -10,7 +10,9 @@ const imageMultipart = multer({
   fileFilter: (_req, file, callback) => {
     if (UPLOAD_LIMITS.ALLOWED_IMAGE_TYPES.includes(file.mimetype)) return callback(null, true);
     return callback(
-      new ApiError(400, 'Only JPEG, PNG, WebP or GIF images are allowed', { code: ERROR_CODES.UPLOAD_ERROR }),
+      new ApiError(400, 'Only JPEG, PNG, WebP or GIF images are allowed', {
+        code: ERROR_CODES.UPLOAD_ERROR,
+      }),
     );
   },
 });

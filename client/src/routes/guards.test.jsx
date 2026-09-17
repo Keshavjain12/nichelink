@@ -31,7 +31,9 @@ describe('route guards', () => {
 
   it('shows a loader instead of redirecting while the session is still resolving', () => {
     renderWithProviders(routes, {
-      preloadedState: { auth: { status: 'loading', accessToken: null, user: null, bootError: null } },
+      preloadedState: {
+        auth: { status: 'loading', accessToken: null, user: null, bootError: null },
+      },
       route: '/messages',
     });
     expect(screen.getByRole('status')).toBeInTheDocument();
@@ -44,12 +46,18 @@ describe('route guards', () => {
   });
 
   it('blocks non-admins from admin routes and allows admins through', () => {
-    const { unmount } = renderWithProviders(routes, { preloadedState: authenticatedState({ role: 'ProMember' }), route: '/admin' });
+    const { unmount } = renderWithProviders(routes, {
+      preloadedState: authenticatedState({ role: 'ProMember' }),
+      route: '/admin',
+    });
     expect(screen.getByText(/don't have access/i)).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Admin dashboard' })).not.toBeInTheDocument();
     unmount();
 
-    renderWithProviders(routes, { preloadedState: authenticatedState({ role: 'Admin' }), route: '/admin' });
+    renderWithProviders(routes, {
+      preloadedState: authenticatedState({ role: 'Admin' }),
+      route: '/admin',
+    });
     expect(screen.getByRole('heading', { name: 'Admin dashboard' })).toBeInTheDocument();
   });
 

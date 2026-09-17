@@ -20,15 +20,18 @@ import { redirectTo } from '../../utils/navigation';
 const STATIC_FAQ = [
   {
     question: 'Can I cancel anytime?',
-    answer: 'Yes. Cancel from Settings → Billing and you keep Pro until the end of the period you already paid for.',
+    answer:
+      'Yes. Cancel from Settings → Billing and you keep Pro until the end of the period you already paid for.',
   },
   {
     question: 'What happens to my posts if I downgrade?',
-    answer: 'Everything you published stays up. You can still read, like and message within the Free limits.',
+    answer:
+      'Everything you published stays up. You can still read, like and message within the Free limits.',
   },
 ];
 
-const TEST_MODE_HINT = 'This deployment runs in Stripe test mode, so use a test card such as 4242 4242 4242 4242.';
+const TEST_MODE_HINT =
+  'This deployment runs in Stripe test mode, so use a test card such as 4242 4242 4242 4242.';
 
 function buildFaq({ proPlan, paymentsMode }) {
   const cadence = proPlan
@@ -47,7 +50,11 @@ function buildFaq({ proPlan, paymentsMode }) {
 function CurrentPlanBanner({ subscription }) {
   if (!subscription) return null;
   if (subscription.role === 'Admin') {
-    return <InlineAlert variant="info" title="Admin account">Administrators have access to every Pro feature.</InlineAlert>;
+    return (
+      <InlineAlert variant="info" title="Admin account">
+        Administrators have access to every Pro feature.
+      </InlineAlert>
+    );
   }
   if (subscription.plan !== 'pro') return null;
   return (
@@ -108,7 +115,8 @@ export default function PricingPage() {
 
       {!isLoading && !paymentsEnabled && (
         <InlineAlert variant="warning" title="Payments are not configured on this server">
-          Stripe keys have not been set for this environment, so upgrades are unavailable. See the README to enable Stripe test mode.
+          Stripe keys have not been set for this environment, so upgrades are unavailable. See the
+          README to enable Stripe test mode.
         </InlineAlert>
       )}
 
@@ -124,14 +132,23 @@ export default function PricingPage() {
             >
               <div className="flex items-center justify-between">
                 <h2 className="flex items-center gap-2 text-lg font-semibold">
-                  {isProPlan ? <Crown className="size-5 text-amber-500" aria-hidden="true" /> : <Sparkles className="size-5 text-brand-500" aria-hidden="true" />}
+                  {isProPlan ? (
+                    <Crown className="size-5 text-amber-500" aria-hidden="true" />
+                  ) : (
+                    <Sparkles className="size-5 text-brand-500" aria-hidden="true" />
+                  )}
                   {plan.name}
                 </h2>
                 {isCurrent && <Badge variant="success">Current plan</Badge>}
               </div>
               <p className="mt-3">
-                <span className="text-4xl font-bold tracking-tight">{formatCurrency(plan.price, plan.currency)}</span>
-                <span className="text-sm text-fg-subtle"> / {formatBillingInterval(plan.interval, plan.intervalCount)}</span>
+                <span className="text-4xl font-bold tracking-tight">
+                  {formatCurrency(plan.price, plan.currency)}
+                </span>
+                <span className="text-sm text-fg-subtle">
+                  {' '}
+                  / {formatBillingInterval(plan.interval, plan.intervalCount)}
+                </span>
               </p>
               <ul className="mt-6 flex-1 space-y-3">
                 {plan.features.map((feature) => (
@@ -150,10 +167,20 @@ export default function PricingPage() {
                   loading={redirecting}
                   disabled={isPro || (isAuthenticated && !paymentsEnabled)}
                 >
-                  {isPro ? 'You have Pro' : isAuthenticated ? 'Upgrade with Stripe' : 'Create an account to upgrade'}
+                  {isPro
+                    ? 'You have Pro'
+                    : isAuthenticated
+                      ? 'Upgrade with Stripe'
+                      : 'Create an account to upgrade'}
                 </Button>
               ) : (
-                <Button as={Link} to={isAuthenticated ? '/feed' : '/register'} variant="secondary" size="lg" className="mt-8 w-full">
+                <Button
+                  as={Link}
+                  to={isAuthenticated ? '/feed' : '/register'}
+                  variant="secondary"
+                  size="lg"
+                  className="mt-8 w-full"
+                >
                   {isAuthenticated ? 'Continue with Free' : 'Start for free'}
                 </Button>
               )}
@@ -163,13 +190,18 @@ export default function PricingPage() {
       </div>
 
       <section aria-labelledby="faq-heading">
-        <h2 id="faq-heading" className="text-lg font-semibold">Frequently asked questions</h2>
+        <h2 id="faq-heading" className="text-lg font-semibold">
+          Frequently asked questions
+        </h2>
         <div className="mt-4 divide-y divide-line rounded-2xl border border-line bg-surface">
           {faq.map((item) => (
             <details key={item.question} className="group px-5 py-4">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-medium text-fg">
                 {item.question}
-                <Info className="size-4 text-fg-subtle transition-transform group-open:rotate-180" aria-hidden="true" />
+                <Info
+                  className="size-4 text-fg-subtle transition-transform group-open:rotate-180"
+                  aria-hidden="true"
+                />
               </summary>
               <p className="mt-2 text-sm text-fg-muted">{item.answer}</p>
             </details>

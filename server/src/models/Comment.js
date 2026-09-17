@@ -11,7 +11,11 @@ const commentSchema = new mongoose.Schema(
     depth: { type: Number, default: 0, min: 0, max: CONTENT_LIMITS.COMMENT_MAX_DEPTH - 1 },
     content: { type: String, required: true, trim: true, maxlength: CONTENT_LIMITS.COMMENT_MAX },
     replyCount: { type: Number, default: 0, min: 0 },
-    status: { type: String, enum: Object.values(CONTENT_STATUS), default: CONTENT_STATUS.PUBLISHED },
+    status: {
+      type: String,
+      enum: Object.values(CONTENT_STATUS),
+      default: CONTENT_STATUS.PUBLISHED,
+    },
     editedAt: { type: Date },
     deletedAt: { type: Date },
   },

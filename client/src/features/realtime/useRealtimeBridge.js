@@ -7,12 +7,7 @@ import { refreshSession } from '../../services/session';
 import { connectSocket, disconnectSocket } from '../../services/socket';
 import { sessionEnded, sessionStarted } from '../auth/authSlice';
 import { refreshCurrentUser } from '../auth/sessionThunks';
-import {
-  connectionChanged,
-  presenceChanged,
-  realtimeReset,
-  typingChanged,
-} from './realtimeSlice';
+import { connectionChanged, presenceChanged, realtimeReset, typingChanged } from './realtimeSlice';
 
 const RECONNECT_AFTER_FAILURE_MS = 5000;
 const AUTH_ERROR_CODES = ['TOKEN_EXPIRED', 'UNAUTHENTICATED'];
@@ -125,16 +120,22 @@ export function useRealtimeBridge(userId) {
         }
       },
       [SOCKET_EVENTS.RECEIVE_MESSAGE]: (payload) => applyIncomingMessage(dispatch, payload),
-      [SOCKET_EVENTS.CONVERSATION_READ]: (payload) => applyConversationRead(dispatch, userId, payload),
+      [SOCKET_EVENTS.CONVERSATION_READ]: (payload) =>
+        applyConversationRead(dispatch, userId, payload),
       [SOCKET_EVENTS.USER_TYPING]: (payload) => dispatch(typingChanged(payload)),
-      [SOCKET_EVENTS.USER_ONLINE]: ({ userId: id }) => dispatch(presenceChanged({ userId: id, online: true })),
-      [SOCKET_EVENTS.USER_OFFLINE]: ({ userId: id }) => dispatch(presenceChanged({ userId: id, online: false })),
-      [SOCKET_EVENTS.NOTIFICATION_NEW]: (notification) => applyNotification(dispatch, store.getState, notification),
+      [SOCKET_EVENTS.USER_ONLINE]: ({ userId: id }) =>
+        dispatch(presenceChanged({ userId: id, online: true })),
+      [SOCKET_EVENTS.USER_OFFLINE]: ({ userId: id }) =>
+        dispatch(presenceChanged({ userId: id, online: false })),
+      [SOCKET_EVENTS.NOTIFICATION_NEW]: (notification) =>
+        applyNotification(dispatch, store.getState, notification),
       [SOCKET_EVENTS.NOTIFICATION_COUNT]: ({ unreadCount }) =>
         dispatch(api.util.upsertQueryData('getUnreadNotificationCount', undefined, unreadCount)),
       [SOCKET_EVENTS.SESSION_UPDATED]: () => {
         dispatch(refreshCurrentUser());
-        dispatch(api.util.invalidateTags(['Subscription', 'Post', 'Community', 'Project', 'Conversation']));
+        dispatch(
+          api.util.invalidateTags(['Subscription', 'Post', 'Community', 'Project', 'Conversation']),
+        );
       },
     };
 

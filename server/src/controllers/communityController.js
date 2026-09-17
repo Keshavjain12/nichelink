@@ -20,7 +20,9 @@ export async function mine(req, res) {
 }
 
 export async function detail(req, res) {
-  sendSuccess(res, { data: await communityService.getCommunityDetail(req.params.community, req.user) });
+  sendSuccess(res, {
+    data: await communityService.getCommunityDetail(req.params.community, req.user),
+  });
 }
 
 export async function create(req, res) {
@@ -29,12 +31,19 @@ export async function create(req, res) {
 }
 
 export async function update(req, res) {
-  const community = await communityService.updateCommunity(req.params.community, req.body, req.user);
+  const community = await communityService.updateCommunity(
+    req.params.community,
+    req.body,
+    req.user,
+  );
   sendSuccess(res, { data: community, message: 'Community updated' });
 }
 
 export async function join(req, res) {
-  const { created, community } = await communityService.joinCommunity(req.params.community, req.user);
+  const { created, community } = await communityService.joinCommunity(
+    req.params.community,
+    req.user,
+  );
   sendSuccess(res, {
     status: created ? 201 : 200,
     data: community,
@@ -48,7 +57,11 @@ export async function leave(req, res) {
 }
 
 export async function members(req, res) {
-  const { items, meta } = await communityService.listMembers(req.params.community, req.user, req.query);
+  const { items, meta } = await communityService.listMembers(
+    req.params.community,
+    req.user,
+    req.query,
+  );
   sendSuccess(res, { data: items, meta });
 }
 

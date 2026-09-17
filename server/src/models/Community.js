@@ -13,7 +13,14 @@ const ruleSchema = new mongoose.Schema(
 const communitySchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true, minlength: 3, maxlength: 60 },
-    slug: { type: String, required: true, unique: true, lowercase: true, trim: true, maxlength: 60 },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      maxlength: 60,
+    },
     tagline: { type: String, trim: true, maxlength: 140, default: '' },
     description: { type: String, trim: true, maxlength: 2000, default: '' },
     icon: { type: String, trim: true, maxlength: 8, default: '💬' },
@@ -24,7 +31,11 @@ const communitySchema = new mongoose.Schema(
     },
     category: { type: String, enum: COMMUNITY_CATEGORIES, required: true },
     tags: { type: [String], default: [] },
-    accessType: { type: String, enum: Object.values(COMMUNITY_ACCESS), default: COMMUNITY_ACCESS.PUBLIC },
+    accessType: {
+      type: String,
+      enum: Object.values(COMMUNITY_ACCESS),
+      default: COMMUNITY_ACCESS.PUBLIC,
+    },
     memberCount: { type: Number, default: 0, min: 0 },
     postCount: { type: Number, default: 0, min: 0 },
     rules: { type: [ruleSchema], default: [] },

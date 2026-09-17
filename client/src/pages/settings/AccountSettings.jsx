@@ -22,8 +22,14 @@ const passwordSchema = z
       .regex(/\d/, 'Include a number'),
     confirmPassword: z.string(),
   })
-  .refine((value) => value.newPassword === value.confirmPassword, { path: ['confirmPassword'], message: 'Passwords do not match' })
-  .refine((value) => value.newPassword !== value.currentPassword, { path: ['newPassword'], message: 'Choose a different password' });
+  .refine((value) => value.newPassword === value.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'Passwords do not match',
+  })
+  .refine((value) => value.newPassword !== value.currentPassword, {
+    path: ['newPassword'],
+    message: 'Choose a different password',
+  });
 
 export default function AccountSettings() {
   const { user } = useAuth();
@@ -34,7 +40,10 @@ export default function AccountSettings() {
     reset,
     setError,
     formState: { errors },
-  } = useForm({ resolver: zodResolver(passwordSchema), defaultValues: { currentPassword: '', newPassword: '', confirmPassword: '' } });
+  } = useForm({
+    resolver: zodResolver(passwordSchema),
+    defaultValues: { currentPassword: '', newPassword: '', confirmPassword: '' },
+  });
 
   const onSubmit = async ({ currentPassword, newPassword }) => {
     try {
@@ -60,28 +69,65 @@ export default function AccountSettings() {
             <Input id="account-username" value={`@${user.username}`} readOnly disabled />
           </div>
         </div>
-        <p className="text-xs text-fg-subtle">Email and username changes are handled by support to protect your account.</p>
+        <p className="text-xs text-fg-subtle">
+          Email and username changes are handled by support to protect your account.
+        </p>
       </Card>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <Card className="space-y-5 p-5 sm:p-6">
           <div>
             <h2 className="text-base font-semibold">Change password</h2>
-            <p className="mt-1 text-sm text-fg-muted">Changing your password signs you out of every other device.</p>
+            <p className="mt-1 text-sm text-fg-muted">
+              Changing your password signs you out of every other device.
+            </p>
           </div>
-          <FormField id="currentPassword" label="Current password" error={errors.currentPassword?.message}>
-            {(fieldProps) => <PasswordInput autoComplete="current-password" {...fieldProps} {...register('currentPassword')} />}
+          <FormField
+            id="currentPassword"
+            label="Current password"
+            error={errors.currentPassword?.message}
+          >
+            {(fieldProps) => (
+              <PasswordInput
+                autoComplete="current-password"
+                {...fieldProps}
+                {...register('currentPassword')}
+              />
+            )}
           </FormField>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <FormField id="newPassword" label="New password" hint="8+ characters with upper, lower case and a number" error={errors.newPassword?.message}>
-              {(fieldProps) => <PasswordInput autoComplete="new-password" {...fieldProps} {...register('newPassword')} />}
+            <FormField
+              id="newPassword"
+              label="New password"
+              hint="8+ characters with upper, lower case and a number"
+              error={errors.newPassword?.message}
+            >
+              {(fieldProps) => (
+                <PasswordInput
+                  autoComplete="new-password"
+                  {...fieldProps}
+                  {...register('newPassword')}
+                />
+              )}
             </FormField>
-            <FormField id="confirmPassword" label="Confirm new password" error={errors.confirmPassword?.message}>
-              {(fieldProps) => <PasswordInput autoComplete="new-password" {...fieldProps} {...register('confirmPassword')} />}
+            <FormField
+              id="confirmPassword"
+              label="Confirm new password"
+              error={errors.confirmPassword?.message}
+            >
+              {(fieldProps) => (
+                <PasswordInput
+                  autoComplete="new-password"
+                  {...fieldProps}
+                  {...register('confirmPassword')}
+                />
+              )}
             </FormField>
           </div>
           <div className="flex justify-end border-t border-line pt-5">
-            <Button type="submit" loading={isLoading}>Update password</Button>
+            <Button type="submit" loading={isLoading}>
+              Update password
+            </Button>
           </div>
         </Card>
       </form>

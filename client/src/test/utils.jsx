@@ -50,7 +50,12 @@ export function buildUser({ role = 'FreeMember', ...overrides } = {}) {
     role,
     permissions: PERMISSIONS_BY_ROLE[role],
     status: 'active',
-    subscription: { plan: role === 'ProMember' ? 'pro' : 'free', status: role === 'ProMember' ? 'active' : 'none', currentPeriodEnd: null, cancelAtPeriodEnd: false },
+    subscription: {
+      plan: role === 'ProMember' ? 'pro' : 'free',
+      status: role === 'ProMember' ? 'active' : 'none',
+      currentPeriodEnd: null,
+      cancelAtPeriodEnd: false,
+    },
     profileCompletion: 100,
     isPro: role === 'ProMember',
     isAdmin: role === 'Admin',
@@ -59,10 +64,19 @@ export function buildUser({ role = 'FreeMember', ...overrides } = {}) {
 }
 
 export function authenticatedState(options) {
-  return { auth: { status: 'authenticated', accessToken: 'test-token', user: buildUser(options), bootError: null } };
+  return {
+    auth: {
+      status: 'authenticated',
+      accessToken: 'test-token',
+      user: buildUser(options),
+      bootError: null,
+    },
+  };
 }
 
-export const guestState = { auth: { status: 'unauthenticated', accessToken: null, user: null, bootError: null } };
+export const guestState = {
+  auth: { status: 'unauthenticated', accessToken: null, user: null, bootError: null },
+};
 
 /**
  * Stubs global fetch with a route table keyed by "METHOD /path".
@@ -89,21 +103,42 @@ export function mockApi(routes) {
 
     const handler = routes[key];
     if (!handler) {
-      return new Response(JSON.stringify({ success: false, message: `Unmocked ${key}`, code: 'NOT_FOUND', errors: [] }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: `Unmocked ${key}`,
+          code: 'NOT_FOUND',
+          errors: [],
+        }),
+        {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
     }
-    const resolved = typeof handler === 'function' ? await handler({ url, method, headers, body: requestBody }) : handler;
+    const resolved =
+      typeof handler === 'function'
+        ? await handler({ url, method, headers, body: requestBody })
+        : handler;
     const { status = 200, body = resolved } = resolved?.status ? resolved : { body: resolved };
-    return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify(body), {
+      status,
+      headers: { 'Content-Type': 'application/json' },
+    });
   });
   return { calls };
 }
 
 export const apiSuccess = (data, meta) => ({ success: true, data, ...(meta && { meta }) });
-export const apiList = (items, meta = { page: 1, limit: 10, hasMore: false }) => ({ success: true, data: items, meta });
-export const apiError = (status, message, code) => ({ status, body: { success: false, message, code, errors: [] } });
+export const apiList = (items, meta = { page: 1, limit: 10, hasMore: false }) => ({
+  success: true,
+  data: items,
+  meta,
+});
+export const apiError = (status, message, code) => ({
+  status,
+  body: { success: false, message, code, errors: [] },
+});
 
 export function renderWithProviders(ui, { preloadedState, route = '/' } = {}) {
   const store = createStore(preloadedState);

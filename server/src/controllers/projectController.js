@@ -31,7 +31,10 @@ export async function expressInterest(req, res) {
 }
 
 export async function withdrawInterest(req, res) {
-  sendSuccess(res, { data: await projectService.withdrawInterest(req.params.id, req.user), message: 'Interest withdrawn' });
+  sendSuccess(res, {
+    data: await projectService.withdrawInterest(req.params.id, req.user),
+    message: 'Interest withdrawn',
+  });
 }
 
 export async function listInterests(req, res) {

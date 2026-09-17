@@ -56,11 +56,16 @@ export default function BillingSuccessPage() {
         <CircleCheck className="mx-auto size-12 text-emerald-500" aria-hidden="true" />
         <h1 className="mt-4 text-2xl font-bold tracking-tight">Welcome to NicheLink Pro</h1>
         <p className="mt-2 text-sm text-fg-muted">
-          Payment verified. Posting, unlimited messaging, Pro communities and Project Match are unlocked.
+          Payment verified. Posting, unlimited messaging, Pro communities and Project Match are
+          unlocked.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <Button as={Link} to="/posts/new">Start a discussion</Button>
-          <Button as={Link} to="/communities?access=pro" variant="secondary">Explore Pro communities</Button>
+          <Button as={Link} to="/posts/new">
+            Start a discussion
+          </Button>
+          <Button as={Link} to="/communities?access=pro" variant="secondary">
+            Explore Pro communities
+          </Button>
         </div>
       </>
     );
@@ -70,7 +75,9 @@ export default function BillingSuccessPage() {
         <TriangleAlert className="mx-auto size-12 text-rose-500" aria-hidden="true" />
         <h1 className="mt-4 text-2xl font-bold tracking-tight">We couldn't verify this checkout</h1>
         <p className="mt-2 text-sm text-fg-muted">{getErrorMessage(confirmError)}</p>
-        <Button as={Link} to="/settings/billing" variant="secondary" className="mt-6">Go to billing</Button>
+        <Button as={Link} to="/settings/billing" variant="secondary" className="mt-6">
+          Go to billing
+        </Button>
       </>
     );
   } else if (timedOut) {
@@ -79,9 +86,12 @@ export default function BillingSuccessPage() {
         <Clock className="mx-auto size-12 text-amber-500" aria-hidden="true" />
         <h1 className="mt-4 text-2xl font-bold tracking-tight">Your payment is still processing</h1>
         <p className="mt-2 text-sm text-fg-muted">
-          Stripe hasn't confirmed the subscription yet. Pro unlocks automatically as soon as it does — you can keep using NicheLink.
+          Stripe hasn't confirmed the subscription yet. Pro unlocks automatically as soon as it does
+          — you can keep using NicheLink.
         </p>
-        <Button as={Link} to="/feed" variant="secondary" className="mt-6">Back to your feed</Button>
+        <Button as={Link} to="/feed" variant="secondary" className="mt-6">
+          Back to your feed
+        </Button>
       </>
     );
   } else {
@@ -89,14 +99,18 @@ export default function BillingSuccessPage() {
       <>
         <Spinner className="size-10" label="Confirming payment" />
         <h1 className="mt-4 text-2xl font-bold tracking-tight">Confirming your upgrade…</h1>
-        <p className="mt-2 text-sm text-fg-muted">We're verifying your payment with Stripe. This usually takes a few seconds.</p>
+        <p className="mt-2 text-sm text-fg-muted">
+          We're verifying your payment with Stripe. This usually takes a few seconds.
+        </p>
       </>
     );
   }
 
   return (
     <div className="mx-auto max-w-lg py-10">
-      <Card className="p-10 text-center" aria-live="polite">{content}</Card>
+      <Card className="p-10 text-center" aria-live="polite">
+        {content}
+      </Card>
     </div>
   );
 }

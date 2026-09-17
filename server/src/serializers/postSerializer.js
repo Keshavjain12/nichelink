@@ -2,7 +2,12 @@ import { CONTENT_STATUS } from '../constants/content.js';
 import { toCommunityRef } from './communitySerializer.js';
 import { toUserSummary } from './userSerializer.js';
 
-const toImage = ({ url, publicId, width, height }) => ({ url, publicId, width: width ?? null, height: height ?? null });
+const toImage = ({ url, publicId, width, height }) => ({
+  url,
+  publicId,
+  width: width ?? null,
+  height: height ?? null,
+});
 
 export function toPostSummary(post, { viewerHasLiked = false } = {}) {
   return {
@@ -26,7 +31,8 @@ export function toPostDetail(post, { viewerHasLiked, permissions }) {
   return {
     ...toPostSummary(post, { viewerHasLiked }),
     content: post.status === CONTENT_STATUS.PUBLISHED ? post.content : '',
-    moderation: post.status === CONTENT_STATUS.REMOVED ? { reason: post.moderation?.reason ?? null } : null,
+    moderation:
+      post.status === CONTENT_STATUS.REMOVED ? { reason: post.moderation?.reason ?? null } : null,
     permissions,
   };
 }

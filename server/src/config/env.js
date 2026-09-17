@@ -75,7 +75,9 @@ export function loadEnv(source) {
   };
 
   if (values.COOKIE_SAMESITE === 'none' && values.COOKIE_SECURE === false) {
-    throw new Error('Invalid environment configuration: COOKIE_SAMESITE=none requires COOKIE_SECURE=true');
+    throw new Error(
+      'Invalid environment configuration: COOKIE_SAMESITE=none requires COOKIE_SECURE=true',
+    );
   }
 
   const corsOrigins = [

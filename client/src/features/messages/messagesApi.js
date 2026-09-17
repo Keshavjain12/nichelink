@@ -33,7 +33,11 @@ export const messagesApi = api.injectEndpoints({
       providesTags: (_result, _error, conversationId) => [{ type: 'Message', id: conversationId }],
     }),
     sendMessage: build.mutation({
-      query: ({ conversationId, ...body }) => ({ url: `/conversations/${conversationId}/messages`, method: 'POST', body }),
+      query: ({ conversationId, ...body }) => ({
+        url: `/conversations/${conversationId}/messages`,
+        method: 'POST',
+        body,
+      }),
       transformResponse: unwrapData,
     }),
     sendDirectMessage: build.mutation({
@@ -42,7 +46,10 @@ export const messagesApi = api.injectEndpoints({
       invalidatesTags: [CONVERSATIONS, 'UnreadMessages'],
     }),
     markConversationRead: build.mutation({
-      query: (conversationId) => ({ url: `/conversations/${conversationId}/read`, method: 'PATCH' }),
+      query: (conversationId) => ({
+        url: `/conversations/${conversationId}/read`,
+        method: 'PATCH',
+      }),
       transformResponse: unwrapData,
       invalidatesTags: ['UnreadMessages'],
     }),

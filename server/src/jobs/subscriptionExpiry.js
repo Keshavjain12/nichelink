@@ -25,7 +25,11 @@ export async function expireLapsedSubscriptions(now = Date.now()) {
     await refreshUserEntitlement(_id);
     // A stored record may still say "active" if its webhook never arrived; force the snapshot down.
     await User.updateOne(
-      { _id, role: ROLES.PRO, 'subscription.currentPeriodEnd': { $lt: new Date(now - RENEWAL_GRACE_MS) } },
+      {
+        _id,
+        role: ROLES.PRO,
+        'subscription.currentPeriodEnd': { $lt: new Date(now - RENEWAL_GRACE_MS) },
+      },
       { $set: { role: ROLES.FREE, 'subscription.plan': 'free' } },
     );
   }

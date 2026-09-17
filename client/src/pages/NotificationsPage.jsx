@@ -19,9 +19,8 @@ export default function NotificationsPage() {
   useDocumentTitle('Notifications');
   const [filter, setFilter] = useState('all');
   const { data: unread = 0 } = useGetUnreadNotificationCountQuery();
-  const { data, isLoading, error, refetch, hasNextPage, fetchNextPage, isFetchingNextPage } = useListNotificationsInfiniteQuery(
-    filter === 'unread' ? { unread: true } : {},
-  );
+  const { data, isLoading, error, refetch, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useListNotificationsInfiniteQuery(filter === 'unread' ? { unread: true } : {});
   const [markAllRead, { isLoading: marking }] = useMarkAllNotificationsReadMutation();
   const items = (data?.pages ?? []).flatMap((page) => page.items);
 
@@ -37,7 +36,12 @@ export default function NotificationsPage() {
             leftIcon={CheckCheck}
             loading={marking}
             disabled={!unread}
-            onClick={() => markAllRead().unwrap().then(() => toast.success('All caught up')).catch((markError) => toast.error(getErrorMessage(markError)))}
+            onClick={() =>
+              markAllRead()
+                .unwrap()
+                .then(() => toast.success('All caught up'))
+                .catch((markError) => toast.error(getErrorMessage(markError)))
+            }
           >
             Mark all as read
           </Button>
@@ -65,14 +69,22 @@ export default function NotificationsPage() {
           ))}
         {error && <ErrorState error={error} onRetry={refetch} />}
         {!isLoading && !error && items.length === 0 && (
-          <EmptyState icon={Bell} title={filter === 'unread' ? 'No unread notifications' : 'Nothing here yet'} description="When members interact with you, you'll hear about it here." />
+          <EmptyState
+            icon={Bell}
+            title={filter === 'unread' ? 'No unread notifications' : 'Nothing here yet'}
+            description="When members interact with you, you'll hear about it here."
+          />
         )}
         <div className="divide-y divide-line">
           {items.map((notification) => (
             <NotificationItem key={notification.id} notification={notification} />
           ))}
         </div>
-        <LoadMore hasNextPage={hasNextPage} fetchNextPage={fetchNextPage} isFetchingNextPage={isFetchingNextPage} />
+        <LoadMore
+          hasNextPage={hasNextPage}
+          fetchNextPage={fetchNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+        />
       </Card>
     </div>
   );

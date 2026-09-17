@@ -14,7 +14,12 @@ export function createSubscriptionRouter({ limiters }) {
 
   router.get('/me', subscriptionController.me);
   router.post('/checkout', limiters.sensitive, subscriptionController.checkout);
-  router.post('/checkout/confirm', limiters.sensitive, validate({ body: confirmBody }), subscriptionController.confirm);
+  router.post(
+    '/checkout/confirm',
+    limiters.sensitive,
+    validate({ body: confirmBody }),
+    subscriptionController.confirm,
+  );
   router.post('/portal', limiters.sensitive, subscriptionController.portal);
   router.post('/cancel', limiters.sensitive, subscriptionController.cancel);
   router.post('/resume', limiters.sensitive, subscriptionController.resume);

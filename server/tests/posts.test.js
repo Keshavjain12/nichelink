@@ -36,13 +36,21 @@ describe('posts API', () => {
     it('rejects FreeMembers with PRO_REQUIRED', async () => {
       const free = await createFreeUser();
       await joinCommunity(free, community);
-      const res = await request(app).post('/api/v1/posts').set(bearer(free)).send(postBody(community)).expect(403);
+      const res = await request(app)
+        .post('/api/v1/posts')
+        .set(bearer(free))
+        .send(postBody(community))
+        .expect(403);
       expect(res.body.code).toBe('PRO_REQUIRED');
     });
 
     it('requires Pro members to join the community first', async () => {
       const pro = await createProUser();
-      const res = await request(app).post('/api/v1/posts').set(bearer(pro)).send(postBody(community)).expect(403);
+      const res = await request(app)
+        .post('/api/v1/posts')
+        .set(bearer(pro))
+        .send(postBody(community))
+        .expect(403);
       expect(res.body.code).toBe('MEMBERSHIP_REQUIRED');
     });
 
@@ -50,7 +58,11 @@ describe('posts API', () => {
       const pro = await createProUser();
       await joinCommunity(pro, community);
 
-      const res = await request(app).post('/api/v1/posts').set(bearer(pro)).send(postBody(community)).expect(201);
+      const res = await request(app)
+        .post('/api/v1/posts')
+        .set(bearer(pro))
+        .send(postBody(community))
+        .expect(201);
       expect(res.body.data).toMatchObject({
         title: 'Lessons from migrating 40 services to OpenTelemetry',
         tags: ['observability', 'otel'],
@@ -81,7 +93,9 @@ describe('posts API', () => {
 
       const { content, excerpt } = res.body.data;
       expect(content).not.toMatch(/script|onerror|onclick|javascript:|<img/i);
-      expect(content).toContain('<a href="https://example.com" target="_blank" rel="noopener noreferrer nofollow">good</a>');
+      expect(content).toContain(
+        '<a href="https://example.com" target="_blank" rel="noopener noreferrer nofollow">good</a>',
+      );
       expect(excerpt).toBe('Hello world bad good');
     });
 
@@ -120,16 +134,26 @@ describe('posts API', () => {
       const author = await createProUser();
       const proCommunity = await createCommunity({ accessType: 'pro' });
       const publicPost = await createPost({ author, community });
-      const proPost = await createPost({ author, community: proCommunity, title: 'Pro-only salary benchmarks' });
+      const proPost = await createPost({
+        author,
+        community: proCommunity,
+        title: 'Pro-only salary benchmarks',
+      });
       const free = await createFreeUser();
 
       const feed = await request(app).get('/api/v1/posts').set(bearer(free)).expect(200);
       expect(feed.body.data.map((post) => post.id)).toEqual([String(publicPost._id)]);
 
       await request(app).get(`/api/v1/posts/${publicPost._id}`).set(bearer(free)).expect(200);
-      const denied = await request(app).get(`/api/v1/posts/${proPost._id}`).set(bearer(free)).expect(403);
+      const denied = await request(app)
+        .get(`/api/v1/posts/${proPost._id}`)
+        .set(bearer(free))
+        .expect(403);
       expect(denied.body.code).toBe('PRO_REQUIRED');
-      await request(app).get(`/api/v1/communities/${proCommunity.slug}/posts`).set(bearer(free)).expect(403);
+      await request(app)
+        .get(`/api/v1/communities/${proCommunity.slug}/posts`)
+        .set(bearer(free))
+        .expect(403);
 
       const pro = await createProUser();
       const proFeed = await request(app).get('/api/v1/posts').set(bearer(pro)).expect(200);
@@ -141,10 +165,14 @@ describe('posts API', () => {
       const author = await createProUser();
       const posts = [];
       for (let i = 0; i < 7; i += 1) {
-        posts.push(await createPost({ author, community, title: `Remote hiring playbook part ${i + 1}` }));
+        posts.push(
+          await createPost({ author, community, title: `Remote hiring playbook part ${i + 1}` }),
+        );
       }
 
-      const preview = await request(app).get(`/api/v1/communities/${community.slug}/posts?limit=20`).expect(200);
+      const preview = await request(app)
+        .get(`/api/v1/communities/${community.slug}/posts?limit=20`)
+        .expect(200);
       expect(preview.body.data).toHaveLength(5);
       expect(preview.body.meta).toMatchObject({ previewOnly: true, hasMore: false });
       expect(preview.body.data[0].content).toBeUndefined();
@@ -159,20 +187,36 @@ describe('posts API', () => {
       await joinCommunity(reader, community);
 
       await createPost({ author, community, title: 'Async standups that actually work' });
-      await createPost({ author, community, title: 'Designing for timezone overlap', reactionCount: 12 });
+      await createPost({
+        author,
+        community,
+        title: 'Designing for timezone overlap',
+        reactionCount: 12,
+      });
       await createPost({ author, community: other, title: 'Visa tips for digital nomads' });
 
       const page1 = await request(app).get('/api/v1/posts?limit=2').set(bearer(reader)).expect(200);
       expect(page1.body.meta).toMatchObject({ page: 1, limit: 2, hasMore: true });
 
-      const joined = await request(app).get('/api/v1/posts?scope=joined').set(bearer(reader)).expect(200);
+      const joined = await request(app)
+        .get('/api/v1/posts?scope=joined')
+        .set(bearer(reader))
+        .expect(200);
       expect(joined.body.data).toHaveLength(2);
 
-      const trending = await request(app).get('/api/v1/posts?sort=trending').set(bearer(reader)).expect(200);
+      const trending = await request(app)
+        .get('/api/v1/posts?sort=trending')
+        .set(bearer(reader))
+        .expect(200);
       expect(trending.body.data[0].title).toBe('Designing for timezone overlap');
 
-      const search = await request(app).get('/api/v1/posts?q=timezone').set(bearer(reader)).expect(200);
-      expect(search.body.data.map((post) => post.title)).toEqual(['Designing for timezone overlap']);
+      const search = await request(app)
+        .get('/api/v1/posts?q=timezone')
+        .set(bearer(reader))
+        .expect(200);
+      expect(search.body.data.map((post) => post.title)).toEqual([
+        'Designing for timezone overlap',
+      ]);
     });
   });
 
@@ -182,7 +226,11 @@ describe('posts API', () => {
       const otherPro = await createProUser();
       const post = await createPost({ author, community });
 
-      await request(app).patch(`/api/v1/posts/${post._id}`).set(bearer(otherPro)).send({ title: 'Hijacked title' }).expect(403);
+      await request(app)
+        .patch(`/api/v1/posts/${post._id}`)
+        .set(bearer(otherPro))
+        .send({ title: 'Hijacked title' })
+        .expect(403);
 
       const res = await request(app)
         .patch(`/api/v1/posts/${post._id}`)
@@ -213,13 +261,19 @@ describe('posts API', () => {
       const second = await createPost({ author, community });
       const admin = await createAdmin();
 
-      await request(app).delete(`/api/v1/posts/${first._id}`).set(bearer(moderator)).send({ reason: 'Off-topic' }).expect(200);
+      await request(app)
+        .delete(`/api/v1/posts/${first._id}`)
+        .set(bearer(moderator))
+        .send({ reason: 'Off-topic' })
+        .expect(200);
       await request(app).delete(`/api/v1/posts/${second._id}`).set(bearer(admin)).expect(200);
 
       const removed = await Post.findById(first._id).lean();
       expect(removed.status).toBe('removed');
       expect(removed.moderation.reason).toBe('Off-topic');
-      expect(await Notification.countDocuments({ recipient: author._id, type: 'moderation' })).toBe(2);
+      expect(await Notification.countDocuments({ recipient: author._id, type: 'moderation' })).toBe(
+        2,
+      );
     });
   });
 
@@ -230,20 +284,35 @@ describe('posts API', () => {
       const fan = await createFreeUser();
       const secondFan = await createFreeUser();
 
-      const liked = await request(app).put(`/api/v1/posts/${post._id}/reactions`).set(bearer(fan)).expect(200);
+      const liked = await request(app)
+        .put(`/api/v1/posts/${post._id}/reactions`)
+        .set(bearer(fan))
+        .expect(200);
       expect(liked.body.data).toEqual({ liked: true, reactionCount: 1 });
       await request(app).put(`/api/v1/posts/${post._id}/reactions`).set(bearer(fan)).expect(200);
-      await request(app).put(`/api/v1/posts/${post._id}/reactions`).set(bearer(secondFan)).expect(200);
+      await request(app)
+        .put(`/api/v1/posts/${post._id}/reactions`)
+        .set(bearer(secondFan))
+        .expect(200);
 
       expect(await Reaction.countDocuments({ post: post._id })).toBe(2);
-      const notifications = await Notification.find({ recipient: author._id, type: 'post_reaction' }).lean();
+      const notifications = await Notification.find({
+        recipient: author._id,
+        type: 'post_reaction',
+      }).lean();
       expect(notifications).toHaveLength(1);
       expect(notifications[0].count).toBe(2);
 
-      const unliked = await request(app).delete(`/api/v1/posts/${post._id}/reactions`).set(bearer(fan)).expect(200);
+      const unliked = await request(app)
+        .delete(`/api/v1/posts/${post._id}/reactions`)
+        .set(bearer(fan))
+        .expect(200);
       expect(unliked.body.data).toEqual({ liked: false, reactionCount: 1 });
 
-      const detail = await request(app).get(`/api/v1/posts/${post._id}`).set(bearer(secondFan)).expect(200);
+      const detail = await request(app)
+        .get(`/api/v1/posts/${post._id}`)
+        .set(bearer(secondFan))
+        .expect(200);
       expect(detail.body.data.viewerHasLiked).toBe(true);
     });
 

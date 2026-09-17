@@ -42,7 +42,10 @@ export default function AppShell() {
         <main
           id="main-content"
           tabIndex={-1}
-          className={cn('min-w-0 flex-1 focus:outline-none', isMessages ? 'py-0 sm:py-6' : 'py-6 pb-24 lg:pb-12')}
+          className={cn(
+            'min-w-0 flex-1 focus:outline-none',
+            isMessages ? 'py-0 sm:py-6' : 'py-6 pb-24 lg:pb-12',
+          )}
         >
           {bootError && (
             <InlineAlert variant="warning" className="mb-4">
@@ -58,7 +61,12 @@ export default function AppShell() {
       <MobileNav />
 
       {mobileNavOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation">
+        <div
+          className="fixed inset-0 z-50 lg:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation"
+        >
           <button
             type="button"
             aria-label="Close navigation"

@@ -1,4 +1,12 @@
-export const COMMUNITY_CATEGORIES = ['Engineering', 'AI & Data', 'Product', 'Design', 'Writing', 'Business', 'Lifestyle'];
+export const COMMUNITY_CATEGORIES = [
+  'Engineering',
+  'AI & Data',
+  'Product',
+  'Design',
+  'Writing',
+  'Business',
+  'Lifestyle',
+];
 
 export const PROJECT_TYPES = [
   { value: 'side-project', label: 'Side project' },
@@ -43,4 +51,5 @@ export const LIMITS = Object.freeze({
   MAX_IMAGE_BYTES: 5 * 1024 * 1024,
 });
 
-export const labelFor = (options, value) => options.find((option) => option.value === value)?.label ?? value;
+export const labelFor = (options, value) =>
+  options.find((option) => option.value === value)?.label ?? value;

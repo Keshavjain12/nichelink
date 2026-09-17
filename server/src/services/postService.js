@@ -30,7 +30,9 @@ const POST_POPULATE = [
 
 async function likedPostIds(viewer, postIds) {
   if (!viewer || postIds.length === 0) return new Set();
-  const reactions = await Reaction.find({ user: viewer.id, post: { $in: postIds } }).select('post').lean();
+  const reactions = await Reaction.find({ user: viewer.id, post: { $in: postIds } })
+    .select('post')
+    .lean();
   return new Set(reactions.map((reaction) => String(reaction.post)));
 }
 
@@ -44,10 +46,19 @@ function prepareContent(html) {
   }
   if (contentText.length > CONTENT_LIMITS.POST_CONTENT_MAX_TEXT) {
     throw ApiError.badRequest('Post content is too long', {
-      errors: [{ field: 'content', message: `Keep posts under ${CONTENT_LIMITS.POST_CONTENT_MAX_TEXT} characters` }],
+      errors: [
+        {
+          field: 'content',
+          message: `Keep posts under ${CONTENT_LIMITS.POST_CONTENT_MAX_TEXT} characters`,
+        },
+      ],
     });
   }
-  return { content, contentText, excerpt: truncate(contentText, CONTENT_LIMITS.POST_EXCERPT_LENGTH) };
+  return {
+    content,
+    contentText,
+    excerpt: truncate(contentText, CONTENT_LIMITS.POST_EXCERPT_LENGTH),
+  };
 }
 
 async function trendingPosts(filter, window) {
@@ -61,7 +72,12 @@ async function trendingPosts(filter, window) {
         trendingScore: {
           $divide: [
             { $add: ['$reactionCount', { $multiply: ['$commentCount', 2] }, 1] },
-            { $pow: [{ $add: [{ $divide: [{ $subtract: [now, '$createdAt'] }, HOUR_MS] }, 2] }, 1.5] },
+            {
+              $pow: [
+                { $add: [{ $divide: [{ $subtract: [now, '$createdAt'] }, HOUR_MS] }, 2] },
+                1.5,
+              ],
+            },
           ],
         },
       },
@@ -74,9 +90,19 @@ async function trendingPosts(filter, window) {
 }
 
 export async function listPosts(params, viewer) {
-  const { community: communityRef, author: username, tag, sort = 'latest', scope = 'all', q } = params;
+  const {
+    community: communityRef,
+    author: username,
+    tag,
+    sort = 'latest',
+    scope = 'all',
+    q,
+  } = params;
   const isGuest = !viewer;
-  const filter = { status: CONTENT_STATUS.PUBLISHED, communityAccess: { $in: readableAccessTypes(viewer) } };
+  const filter = {
+    status: CONTENT_STATUS.PUBLISHED,
+    communityAccess: { $in: readableAccessTypes(viewer) },
+  };
 
   if (communityRef) {
     const community = await findCommunity(communityRef);
@@ -84,7 +110,9 @@ export async function listPosts(params, viewer) {
     filter.community = community._id;
   } else if (scope === 'joined') {
     if (isGuest) throw ApiError.unauthorized('Sign in to see posts from your communities');
-    filter.community = { $in: await Membership.find({ user: viewer.id, status: 'active' }).distinct('community') };
+    filter.community = {
+      $in: await Membership.find({ user: viewer.id, status: 'active' }).distinct('community'),
+    };
   }
 
   if (username) {
@@ -98,7 +126,9 @@ export async function listPosts(params, viewer) {
 
   // Guests get a small read-only preview of public boards.
   const window = toPageWindow(
-    isGuest ? { page: 1, limit: Math.min(params.limit, GUEST_PREVIEW_LIMIT) } : { page: params.page, limit: params.limit },
+    isGuest
+      ? { page: 1, limit: Math.min(params.limit, GUEST_PREVIEW_LIMIT) }
+      : { page: params.page, limit: params.limit },
   );
 
   let rows;
@@ -110,7 +140,10 @@ export async function listPosts(params, viewer) {
       : sort === 'top'
         ? { reactionCount: -1, commentCount: -1, createdAt: -1 }
         : { createdAt: -1, _id: -1 };
-    rows = await Post.find(filter, q ? { score: { $meta: 'textScore' }, content: 0 } : { content: 0 })
+    rows = await Post.find(
+      filter,
+      q ? { score: { $meta: 'textScore' }, content: 0 } : { content: 0 },
+    )
       .sort(sortSpec)
       .skip(window.skip)
       .limit(window.fetchLimit)
@@ -125,7 +158,9 @@ export async function listPosts(params, viewer) {
   );
 
   return {
-    items: items.map((post) => toPostSummary(post, { viewerHasLiked: liked.has(String(post._id)) })),
+    items: items.map((post) =>
+      toPostSummary(post, { viewerHasLiked: liked.has(String(post._id)) }),
+    ),
     meta: isGuest ? { ...meta, hasMore: false, previewOnly: true } : meta,
   };
 }
@@ -159,14 +194,19 @@ export async function getPost(postId, viewer) {
   });
 }
 
-export async function createPost(viewer, { community: communityRef, title, content, tags, images }) {
+export async function createPost(
+  viewer,
+  { community: communityRef, title, content, tags, images },
+) {
   const community = await findCommunity(communityRef);
   assertCanReadCommunity(viewer, community);
 
   if (!can(viewer, PERMISSIONS.CONTENT_MODERATE)) {
     const membership = await getMembership(viewer.id, community._id);
     if (membership?.status !== 'active') {
-      throw ApiError.forbidden('Join this community before posting', { code: ERROR_CODES.MEMBERSHIP_REQUIRED });
+      throw ApiError.forbidden('Join this community before posting', {
+        code: ERROR_CODES.MEMBERSHIP_REQUIRED,
+      });
     }
   }
 
@@ -198,7 +238,8 @@ async function loadPublishedPost(postId) {
 
 export async function updatePost(postId, viewer, updates) {
   const post = await loadPublishedPost(postId);
-  if (String(post.author) !== viewer.id) throw ApiError.forbidden('You can only edit your own posts');
+  if (String(post.author) !== viewer.id)
+    throw ApiError.forbidden('You can only edit your own posts');
   if (!can(viewer, PERMISSIONS.POST_CREATE)) {
     throw ApiError.forbidden('Upgrade to Pro to edit posts', { code: ERROR_CODES.PRO_REQUIRED });
   }
@@ -234,7 +275,11 @@ export async function deletePost(postId, viewer, { reason } = {}) {
   } else {
     post.set({
       status: CONTENT_STATUS.REMOVED,
-      moderation: { removedBy: viewer.id, reason: reason ?? 'Removed by a moderator', removedAt: new Date() },
+      moderation: {
+        removedBy: viewer.id,
+        reason: reason ?? 'Removed by a moderator',
+        removedAt: new Date(),
+      },
     });
     await post.save();
     await AuditLog.create({
@@ -256,12 +301,17 @@ export async function deletePost(postId, viewer, { reason } = {}) {
     });
   }
 
-  await Community.updateOne({ _id: post.community, postCount: { $gt: 0 } }, { $inc: { postCount: -1 } });
+  await Community.updateOne(
+    { _id: post.community, postCount: { $gt: 0 } },
+    { $inc: { postCount: -1 } },
+  );
   return { id: String(post._id), status: post.status };
 }
 
 async function loadReactablePost(postId, viewer) {
-  const post = await Post.findById(postId).select('author community communityAccess status title').lean();
+  const post = await Post.findById(postId)
+    .select('author community communityAccess status title')
+    .lean();
   if (!post || post.status !== CONTENT_STATUS.PUBLISHED) throw ApiError.notFound('Post not found');
   assertCanReadCommunity(viewer, { accessType: post.communityAccess });
   return post;
@@ -300,7 +350,10 @@ export async function unlikePost(postId, viewer) {
   const post = await loadReactablePost(postId, viewer);
   const { deletedCount } = await Reaction.deleteOne({ user: viewer.id, post: post._id });
   if (deletedCount > 0) {
-    await Post.updateOne({ _id: post._id, reactionCount: { $gt: 0 } }, { $inc: { reactionCount: -1 } });
+    await Post.updateOne(
+      { _id: post._id, reactionCount: { $gt: 0 } },
+      { $inc: { reactionCount: -1 } },
+    );
   }
   return reactionState(post._id, false);
 }

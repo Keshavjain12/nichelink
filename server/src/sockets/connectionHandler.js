@@ -37,7 +37,12 @@ function toSocketError(error) {
     };
   }
   if (error instanceof ApiError) {
-    return { status: error.statusCode, code: error.code, message: error.message, details: error.details };
+    return {
+      status: error.statusCode,
+      code: error.code,
+      message: error.message,
+      details: error.details,
+    };
   }
   return { status: 500, code: ERROR_CODES.INTERNAL_ERROR, message: 'Something went wrong' };
 }

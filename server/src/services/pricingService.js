@@ -9,12 +9,24 @@ const PRICE_FAILURE_RETRY_MS = 60 * 1000;
 /** `/config` loads on every page view; a slow Stripe must not hold it open for the client's retry budget. */
 const PRICE_LOOKUP_OPTIONS = { timeout: 5_000, maxNetworkRetries: 0 };
 /** Stripe amounts are in minor units, except for these currencies, which have none. */
-const ZERO_DECIMAL_CURRENCIES = Object.freeze(
-  new Set([
-    'bif', 'clp', 'djf', 'gnf', 'jpy', 'kmf', 'krw', 'mga',
-    'pyg', 'rwf', 'ugx', 'vnd', 'vuv', 'xaf', 'xof', 'xpf',
-  ]),
-);
+const ZERO_DECIMAL_CURRENCIES = new Set([
+  'bif',
+  'clp',
+  'djf',
+  'gnf',
+  'jpy',
+  'kmf',
+  'krw',
+  'mga',
+  'pyg',
+  'rwf',
+  'ugx',
+  'vnd',
+  'vuv',
+  'xaf',
+  'xof',
+  'xpf',
+]);
 const MINOR_UNIT_DIVISOR = 100;
 
 let cached = null;
@@ -25,7 +37,11 @@ function toMajorUnits(amount, currency) {
 }
 
 async function fetchProPrice() {
-  const price = await getStripe().prices.retrieve(env.STRIPE_PRO_PRICE_ID, {}, PRICE_LOOKUP_OPTIONS);
+  const price = await getStripe().prices.retrieve(
+    env.STRIPE_PRO_PRICE_ID,
+    {},
+    PRICE_LOOKUP_OPTIONS,
+  );
   if (typeof price.unit_amount !== 'number' || !price.recurring) {
     throw new Error('The Pro price is not a recurring price with a fixed amount');
   }

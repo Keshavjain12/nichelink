@@ -23,7 +23,10 @@ const conversationNotFound = () => ApiError.notFound('Conversation not found');
 
 /** Loads a conversation only if the viewer participates — non-members get a 404, not a 403. */
 async function loadConversationForMember(conversationId, viewerId) {
-  const conversation = await Conversation.findOne({ _id: conversationId, 'members.user': viewerId }).lean();
+  const conversation = await Conversation.findOne({
+    _id: conversationId,
+    'members.user': viewerId,
+  }).lean();
   if (!conversation) throw conversationNotFound();
   return conversation;
 }
@@ -33,8 +36,12 @@ export async function assertConversationMember(conversationId, viewerId) {
 }
 
 export async function getMessagingQuota(viewer) {
-  if (can(viewer, PERMISSIONS.MESSAGE_UNLIMITED)) return { unlimited: true, limit: null, used: null, remaining: null };
-  const used = await Message.countDocuments({ sender: viewer.id, createdAt: { $gte: new Date(Date.now() - DAY_MS) } });
+  if (can(viewer, PERMISSIONS.MESSAGE_UNLIMITED))
+    return { unlimited: true, limit: null, used: null, remaining: null };
+  const used = await Message.countDocuments({
+    sender: viewer.id,
+    createdAt: { $gte: new Date(Date.now() - DAY_MS) },
+  });
   const limit = PLAN_LIMITS.FREE_MESSAGES_PER_DAY;
   return { unlimited: false, limit, used, remaining: Math.max(0, limit - used) };
 }
@@ -57,7 +64,8 @@ export async function startConversation(viewer, recipientId) {
   if (recipientId === viewer.id) throw ApiError.badRequest('You cannot message yourself');
 
   const recipient = await User.findById(recipientId).select('status').lean();
-  if (!recipient || recipient.status === ACCOUNT_STATUS.SUSPENDED) throw ApiError.notFound('Member not found');
+  if (!recipient || recipient.status === ACCOUNT_STATUS.SUSPENDED)
+    throw ApiError.notFound('Member not found');
 
   const participantKey = buildParticipantKey(viewer.id, recipientId);
   let conversation;
@@ -139,7 +147,9 @@ export async function getUnreadMessageTotal(viewerId) {
  */
 export async function sendMessage(viewer, { conversationId, body, clientId }) {
   const conversation = await loadConversationForMember(conversationId, viewer.id);
-  const recipientId = String(conversation.members.find((member) => String(member.user) !== viewer.id).user);
+  const recipientId = String(
+    conversation.members.find((member) => String(member.user) !== viewer.id).user,
+  );
 
   if (clientId) {
     const duplicate = await Message.findOne({ sender: viewer.id, clientId }).lean();
@@ -155,10 +165,18 @@ export async function sendMessage(viewer, { conversationId, body, clientId }) {
 
   let message;
   try {
-    message = await Message.create({ conversation: conversation._id, sender: viewer.id, body, clientId });
+    message = await Message.create({
+      conversation: conversation._id,
+      sender: viewer.id,
+      body,
+      clientId,
+    });
   } catch (error) {
     if (error?.code === 11000 && clientId) {
-      return { message: toMessage(await Message.findOne({ sender: viewer.id, clientId }).lean()), duplicate: true };
+      return {
+        message: toMessage(await Message.findOne({ sender: viewer.id, clientId }).lean()),
+        duplicate: true,
+      };
     }
     throw error;
   }
@@ -177,12 +195,16 @@ export async function sendMessage(viewer, { conversationId, body, clientId }) {
     },
     {
       returnDocument: 'after',
-      arrayFilters: [{ 'sender.user': new ObjectId(viewer.id) }, { 'recipient.user': new ObjectId(recipientId) }],
+      arrayFilters: [
+        { 'sender.user': new ObjectId(viewer.id) },
+        { 'recipient.user': new ObjectId(recipientId) },
+      ],
     },
   ).lean();
 
   const payload = toMessage(message.toObject());
-  const unreadFor = (userId) => updated.members.find((member) => String(member.user) === userId)?.unreadCount ?? 0;
+  const unreadFor = (userId) =>
+    updated.members.find((member) => String(member.user) === userId)?.unreadCount ?? 0;
   for (const userId of [viewer.id, recipientId]) {
     emitToUser(userId, SOCKET_EVENTS.RECEIVE_MESSAGE, {
       message: payload,
@@ -235,11 +257,16 @@ export async function markConversationRead(viewer, conversationId) {
 }
 
 export async function conversationPartnerIds(userId) {
-  const conversations = await Conversation.find({ 'members.user': userId }).select('members.user').limit(500).lean();
+  const conversations = await Conversation.find({ 'members.user': userId })
+    .select('members.user')
+    .limit(500)
+    .lean();
   return [
     ...new Set(
       conversations.flatMap((conversation) =>
-        conversation.members.map((member) => String(member.user)).filter((id) => id !== String(userId)),
+        conversation.members
+          .map((member) => String(member.user))
+          .filter((id) => id !== String(userId)),
       ),
     ),
   ];

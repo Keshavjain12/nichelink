@@ -17,7 +17,10 @@ export function signAccessToken(userId) {
 
 /** Throws jsonwebtoken errors (TokenExpiredError / JsonWebTokenError) on invalid tokens. */
 export function verifyAccessToken(token) {
-  const payload = jwt.verify(token, env.JWT_ACCESS_SECRET, { ...JWT_OPTIONS, algorithms: ['HS256'] });
+  const payload = jwt.verify(token, env.JWT_ACCESS_SECRET, {
+    ...JWT_OPTIONS,
+    algorithms: ['HS256'],
+  });
   if (payload.typ !== 'access' || typeof payload.sub !== 'string') {
     throw new jwt.JsonWebTokenError('Unexpected token type');
   }

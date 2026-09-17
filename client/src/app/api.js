@@ -17,7 +17,8 @@ const rawBaseQuery = fetchBaseQuery({
 });
 
 const SESSION_ENDPOINTS = ['/auth/login', '/auth/register', '/auth/refresh', '/auth/logout'];
-const isSessionEndpoint = (args) => SESSION_ENDPOINTS.includes(typeof args === 'string' ? args : args.url);
+const isSessionEndpoint = (args) =>
+  SESSION_ENDPOINTS.includes(typeof args === 'string' ? args : args.url);
 
 /** Transparently refreshes an expired access token once, then retries the original request. */
 async function baseQueryWithReauth(args, api, extraOptions) {
@@ -70,7 +71,11 @@ export const api = createApi({
     'Report',
   ],
   endpoints: (build) => ({
-    getConfig: build.query({ query: () => '/config', transformResponse: unwrapData, providesTags: ['Config'] }),
+    getConfig: build.query({
+      query: () => '/config',
+      transformResponse: unwrapData,
+      providesTags: ['Config'],
+    }),
   }),
 });
 

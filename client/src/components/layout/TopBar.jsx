@@ -1,4 +1,12 @@
-import { Briefcase, LogIn, Menu as MenuIcon, MessagesSquare, PenSquare, Plus, Users } from 'lucide-react';
+import {
+  Briefcase,
+  LogIn,
+  Menu as MenuIcon,
+  MessagesSquare,
+  PenSquare,
+  Plus,
+  Users,
+} from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom';
 import { PERMISSIONS } from '../../constants/app';
@@ -25,7 +33,9 @@ export function CountBadge({ count, label }) {
 }
 
 function MessagesLink() {
-  const { data: unread = 0 } = useGetUnreadMessageCountQuery(undefined, { pollingInterval: 120_000 });
+  const { data: unread = 0 } = useGetUnreadMessageCountQuery(undefined, {
+    pollingInterval: 120_000,
+  });
   return (
     <NavLink
       to="/messages"
@@ -83,7 +93,11 @@ export default function TopBar() {
         >
           <MenuIcon className="size-5" aria-hidden="true" />
         </Button>
-        <Link to={isAuthenticated ? '/feed' : '/'} className="rounded-lg lg:w-60" aria-label="NicheLink home">
+        <Link
+          to={isAuthenticated ? '/feed' : '/'}
+          className="rounded-lg lg:w-60"
+          aria-label="NicheLink home"
+        >
           <Logo className="max-sm:hidden" />
           <Logo compact className="sm:hidden" />
         </Link>

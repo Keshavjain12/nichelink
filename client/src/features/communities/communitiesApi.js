@@ -16,7 +16,10 @@ export const communitiesApi = api.injectEndpoints({
     listCommunities: build.query({
       query: (params = {}) => ({ url: '/communities', params: cleanParams(params) }),
       transformResponse: unwrapList,
-      providesTags: (result) => [LIST, ...(result?.items ?? []).map((community) => communityTag(community.slug))],
+      providesTags: (result) => [
+        LIST,
+        ...(result?.items ?? []).map((community) => communityTag(community.slug)),
+      ],
     }),
     getCommunity: build.query({
       query: (slug) => `/communities/${slug}`,
@@ -39,7 +42,10 @@ export const communitiesApi = api.injectEndpoints({
       providesTags: ['MyCommunities'],
     }),
     getCommunityMembers: build.query({
-      query: ({ slug, page = 1 }) => ({ url: `/communities/${slug}/members`, params: { page, limit: 24 } }),
+      query: ({ slug, page = 1 }) => ({
+        url: `/communities/${slug}/members`,
+        params: { page, limit: 24 },
+      }),
       transformResponse: unwrapList,
       providesTags: (_result, _error, { slug }) => [{ type: 'Member', id: slug }],
     }),
@@ -51,7 +57,12 @@ export const communitiesApi = api.injectEndpoints({
     updateCommunity: build.mutation({
       query: ({ slug, ...body }) => ({ url: `/communities/${slug}`, method: 'PATCH', body }),
       transformResponse: unwrapData,
-      invalidatesTags: (_result, _error, { slug }) => [communityTag(slug), LIST, 'Admin', { type: 'Post', id: 'LIST' }],
+      invalidatesTags: (_result, _error, { slug }) => [
+        communityTag(slug),
+        LIST,
+        'Admin',
+        { type: 'Post', id: 'LIST' },
+      ],
     }),
     joinCommunity: build.mutation({
       query: (slug) => ({ url: `/communities/${slug}/join`, method: 'POST' }),

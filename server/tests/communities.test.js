@@ -30,7 +30,11 @@ describe('communities API', () => {
   describe('creation', () => {
     it('lets an Admin create a community and become its owner', async () => {
       const admin = await createAdmin();
-      const res = await request(app).post('/api/v1/communities').set(bearer(admin)).send(newCommunity).expect(201);
+      const res = await request(app)
+        .post('/api/v1/communities')
+        .set(bearer(admin))
+        .send(newCommunity)
+        .expect(201);
 
       expect(res.body.data).toMatchObject({
         name: 'Platform Engineers',
@@ -39,7 +43,11 @@ describe('communities API', () => {
         memberCount: 1,
         tags: ['kubernetes', 'backstage', 'platform'],
       });
-      expect(res.body.data.viewer).toMatchObject({ isMember: true, role: 'owner', canModerate: true });
+      expect(res.body.data.viewer).toMatchObject({
+        isMember: true,
+        role: 'owner',
+        canModerate: true,
+      });
 
       const membership = await Membership.findOne({ user: admin._id }).lean();
       expect(membership.role).toBe('owner');
@@ -49,14 +57,30 @@ describe('communities API', () => {
       const pro = await createProUser();
       const free = await createFreeUser();
       await request(app).post('/api/v1/communities').send(newCommunity).expect(401);
-      await request(app).post('/api/v1/communities').set(bearer(free)).send(newCommunity).expect(403);
-      await request(app).post('/api/v1/communities').set(bearer(pro)).send(newCommunity).expect(403);
+      await request(app)
+        .post('/api/v1/communities')
+        .set(bearer(free))
+        .send(newCommunity)
+        .expect(403);
+      await request(app)
+        .post('/api/v1/communities')
+        .set(bearer(pro))
+        .send(newCommunity)
+        .expect(403);
     });
 
     it('rejects duplicate slugs', async () => {
       const admin = await createAdmin();
-      await request(app).post('/api/v1/communities').set(bearer(admin)).send(newCommunity).expect(201);
-      await request(app).post('/api/v1/communities').set(bearer(admin)).send(newCommunity).expect(409);
+      await request(app)
+        .post('/api/v1/communities')
+        .set(bearer(admin))
+        .send(newCommunity)
+        .expect(201);
+      await request(app)
+        .post('/api/v1/communities')
+        .set(bearer(admin))
+        .send(newCommunity)
+        .expect(409);
     });
   });
 
@@ -95,10 +119,16 @@ describe('communities API', () => {
       const community = await createCommunity();
       const user = await createFreeUser();
 
-      const first = await request(app).post(`/api/v1/communities/${community.slug}/join`).set(bearer(user)).expect(201);
+      const first = await request(app)
+        .post(`/api/v1/communities/${community.slug}/join`)
+        .set(bearer(user))
+        .expect(201);
       expect(first.body.data.viewer).toMatchObject({ isMember: true, role: 'member' });
 
-      await request(app).post(`/api/v1/communities/${community.slug}/join`).set(bearer(user)).expect(200);
+      await request(app)
+        .post(`/api/v1/communities/${community.slug}/join`)
+        .set(bearer(user))
+        .expect(200);
 
       expect(await Membership.countDocuments({ user: user._id, community: community._id })).toBe(1);
       expect((await Community.findById(community._id).lean()).memberCount).toBe(1);
@@ -114,10 +144,16 @@ describe('communities API', () => {
       const free = await createFreeUser();
       const pro = await createProUser();
 
-      const denied = await request(app).post(`/api/v1/communities/${community.slug}/join`).set(bearer(free)).expect(403);
+      const denied = await request(app)
+        .post(`/api/v1/communities/${community.slug}/join`)
+        .set(bearer(free))
+        .expect(403);
       expect(denied.body.code).toBe('PRO_REQUIRED');
 
-      await request(app).post(`/api/v1/communities/${community.slug}/join`).set(bearer(pro)).expect(201);
+      await request(app)
+        .post(`/api/v1/communities/${community.slug}/join`)
+        .set(bearer(pro))
+        .expect(201);
     });
 
     it('lets members leave but not owners', async () => {
@@ -127,8 +163,14 @@ describe('communities API', () => {
       const member = await createFreeUser();
       await joinCommunity(member, community);
 
-      await request(app).delete(`/api/v1/communities/${community.slug}/membership`).set(bearer(member)).expect(200);
-      await request(app).delete(`/api/v1/communities/${community.slug}/membership`).set(bearer(admin)).expect(409);
+      await request(app)
+        .delete(`/api/v1/communities/${community.slug}/membership`)
+        .set(bearer(member))
+        .expect(200);
+      await request(app)
+        .delete(`/api/v1/communities/${community.slug}/membership`)
+        .set(bearer(admin))
+        .expect(409);
       expect((await Community.findById(community._id).lean()).memberCount).toBe(1);
     });
 
@@ -140,8 +182,14 @@ describe('communities API', () => {
       const mine = await request(app).get('/api/v1/memberships/me').set(bearer(user)).expect(200);
       expect(mine.body.data.map((item) => item.slug)).toEqual([community.slug]);
 
-      const members = await request(app).get(`/api/v1/communities/${community.slug}/members`).set(bearer(user)).expect(200);
-      expect(members.body.data[0]).toMatchObject({ username: user.username, communityRole: 'member' });
+      const members = await request(app)
+        .get(`/api/v1/communities/${community.slug}/members`)
+        .set(bearer(user))
+        .expect(200);
+      expect(members.body.data[0]).toMatchObject({
+        username: user.username,
+        communityRole: 'member',
+      });
     });
   });
 
@@ -162,7 +210,11 @@ describe('communities API', () => {
 
     it('does not reset unspecified fields on partial updates', async () => {
       const admin = await createAdmin();
-      const community = await createCommunity({ createdBy: admin, accessType: 'pro', isFeatured: true });
+      const community = await createCommunity({
+        createdBy: admin,
+        accessType: 'pro',
+        isFeatured: true,
+      });
       await request(app)
         .patch(`/api/v1/communities/${community.slug}`)
         .set(bearer(admin))
@@ -170,7 +222,11 @@ describe('communities API', () => {
         .expect(200);
 
       const updated = await Community.findById(community._id).lean();
-      expect(updated).toMatchObject({ accessType: 'pro', isFeatured: true, tagline: 'Updated tagline' });
+      expect(updated).toMatchObject({
+        accessType: 'pro',
+        isFeatured: true,
+        tagline: 'Updated tagline',
+      });
     });
   });
 
@@ -184,7 +240,10 @@ describe('communities API', () => {
       const trending = await request(app).get('/api/v1/communities/trending').expect(200);
       expect(trending.body.data[0]).toMatchObject({ slug: react.slug, recentPostCount: 1 });
 
-      const recommended = await request(app).get('/api/v1/communities/recommended').set(bearer(user)).expect(200);
+      const recommended = await request(app)
+        .get('/api/v1/communities/recommended')
+        .set(bearer(user))
+        .expect(200);
       expect(recommended.body.data[0].slug).toBe(react.slug);
       expect(recommended.body.data.map((community) => community.slug)).toContain(other.slug);
     });

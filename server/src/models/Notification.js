@@ -8,7 +8,10 @@ const notificationSchema = new mongoose.Schema(
     recipient: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     actor: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     type: { type: String, enum: Object.values(NOTIFICATION_TYPES), required: true },
-    entityType: { type: String, enum: ['Post', 'Comment', 'Conversation', 'Project', 'User', 'Report'] },
+    entityType: {
+      type: String,
+      enum: ['Post', 'Comment', 'Conversation', 'Project', 'User', 'Report'],
+    },
     entityId: { type: mongoose.Schema.Types.ObjectId },
     title: { type: String, required: true, maxlength: 160 },
     body: { type: String, maxlength: 280, default: '' },

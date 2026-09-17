@@ -19,12 +19,19 @@ export const adminApi = api.injectEndpoints({
       invalidatesTags: ['Admin'],
     }),
     updateUserAdmin: build.mutation({
-      query: ({ id, isAdmin }) => ({ url: `/admin/users/${id}/admin`, method: 'PATCH', body: { isAdmin } }),
+      query: ({ id, isAdmin }) => ({
+        url: `/admin/users/${id}/admin`,
+        method: 'PATCH',
+        body: { isAdmin },
+      }),
       transformResponse: unwrapData,
       invalidatesTags: ['Admin'],
     }),
     listAdminCommunities: build.query({
-      query: (params) => ({ url: '/admin/communities', params: cleanParams({ limit: 20, ...params }) }),
+      query: (params) => ({
+        url: '/admin/communities',
+        params: cleanParams({ limit: 20, ...params }),
+      }),
       transformResponse: unwrapList,
       providesTags: ['Admin', { type: 'Community', id: 'LIST' }],
     }),
@@ -39,7 +46,10 @@ export const adminApi = api.injectEndpoints({
       invalidatesTags: ['Report', 'Admin', { type: 'Post', id: 'LIST' }],
     }),
     listAuditLogs: build.query({
-      query: (params) => ({ url: '/admin/audit-logs', params: cleanParams({ limit: 15, ...params }) }),
+      query: (params) => ({
+        url: '/admin/audit-logs',
+        params: cleanParams({ limit: 15, ...params }),
+      }),
       transformResponse: unwrapList,
       providesTags: ['Admin'],
     }),

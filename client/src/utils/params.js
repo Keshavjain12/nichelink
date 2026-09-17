@@ -2,7 +2,11 @@
 export function cleanParams(params = {}) {
   return Object.fromEntries(
     Object.entries(params).filter(
-      ([, value]) => value !== undefined && value !== null && value !== '' && !(Array.isArray(value) && value.length === 0),
+      ([, value]) =>
+        value !== undefined &&
+        value !== null &&
+        value !== '' &&
+        !(Array.isArray(value) && value.length === 0),
     ),
   );
 }

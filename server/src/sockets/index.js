@@ -33,7 +33,12 @@ export function createSocketServer(httpServer) {
       socket.data.user = await resolveUserFromToken(token);
       return next();
     } catch (error) {
-      return next(handshakeError(error.code ?? ERROR_CODES.UNAUTHENTICATED, error.message ?? 'Authentication failed'));
+      return next(
+        handshakeError(
+          error.code ?? ERROR_CODES.UNAUTHENTICATED,
+          error.message ?? 'Authentication failed',
+        ),
+      );
     }
   });
 

@@ -18,7 +18,11 @@ export function createApiRouter({ limiters }) {
     const database = isDatabaseReady() ? 'up' : 'down';
     res.status(database === 'up' ? 200 : 503).json({
       success: database === 'up',
-      data: { status: database === 'up' ? 'ok' : 'degraded', database, uptime: Math.round(process.uptime()) },
+      data: {
+        status: database === 'up' ? 'ok' : 'degraded',
+        database,
+        uptime: Math.round(process.uptime()),
+      },
     });
   });
 

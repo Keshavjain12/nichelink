@@ -14,7 +14,11 @@ export const subscriptionsApi = api.injectEndpoints({
       transformResponse: unwrapData,
     }),
     confirmCheckoutSession: build.mutation({
-      query: (sessionId) => ({ url: '/subscriptions/checkout/confirm', method: 'POST', body: { sessionId } }),
+      query: (sessionId) => ({
+        url: '/subscriptions/checkout/confirm',
+        method: 'POST',
+        body: { sessionId },
+      }),
       transformResponse: unwrapData,
       invalidatesTags: invalidateBilling,
     }),

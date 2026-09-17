@@ -25,17 +25,17 @@ MongoDB, plus Stripe and Cloudinary as external services.
 
 ## Backend layers
 
-| Layer | Responsibility | Never does |
-| --- | --- | --- |
-| `routes/` | URL → middleware chain → controller | business logic |
-| `middleware/` | authentication, permissions, validation, rate limits, uploads, errors | resource-level authorization |
-| `validators/` | Zod schemas for `params`, `query`, `body` | database access |
-| `controllers/` | HTTP ↔ service translation, response shaping | Mongoose queries for business rules |
-| `services/` | business rules, resource authorization, side effects | touch `req` / `res` |
-| `serializers/` | explicit field whitelists per audience (summary, profile, session, admin) | leak private fields |
-| `models/` | schema, indexes, hooks | cross-entity rules |
-| `sockets/` | authenticated gateway, rooms, presence | duplicate service logic |
-| `jobs/` | periodic maintenance | request handling |
+| Layer          | Responsibility                                                            | Never does                          |
+| -------------- | ------------------------------------------------------------------------- | ----------------------------------- |
+| `routes/`      | URL → middleware chain → controller                                       | business logic                      |
+| `middleware/`  | authentication, permissions, validation, rate limits, uploads, errors     | resource-level authorization        |
+| `validators/`  | Zod schemas for `params`, `query`, `body`                                 | database access                     |
+| `controllers/` | HTTP ↔ service translation, response shaping                              | Mongoose queries for business rules |
+| `services/`    | business rules, resource authorization, side effects                      | touch `req` / `res`                 |
+| `serializers/` | explicit field whitelists per audience (summary, profile, session, admin) | leak private fields                 |
+| `models/`      | schema, indexes, hooks                                                    | cross-entity rules                  |
+| `sockets/`     | authenticated gateway, rooms, presence                                    | duplicate service logic             |
+| `jobs/`        | periodic maintenance                                                      | request handling                    |
 
 A request flows straight down and back:
 

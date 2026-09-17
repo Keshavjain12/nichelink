@@ -5,7 +5,8 @@ export const notificationsApi = api.injectEndpoints({
     listNotifications: build.infiniteQuery({
       infiniteQueryOptions: {
         initialPageParam: 1,
-        getNextPageParam: (lastPage, _allPages, lastPageParam) => (lastPage.meta.hasMore ? lastPageParam + 1 : undefined),
+        getNextPageParam: (lastPage, _allPages, lastPageParam) =>
+          lastPage.meta.hasMore ? lastPageParam + 1 : undefined,
       },
       query: ({ queryArg, pageParam }) => ({
         url: '/notifications',
@@ -22,20 +23,28 @@ export const notificationsApi = api.injectEndpoints({
     markNotificationRead: build.mutation({
       query: (id) => ({ url: `/notifications/${id}/read`, method: 'PATCH' }),
       async onQueryStarted(id, { dispatch, getState, queryFulfilled }) {
-        const patches = api.util.selectCachedArgsForQuery(getState(), 'listNotifications').map((args) =>
-          dispatch(
-            api.util.updateQueryData('listNotifications', args, (draft) => {
-              draft.pages.forEach((page) =>
-                page.items.forEach((item) => {
-                  if (item.id === id) item.isRead = true;
-                }),
-              );
-            }),
-          ),
-        );
+        const patches = api.util
+          .selectCachedArgsForQuery(getState(), 'listNotifications')
+          .map((args) =>
+            dispatch(
+              api.util.updateQueryData('listNotifications', args, (draft) => {
+                draft.pages.forEach((page) =>
+                  page.items.forEach((item) => {
+                    if (item.id === id) item.isRead = true;
+                  }),
+                );
+              }),
+            ),
+          );
         try {
           const { data } = await queryFulfilled;
-          dispatch(api.util.upsertQueryData('getUnreadNotificationCount', undefined, data.data.unreadCount));
+          dispatch(
+            api.util.upsertQueryData(
+              'getUnreadNotificationCount',
+              undefined,
+              data.data.unreadCount,
+            ),
+          );
         } catch {
           patches.forEach((patch) => patch.undo());
         }

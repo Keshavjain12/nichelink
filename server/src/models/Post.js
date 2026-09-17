@@ -32,7 +32,11 @@ const postSchema = new mongoose.Schema(
     tags: { type: [String], default: [] },
     reactionCount: { type: Number, default: 0, min: 0 },
     commentCount: { type: Number, default: 0, min: 0 },
-    status: { type: String, enum: Object.values(CONTENT_STATUS), default: CONTENT_STATUS.PUBLISHED },
+    status: {
+      type: String,
+      enum: Object.values(CONTENT_STATUS),
+      default: CONTENT_STATUS.PUBLISHED,
+    },
     editedAt: { type: Date },
     deletedAt: { type: Date },
     moderation: {

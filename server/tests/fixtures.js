@@ -15,7 +15,12 @@ export async function createPost({ author, community, ...overrides }) {
 }
 
 export function createComment({ post, author, ...overrides }) {
-  return Comment.create({ post: post._id, author: author._id, content: 'Great write-up, thanks!', ...overrides });
+  return Comment.create({
+    post: post._id,
+    author: author._id,
+    content: 'Great write-up, thanks!',
+    ...overrides,
+  });
 }
 
 export function createProject({ author, ...overrides }) {
@@ -23,7 +28,8 @@ export function createProject({ author, ...overrides }) {
     author: author._id,
     title: 'Open-source changelog generator',
     summary: 'Looking for a TypeScript contributor',
-    description: 'We are building a CLI that turns conventional commits into polished release notes for teams.',
+    description:
+      'We are building a CLI that turns conventional commits into polished release notes for teams.',
     requiredSkills: ['TypeScript', 'Node.js'],
     projectType: 'open-source',
     commitment: 'few-hours-week',

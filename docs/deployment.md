@@ -23,12 +23,12 @@ REST calls. WebSockets connect directly to Render via `VITE_SOCKET_URL`.
 `render.yaml` in the repository root is a Blueprint — "New → Blueprint" and point Render at the repo. Or
 configure manually:
 
-| Setting | Value |
-| --- | --- |
-| Root directory | repository root (npm workspaces) |
-| Build command | `npm ci` |
-| Start command | `npm start --workspace server` |
-| Health check path | `/api/v1/health` |
+| Setting           | Value                            |
+| ----------------- | -------------------------------- |
+| Root directory    | repository root (npm workspaces) |
+| Build command     | `npm ci`                         |
+| Start command     | `npm start --workspace server`   |
+| Health check path | `/api/v1/health`                 |
 
 Environment variables (see [`server/.env.example`](../server/.env.example)):
 
@@ -47,12 +47,12 @@ Render's free tier sleeps after inactivity; the first request wakes it and may t
 
 ## 3. Frontend on Vercel
 
-| Setting | Value |
-| --- | --- |
-| Root directory | `client` |
-| Framework preset | Vite |
-| Build command | `npm run build` |
-| Output directory | `dist` |
+| Setting          | Value           |
+| ---------------- | --------------- |
+| Root directory   | `client`        |
+| Framework preset | Vite            |
+| Build command    | `npm run build` |
+| Output directory | `dist`          |
 
 **Replace the placeholder API host in `client/vercel.json`.** The `/api/:path*` rewrite ships pointing at
 `https://nichelink-api.onrender.com`, which is a placeholder, not your API. `vercel.json` cannot read

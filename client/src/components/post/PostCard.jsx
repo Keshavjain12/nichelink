@@ -34,7 +34,10 @@ export function PostMeta({ post, showCommunity = true }) {
   return (
     <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1 text-sm">
       {post.author ? (
-        <Link to={`/profile/${post.author.username}`} className="relative z-10 font-medium text-fg hover:underline">
+        <Link
+          to={`/profile/${post.author.username}`}
+          className="relative z-10 font-medium text-fg hover:underline"
+        >
           {post.author.name}
         </Link>
       ) : (
@@ -43,13 +46,20 @@ export function PostMeta({ post, showCommunity = true }) {
       <UserBadges user={post.author} />
       {showCommunity && post.community && (
         <>
-          <span className="text-fg-subtle" aria-hidden="true">in</span>
-          <Link to={`/communities/${post.community.slug}`} className="relative z-10 font-medium text-fg-muted hover:text-fg hover:underline">
+          <span className="text-fg-subtle" aria-hidden="true">
+            in
+          </span>
+          <Link
+            to={`/communities/${post.community.slug}`}
+            className="relative z-10 font-medium text-fg-muted hover:text-fg hover:underline"
+          >
             {post.community.icon} {post.community.name}
           </Link>
         </>
       )}
-      <span className="text-fg-subtle" aria-hidden="true">·</span>
+      <span className="text-fg-subtle" aria-hidden="true">
+        ·
+      </span>
       <RelativeTime value={post.createdAt} className="text-fg-subtle" />
       {post.editedAt && <span className="text-xs text-fg-subtle">(edited)</span>}
     </div>
@@ -65,7 +75,12 @@ export default function PostCard({ post, showCommunity = true, preview = false }
   return (
     <Card as="article" className="group relative p-5 transition-colors hover:border-line-strong">
       <div className="flex items-start gap-3">
-        <Link to={post.author ? `/profile/${post.author.username}` : '#'} className="relative z-10 shrink-0" tabIndex={-1} aria-hidden="true">
+        <Link
+          to={post.author ? `/profile/${post.author.username}` : '#'}
+          className="relative z-10 shrink-0"
+          tabIndex={-1}
+          aria-hidden="true"
+        >
           <Avatar user={post.author} size="sm" />
         </Link>
         <div className="min-w-0 flex-1">
@@ -76,24 +91,43 @@ export default function PostCard({ post, showCommunity = true, preview = false }
             label="Post actions"
             className="relative z-10 -mt-1 -mr-2"
             trigger={(props) => (
-              <button type="button" className="inline-flex size-8 items-center justify-center rounded-lg text-fg-subtle hover:bg-surface-hover hover:text-fg" {...props}>
+              <button
+                type="button"
+                className="inline-flex size-8 items-center justify-center rounded-lg text-fg-subtle hover:bg-surface-hover hover:text-fg"
+                {...props}
+              >
                 <Ellipsis className="size-4" aria-hidden="true" />
               </button>
             )}
           >
-            <MenuItem icon={Link2} onClick={() => copyPostLink(post.id)}>Copy link</MenuItem>
-            {isAuthor && <MenuItem as={Link} to={`/posts/${post.id}/edit`} icon={Pencil}>Edit post</MenuItem>}
-            {!isAuthor && <MenuItem icon={Flag} danger onClick={() => setReporting(true)}>Report post</MenuItem>}
+            <MenuItem icon={Link2} onClick={() => copyPostLink(post.id)}>
+              Copy link
+            </MenuItem>
+            {isAuthor && (
+              <MenuItem as={Link} to={`/posts/${post.id}/edit`} icon={Pencil}>
+                Edit post
+              </MenuItem>
+            )}
+            {!isAuthor && (
+              <MenuItem icon={Flag} danger onClick={() => setReporting(true)}>
+                Report post
+              </MenuItem>
+            )}
           </Menu>
         )}
       </div>
 
       <h2 className="mt-3 text-lg font-semibold leading-snug tracking-tight text-fg">
-        <Link to={href} className="after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none">
+        <Link
+          to={href}
+          className="after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none"
+        >
           {post.title}
         </Link>
       </h2>
-      {post.excerpt && <p className="mt-1.5 line-clamp-3 text-sm leading-6 text-fg-muted">{post.excerpt}</p>}
+      {post.excerpt && (
+        <p className="mt-1.5 line-clamp-3 text-sm leading-6 text-fg-muted">{post.excerpt}</p>
+      )}
 
       {post.images?.[0] && (
         <img
@@ -126,7 +160,14 @@ export default function PostCard({ post, showCommunity = true, preview = false }
         </div>
       )}
 
-      {reporting && <ReportDialog open onClose={() => setReporting(false)} targetType="Post" targetId={post.id} />}
+      {reporting && (
+        <ReportDialog
+          open
+          onClose={() => setReporting(false)}
+          targetType="Post"
+          targetId={post.id}
+        />
+      )}
     </Card>
   );
 }

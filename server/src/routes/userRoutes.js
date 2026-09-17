@@ -22,8 +22,18 @@ export function createUserRouter({ limiters }) {
   );
   router.delete('/me/avatar', authenticate, userController.removeAvatar);
 
-  router.get('/:username', authenticate, validate({ params: usernameParams }), userController.profile);
-  router.get('/:username/communities', authenticate, validate({ params: usernameParams }), userController.communities);
+  router.get(
+    '/:username',
+    authenticate,
+    validate({ params: usernameParams }),
+    userController.profile,
+  );
+  router.get(
+    '/:username/communities',
+    authenticate,
+    validate({ params: usernameParams }),
+    userController.communities,
+  );
 
   return router;
 }

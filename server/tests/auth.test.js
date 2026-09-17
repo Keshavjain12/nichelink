@@ -13,7 +13,9 @@ import {
 
 // /config looks up the Pro price; keep this suite off the network.
 vi.mock('../src/services/stripeClient.js', () => ({
-  getStripe: () => ({ prices: { retrieve: vi.fn().mockRejectedValue(new Error('Stripe is not reachable in tests')) } }),
+  getStripe: () => ({
+    prices: { retrieve: vi.fn().mockRejectedValue(new Error('Stripe is not reachable in tests')) },
+  }),
 }));
 
 const validRegistration = {
@@ -31,11 +33,18 @@ describe('auth API', () => {
 
   describe('POST /auth/register', () => {
     it('creates a FreeMember, returns an access token and sets a scoped httpOnly refresh cookie', async () => {
-      const res = await request(app).post('/api/v1/auth/register').send(validRegistration).expect(201);
+      const res = await request(app)
+        .post('/api/v1/auth/register')
+        .send(validRegistration)
+        .expect(201);
 
       expect(res.body.success).toBe(true);
       expect(res.body.data.accessToken).toEqual(expect.any(String));
-      expect(res.body.data.user).toMatchObject({ username: 'ada_l', email: 'ada@example.com', role: 'FreeMember' });
+      expect(res.body.data.user).toMatchObject({
+        username: 'ada_l',
+        email: 'ada@example.com',
+        role: 'FreeMember',
+      });
       expect(res.body.data.user.password).toBeUndefined();
       expect(res.body.data.user.permissions).not.toContain('post:create');
 
@@ -131,7 +140,9 @@ describe('auth API', () => {
     it('rate limits repeated failed attempts', async () => {
       const limitedApp = buildApp({ rateLimitEnabled: true });
       const attempt = () =>
-        request(limitedApp).post('/api/v1/auth/login').send({ email: 'x@example.com', password: 'Wrong1234' });
+        request(limitedApp)
+          .post('/api/v1/auth/login')
+          .send({ email: 'x@example.com', password: 'Wrong1234' });
 
       for (let i = 0; i < 10; i += 1) {
         await attempt().expect(401);
@@ -226,7 +237,11 @@ describe('auth API', () => {
 
     it('tolerates a concurrent replay inside the grace window without rotating again', async () => {
       const { cookie } = await signIn();
-      await request(app).post('/api/v1/auth/refresh').set('Cookie', cookie).set(CSRF_HEADERS).expect(200);
+      await request(app)
+        .post('/api/v1/auth/refresh')
+        .set('Cookie', cookie)
+        .set(CSRF_HEADERS)
+        .expect(200);
       const replay = await request(app)
         .post('/api/v1/auth/refresh')
         .set('Cookie', cookie)
@@ -249,14 +264,30 @@ describe('auth API', () => {
         { $set: { revokedAt: new Date(Date.now() - 60_000) } },
       );
 
-      await request(app).post('/api/v1/auth/refresh').set('Cookie', cookie).set(CSRF_HEADERS).expect(401);
-      await request(app).post('/api/v1/auth/refresh').set('Cookie', latestCookie).set(CSRF_HEADERS).expect(401);
+      await request(app)
+        .post('/api/v1/auth/refresh')
+        .set('Cookie', cookie)
+        .set(CSRF_HEADERS)
+        .expect(401);
+      await request(app)
+        .post('/api/v1/auth/refresh')
+        .set('Cookie', latestCookie)
+        .set(CSRF_HEADERS)
+        .expect(401);
     });
 
     it('logout revokes the session', async () => {
       const { cookie } = await signIn();
-      await request(app).post('/api/v1/auth/logout').set('Cookie', cookie).set(CSRF_HEADERS).expect(200);
-      await request(app).post('/api/v1/auth/refresh').set('Cookie', cookie).set(CSRF_HEADERS).expect(401);
+      await request(app)
+        .post('/api/v1/auth/logout')
+        .set('Cookie', cookie)
+        .set(CSRF_HEADERS)
+        .expect(200);
+      await request(app)
+        .post('/api/v1/auth/refresh')
+        .set('Cookie', cookie)
+        .set(CSRF_HEADERS)
+        .expect(401);
     });
   });
 
@@ -285,7 +316,11 @@ describe('auth API', () => {
         .send({ currentPassword: TEST_PASSWORD, newPassword: 'NewPassw0rd!' })
         .expect(200);
 
-      await request(app).post('/api/v1/auth/refresh').set('Cookie', oldCookie).set(CSRF_HEADERS).expect(401);
+      await request(app)
+        .post('/api/v1/auth/refresh')
+        .set('Cookie', oldCookie)
+        .set(CSRF_HEADERS)
+        .expect(401);
       await request(app).get('/api/v1/auth/me').set(oldAccess).expect(401);
       await request(app)
         .post('/api/v1/auth/login')
@@ -302,7 +337,11 @@ describe('platform endpoints', () => {
     expect(health.body.data.database).toBe('up');
 
     const config = await request(app).get('/api/v1/config').expect(200);
-    expect(config.body.data.features).toEqual({ payments: true, paymentsMode: 'test', uploads: true });
+    expect(config.body.data.features).toEqual({
+      payments: true,
+      paymentsMode: 'test',
+      uploads: true,
+    });
 
     const missing = await request(app).get('/api/v1/does-not-exist').expect(404);
     expect(missing.body).toMatchObject({ success: false, code: 'NOT_FOUND' });

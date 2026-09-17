@@ -12,7 +12,9 @@ export function getUnreadCount(userId) {
 }
 
 async function pushUnreadCount(userId) {
-  emitToUser(userId, SOCKET_EVENTS.NOTIFICATION_COUNT, { unreadCount: await getUnreadCount(userId) });
+  emitToUser(userId, SOCKET_EVENTS.NOTIFICATION_COUNT, {
+    unreadCount: await getUnreadCount(userId),
+  });
 }
 
 /**
@@ -66,13 +68,19 @@ export async function markRead(userId, notificationId) {
   const exists = await Notification.exists({ _id: notificationId, recipient: userId });
   if (!exists) throw ApiError.notFound('Notification not found');
 
-  await Notification.updateOne({ _id: notificationId, readAt: null }, { $set: { readAt: new Date() } });
+  await Notification.updateOne(
+    { _id: notificationId, readAt: null },
+    { $set: { readAt: new Date() } },
+  );
   await pushUnreadCount(userId);
   return { unreadCount: await getUnreadCount(userId) };
 }
 
 export async function markAllRead(userId) {
-  await Notification.updateMany({ recipient: userId, readAt: null }, { $set: { readAt: new Date() } });
+  await Notification.updateMany(
+    { recipient: userId, readAt: null },
+    { $set: { readAt: new Date() } },
+  );
   await pushUnreadCount(userId);
   return { unreadCount: 0 };
 }

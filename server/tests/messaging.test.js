@@ -10,7 +10,10 @@ describe('messaging API', () => {
   });
 
   const start = (from, to) =>
-    request(app).post('/api/v1/conversations').set(bearer(from)).send({ recipientId: String(to._id) });
+    request(app)
+      .post('/api/v1/conversations')
+      .set(bearer(from))
+      .send({ recipientId: String(to._id) });
 
   const send = (from, conversationId, body, extra = {}) =>
     request(app)
@@ -31,7 +34,11 @@ describe('messaging API', () => {
     expect(second.body.data.id).toBe(first.body.data.id);
     expect(first.body.data.participant.username).toBe(bob.username);
 
-    await request(app).post('/api/v1/conversations').set(bearer(alice)).send({ recipientId: String(alice._id) }).expect(400);
+    await request(app)
+      .post('/api/v1/conversations')
+      .set(bearer(alice))
+      .send({ recipientId: String(alice._id) })
+      .expect(400);
     await request(app)
       .post('/api/v1/conversations')
       .set(bearer(alice))
@@ -46,7 +53,10 @@ describe('messaging API', () => {
     const conversationId = body.data.id;
 
     // An empty conversation is hidden from the recipient until a message arrives.
-    const beforeMessage = await request(app).get('/api/v1/conversations').set(bearer(bob)).expect(200);
+    const beforeMessage = await request(app)
+      .get('/api/v1/conversations')
+      .set(bearer(bob))
+      .expect(200);
     expect(beforeMessage.body.data).toHaveLength(0);
 
     await send(alice, conversationId, 'Hey Bob, loved your talk on event sourcing!').expect(201);
@@ -59,20 +69,34 @@ describe('messaging API', () => {
       lastMessage: { body: 'Would you be up for a quick call?', senderId: String(alice._id) },
     });
 
-    const unread = await request(app).get('/api/v1/conversations/unread-count').set(bearer(bob)).expect(200);
+    const unread = await request(app)
+      .get('/api/v1/conversations/unread-count')
+      .set(bearer(bob))
+      .expect(200);
     expect(unread.body.data.unreadCount).toBe(2);
     expect(await Notification.countDocuments({ recipient: bob._id, type: 'message' })).toBe(1);
 
-    const history = await request(app).get(`/api/v1/conversations/${conversationId}/messages`).set(bearer(bob)).expect(200);
+    const history = await request(app)
+      .get(`/api/v1/conversations/${conversationId}/messages`)
+      .set(bearer(bob))
+      .expect(200);
     expect(history.body.data.map((message) => message.body)).toEqual([
       'Hey Bob, loved your talk on event sourcing!',
       'Would you be up for a quick call?',
     ]);
 
-    await request(app).patch(`/api/v1/conversations/${conversationId}/read`).set(bearer(bob)).expect(200);
-    const afterRead = await request(app).get(`/api/v1/conversations/${conversationId}`).set(bearer(bob)).expect(200);
+    await request(app)
+      .patch(`/api/v1/conversations/${conversationId}/read`)
+      .set(bearer(bob))
+      .expect(200);
+    const afterRead = await request(app)
+      .get(`/api/v1/conversations/${conversationId}`)
+      .set(bearer(bob))
+      .expect(200);
     expect(afterRead.body.data.unreadCount).toBe(0);
-    expect(await Notification.countDocuments({ recipient: bob._id, type: 'message', readAt: null })).toBe(0);
+    expect(
+      await Notification.countDocuments({ recipient: bob._id, type: 'message', readAt: null }),
+    ).toBe(0);
   });
 
   it('prevents non-participants from reading or writing a conversation (IDOR)', async () => {
@@ -83,10 +107,19 @@ describe('messaging API', () => {
     const conversationId = body.data.id;
     await send(alice, conversationId, 'Private hello').expect(201);
 
-    await request(app).get(`/api/v1/conversations/${conversationId}`).set(bearer(mallory)).expect(404);
-    await request(app).get(`/api/v1/conversations/${conversationId}/messages`).set(bearer(mallory)).expect(404);
+    await request(app)
+      .get(`/api/v1/conversations/${conversationId}`)
+      .set(bearer(mallory))
+      .expect(404);
+    await request(app)
+      .get(`/api/v1/conversations/${conversationId}/messages`)
+      .set(bearer(mallory))
+      .expect(404);
     await send(mallory, conversationId, 'Injected').expect(404);
-    await request(app).patch(`/api/v1/conversations/${conversationId}/read`).set(bearer(mallory)).expect(404);
+    await request(app)
+      .patch(`/api/v1/conversations/${conversationId}/read`)
+      .set(bearer(mallory))
+      .expect(404);
     expect(await Message.countDocuments({ conversation: conversationId })).toBe(1);
   });
 
@@ -101,7 +134,10 @@ describe('messaging API', () => {
     const blocked = await send(free, body.data.id, 'One too many').expect(403);
     expect(blocked.body.code).toBe('DM_LIMIT_REACHED');
 
-    const quota = await request(app).get('/api/v1/conversations/quota').set(bearer(free)).expect(200);
+    const quota = await request(app)
+      .get('/api/v1/conversations/quota')
+      .set(bearer(free))
+      .expect(200);
     expect(quota.body.data).toMatchObject({ unlimited: false, limit: 10, remaining: 0 });
 
     for (let i = 0; i < 12; i += 1) {
@@ -114,8 +150,12 @@ describe('messaging API', () => {
     const bob = await createProUser();
     const { body } = await start(alice, bob).expect(200);
 
-    const first = await send(alice, body.data.id, 'Retry-safe message', { clientId: 'client-msg-0001' }).expect(201);
-    const retry = await send(alice, body.data.id, 'Retry-safe message', { clientId: 'client-msg-0001' }).expect(200);
+    const first = await send(alice, body.data.id, 'Retry-safe message', {
+      clientId: 'client-msg-0001',
+    }).expect(201);
+    const retry = await send(alice, body.data.id, 'Retry-safe message', {
+      clientId: 'client-msg-0001',
+    }).expect(200);
     expect(retry.body.data.id).toBe(first.body.data.id);
     expect(await Message.countDocuments({ conversation: body.data.id })).toBe(1);
   });
@@ -136,7 +176,9 @@ describe('messaging API', () => {
     expect(latest.body.meta.hasMore).toBe(true);
 
     const older = await request(app)
-      .get(`/api/v1/conversations/${body.data.id}/messages?limit=2&before=${latest.body.meta.nextCursor}`)
+      .get(
+        `/api/v1/conversations/${body.data.id}/messages?limit=2&before=${latest.body.meta.nextCursor}`,
+      )
       .set(bearer(alice))
       .expect(200);
     expect(older.body.data.map((message) => message.body)).toEqual(['Message 2', 'Message 3']);

@@ -47,7 +47,10 @@ export default function CommunitiesPage() {
     }
   }, [debouncedSearch, searchParams, setSearchParams]);
 
-  const { data, isLoading, isFetching, error, refetch } = useListCommunitiesQuery({ ...filters, limit: 12 });
+  const { data, isLoading, isFetching, error, refetch } = useListCommunitiesQuery({
+    ...filters,
+    limit: 12,
+  });
 
   return (
     <div className="space-y-6">
@@ -65,8 +68,13 @@ export default function CommunitiesPage() {
 
       <div className="flex flex-col gap-3 md:flex-row">
         <div className="relative flex-1">
-          <label htmlFor="community-search" className="sr-only">Search communities</label>
-          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-fg-subtle" aria-hidden="true" />
+          <label htmlFor="community-search" className="sr-only">
+            Search communities
+          </label>
+          <Search
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-fg-subtle"
+            aria-hidden="true"
+          />
           <Input
             id="community-search"
             type="search"
@@ -77,14 +85,29 @@ export default function CommunitiesPage() {
           />
         </div>
         <div className="flex gap-3">
-          <label htmlFor="community-access" className="sr-only">Access</label>
-          <Select id="community-access" value={filters.access} onChange={(event) => updateFilters({ access: event.target.value })} className="w-36">
+          <label htmlFor="community-access" className="sr-only">
+            Access
+          </label>
+          <Select
+            id="community-access"
+            value={filters.access}
+            onChange={(event) => updateFilters({ access: event.target.value })}
+            className="w-36"
+          >
             <option value="">All access</option>
             <option value="public">Public</option>
             <option value="pro">Pro only</option>
           </Select>
-          <label htmlFor="community-sort" className="sr-only">Sort</label>
-          <Select id="community-sort" value={filters.sort} onChange={(event) => updateFilters({ sort: event.target.value })} className="w-40" disabled={Boolean(filters.q)}>
+          <label htmlFor="community-sort" className="sr-only">
+            Sort
+          </label>
+          <Select
+            id="community-sort"
+            value={filters.sort}
+            onChange={(event) => updateFilters({ sort: event.target.value })}
+            className="w-40"
+            disabled={Boolean(filters.q)}
+          >
             <option value="popular">Most members</option>
             <option value="active">Recently active</option>
             <option value="newest">Newest</option>
@@ -93,7 +116,11 @@ export default function CommunitiesPage() {
         </div>
       </div>
 
-      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0" role="group" aria-label="Filter by category">
+      <div
+        className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0"
+        role="group"
+        aria-label="Filter by category"
+      >
         {['', ...COMMUNITY_CATEGORIES].map((category) => (
           <button
             key={category || 'all'}
@@ -121,8 +148,14 @@ export default function CommunitiesPage() {
               {data.meta.total} {data.meta.total === 1 ? 'community' : 'communities'}
             </p>
           )}
-          <div className={cn('grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3', isFetching && !isLoading && 'opacity-70')}>
-            {isLoading && Array.from({ length: 6 }, (_, index) => <CommunityCardSkeleton key={index} />)}
+          <div
+            className={cn(
+              'grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3',
+              isFetching && !isLoading && 'opacity-70',
+            )}
+          >
+            {isLoading &&
+              Array.from({ length: 6 }, (_, index) => <CommunityCardSkeleton key={index} />)}
             {data?.items.map((community) => (
               <CommunityCard key={community.id} community={community} />
             ))}
@@ -132,10 +165,24 @@ export default function CommunitiesPage() {
               icon={Compass}
               title="No communities match those filters"
               description="Try a different search term or category."
-              action={<Button variant="secondary" onClick={() => { setSearch(''); setSearchParams({}); }}>Clear filters</Button>}
+              action={
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setSearch('');
+                    setSearchParams({});
+                  }}
+                >
+                  Clear filters
+                </Button>
+              }
             />
           )}
-          <Pagination page={filters.page} totalPages={data?.meta.totalPages} onPageChange={(page) => updateFilters({ page })} />
+          <Pagination
+            page={filters.page}
+            totalPages={data?.meta.totalPages}
+            onPageChange={(page) => updateFilters({ page })}
+          />
         </>
       )}
     </div>

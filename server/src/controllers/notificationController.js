@@ -7,7 +7,9 @@ export async function list(req, res) {
 }
 
 export async function unreadCount(req, res) {
-  sendSuccess(res, { data: { unreadCount: await notificationService.getUnreadCount(req.user.id) } });
+  sendSuccess(res, {
+    data: { unreadCount: await notificationService.getUnreadCount(req.user.id) },
+  });
 }
 
 export async function markRead(req, res) {

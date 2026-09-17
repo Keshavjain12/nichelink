@@ -5,6 +5,10 @@ import { sendSuccess } from '../utils/response.js';
 
 export async function getConfig(_req, res) {
   sendSuccess(res, {
-    data: { features: env.features, plans: await pricingService.getPlanCatalog(), limits: PLAN_LIMITS },
+    data: {
+      features: env.features,
+      plans: await pricingService.getPlanCatalog(),
+      limits: PLAN_LIMITS,
+    },
   });
 }

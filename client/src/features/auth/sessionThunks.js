@@ -11,7 +11,11 @@ export const bootstrapSession = () => async (dispatch) => {
     const session = await refreshSession();
     dispatch(session ? sessionStarted(session) : sessionEnded());
   } catch {
-    dispatch(sessionEnded({ bootError: 'We could not reach NicheLink. Some features may be unavailable.' }));
+    dispatch(
+      sessionEnded({
+        bootError: 'We could not reach NicheLink. Some features may be unavailable.',
+      }),
+    );
   }
 };
 

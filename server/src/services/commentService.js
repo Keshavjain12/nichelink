@@ -15,7 +15,9 @@ import { notify } from './notificationService.js';
 const MAX_DESCENDANTS_PER_PAGE = 500;
 
 async function loadReadablePost(postId, viewer) {
-  const post = await Post.findById(postId).select('author community communityAccess status title commentCount').lean();
+  const post = await Post.findById(postId)
+    .select('author community communityAccess status title commentCount')
+    .lean();
   if (!post || post.status !== CONTENT_STATUS.PUBLISHED) throw ApiError.notFound('Post not found');
   assertCanReadCommunity(viewer, { accessType: post.communityAccess });
   return post;
@@ -73,7 +75,8 @@ export async function createComment(postId, viewer, { content, parentId }) {
   if (parentId) {
     parent = await Comment.findOne({ _id: parentId, post: post._id }).lean();
     if (!parent) throw ApiError.notFound('The comment you are replying to no longer exists');
-    if (parent.status !== CONTENT_STATUS.PUBLISHED) throw ApiError.badRequest('You cannot reply to a deleted comment');
+    if (parent.status !== CONTENT_STATUS.PUBLISHED)
+      throw ApiError.badRequest('You cannot reply to a deleted comment');
     if (parent.depth >= CONTENT_LIMITS.COMMENT_MAX_DEPTH - 1) {
       throw ApiError.badRequest('This thread has reached its maximum reply depth');
     }
@@ -122,18 +125,22 @@ export async function createComment(postId, viewer, { content, parentId }) {
   }
 
   await comment.populate('author', USER_SUMMARY_FIELDS);
-  return toComment(comment.toObject(), viewer, { canModerate: await canModerateCommunity(viewer, post.community) });
+  return toComment(comment.toObject(), viewer, {
+    canModerate: await canModerateCommunity(viewer, post.community),
+  });
 }
 
 async function loadPublishedComment(commentId) {
   const comment = await Comment.findById(commentId);
-  if (!comment || comment.status !== CONTENT_STATUS.PUBLISHED) throw ApiError.notFound('Comment not found');
+  if (!comment || comment.status !== CONTENT_STATUS.PUBLISHED)
+    throw ApiError.notFound('Comment not found');
   return comment;
 }
 
 export async function updateComment(commentId, viewer, { content }) {
   const comment = await loadPublishedComment(commentId);
-  if (String(comment.author) !== viewer.id) throw ApiError.forbidden('You can only edit your own comments');
+  if (String(comment.author) !== viewer.id)
+    throw ApiError.forbidden('You can only edit your own comments');
   if (!can(viewer, PERMISSIONS.COMMENT_CREATE)) {
     throw ApiError.forbidden('Upgrade to Pro to edit comments', { code: ERROR_CODES.PRO_REQUIRED });
   }
@@ -148,16 +155,23 @@ export async function deleteComment(commentId, viewer) {
   const comment = await loadPublishedComment(commentId);
   const post = await Post.findById(comment.post).select('community').lean();
   const isAuthor = String(comment.author) === viewer.id;
-  const canModerate = !isAuthor && post ? await canModerateCommunity(viewer, post.community) : false;
+  const canModerate =
+    !isAuthor && post ? await canModerateCommunity(viewer, post.community) : false;
   if (!isAuthor && !canModerate) throw ApiError.forbidden('You can only delete your own comments');
 
-  comment.set({ status: isAuthor ? CONTENT_STATUS.DELETED : CONTENT_STATUS.REMOVED, deletedAt: new Date() });
+  comment.set({
+    status: isAuthor ? CONTENT_STATUS.DELETED : CONTENT_STATUS.REMOVED,
+    deletedAt: new Date(),
+  });
   await comment.save();
 
   await Promise.all([
     Post.updateOne({ _id: comment.post, commentCount: { $gt: 0 } }, { $inc: { commentCount: -1 } }),
     comment.parent &&
-      Comment.updateOne({ _id: comment.parent, replyCount: { $gt: 0 } }, { $inc: { replyCount: -1 } }),
+      Comment.updateOne(
+        { _id: comment.parent, replyCount: { $gt: 0 } },
+        { $inc: { replyCount: -1 } },
+      ),
   ]);
 
   return { id: String(comment._id), status: comment.status };

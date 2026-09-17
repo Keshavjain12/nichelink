@@ -1,4 +1,13 @@
-import { ArrowLeft, Ellipsis, Flag, Link2, MessageCircle, Pencil, ShieldAlert, Trash2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  Ellipsis,
+  Flag,
+  Link2,
+  MessageCircle,
+  Pencil,
+  ShieldAlert,
+  Trash2,
+} from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -27,7 +36,9 @@ function PostSkeleton() {
         <Skeleton className="h-3 w-48" />
       </div>
       <Skeleton className="h-7 w-3/4" />
-      {Array.from({ length: 5 }, (_, index) => <Skeleton key={index} className="h-3 w-full" />)}
+      {Array.from({ length: 5 }, (_, index) => (
+        <Skeleton key={index} className="h-3 w-full" />
+      ))}
     </Card>
   );
 }
@@ -43,17 +54,35 @@ export default function PostPage() {
   const [reporting, setReporting] = useState(false);
   useDocumentTitle(post?.title ?? 'Discussion');
 
-  if (isLoading) return <div className="mx-auto max-w-3xl"><PostSkeleton /></div>;
+  if (isLoading)
+    return (
+      <div className="mx-auto max-w-3xl">
+        <PostSkeleton />
+      </div>
+    );
 
   if (error) {
     if (getErrorCode(error) === 'PRO_REQUIRED') {
       return (
         <div className="mx-auto max-w-3xl">
-          <UpgradeCallout title="This discussion is in a Pro community" description={getErrorMessage(error)} />
+          <UpgradeCallout
+            title="This discussion is in a Pro community"
+            description={getErrorMessage(error)}
+          />
         </div>
       );
     }
-    return <ErrorState error={error} title={error.status === 404 ? 'This discussion no longer exists' : 'Could not load this discussion'} onRetry={error.status === 404 ? undefined : refetch} />;
+    return (
+      <ErrorState
+        error={error}
+        title={
+          error.status === 404
+            ? 'This discussion no longer exists'
+            : 'Could not load this discussion'
+        }
+        onRetry={error.status === 404 ? undefined : refetch}
+      />
+    );
   }
 
   const { permissions } = post;
@@ -62,7 +91,10 @@ export default function PostPage() {
 
   const handleDelete = async () => {
     try {
-      await deletePost({ id: post.id, reason: moderatorRemoval ? removalReason.trim() || undefined : undefined }).unwrap();
+      await deletePost({
+        id: post.id,
+        reason: moderatorRemoval ? removalReason.trim() || undefined : undefined,
+      }).unwrap();
       toast.success(moderatorRemoval ? 'Post removed' : 'Post deleted');
       navigate(post.community ? `/communities/${post.community.slug}` : '/feed', { replace: true });
     } catch (deleteError) {
@@ -82,7 +114,11 @@ export default function PostPage() {
 
       <Card as="article" className="p-5 sm:p-7">
         {post.moderation && (
-          <InlineAlert variant="danger" title="This post was removed by a moderator" className="mb-5">
+          <InlineAlert
+            variant="danger"
+            title="This post was removed by a moderator"
+            className="mb-5"
+          >
             {post.moderation.reason}
           </InlineAlert>
         )}
@@ -91,34 +127,62 @@ export default function PostPage() {
           <Avatar user={post.author} />
           <div className="min-w-0 flex-1 pt-0.5">
             <PostMeta post={post} />
-            {post.author?.headline && <p className="mt-0.5 truncate text-xs text-fg-subtle">{post.author.headline}</p>}
+            {post.author?.headline && (
+              <p className="mt-0.5 truncate text-xs text-fg-subtle">{post.author.headline}</p>
+            )}
           </div>
           <Menu
             label="Post actions"
             trigger={(props) => (
-              <button type="button" className="inline-flex size-9 items-center justify-center rounded-lg text-fg-subtle hover:bg-surface-hover hover:text-fg" {...props}>
+              <button
+                type="button"
+                className="inline-flex size-9 items-center justify-center rounded-lg text-fg-subtle hover:bg-surface-hover hover:text-fg"
+                {...props}
+              >
                 <Ellipsis className="size-5" aria-hidden="true" />
               </button>
             )}
           >
-            <MenuItem icon={Link2} onClick={() => copyPostLink(post.id)}>Copy link</MenuItem>
-            {permissions.canEdit && <MenuItem as={Link} to={`/posts/${post.id}/edit`} icon={Pencil}>Edit post</MenuItem>}
+            <MenuItem icon={Link2} onClick={() => copyPostLink(post.id)}>
+              Copy link
+            </MenuItem>
+            {permissions.canEdit && (
+              <MenuItem as={Link} to={`/posts/${post.id}/edit`} icon={Pencil}>
+                Edit post
+              </MenuItem>
+            )}
             {permissions.canDelete && (
-              <MenuItem icon={moderatorRemoval ? ShieldAlert : Trash2} danger onClick={() => setConfirmDelete(true)}>
+              <MenuItem
+                icon={moderatorRemoval ? ShieldAlert : Trash2}
+                danger
+                onClick={() => setConfirmDelete(true)}
+              >
                 {moderatorRemoval ? 'Remove as moderator' : 'Delete post'}
               </MenuItem>
             )}
-            {permissions.canReport && <MenuItem icon={Flag} danger onClick={() => setReporting(true)}>Report post</MenuItem>}
+            {permissions.canReport && (
+              <MenuItem icon={Flag} danger onClick={() => setReporting(true)}>
+                Report post
+              </MenuItem>
+            )}
           </Menu>
         </div>
 
-        <h1 className="mt-5 text-2xl font-bold leading-tight tracking-tight sm:text-3xl">{post.title}</h1>
+        <h1 className="mt-5 text-2xl font-bold leading-tight tracking-tight sm:text-3xl">
+          {post.title}
+        </h1>
         {post.content && <RichTextContent html={post.content} className="mt-5" />}
 
         {post.images.length > 0 && (
           <div className={`mt-6 grid gap-3 ${post.images.length > 1 ? 'sm:grid-cols-2' : ''}`}>
             {post.images.map((image) => (
-              <a key={image.publicId} href={image.url} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded-xl border border-line">
+              <a
+                key={image.publicId}
+                href={image.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block overflow-hidden rounded-xl border border-line"
+              >
                 <img src={image.url} alt="" loading="lazy" className="w-full object-cover" />
               </a>
             ))}
@@ -127,13 +191,18 @@ export default function PostPage() {
 
         {post.tags.length > 0 && (
           <div className="mt-6 flex flex-wrap gap-1.5">
-            {post.tags.map((tag) => <Tag key={tag}>#{tag}</Tag>)}
+            {post.tags.map((tag) => (
+              <Tag key={tag}>#{tag}</Tag>
+            ))}
           </div>
         )}
 
         <div className="mt-6 -ml-2.5 flex items-center gap-1 border-t border-line pt-4">
           <LikeButton post={post} />
-          <a href="#comments" className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-sm font-medium text-fg-subtle hover:bg-surface-hover hover:text-fg">
+          <a
+            href="#comments"
+            className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-sm font-medium text-fg-subtle hover:bg-surface-hover hover:text-fg"
+          >
             <MessageCircle className="size-4" aria-hidden="true" />
             {post.commentCount} {post.commentCount === 1 ? 'comment' : 'comments'}
           </a>
@@ -142,13 +211,19 @@ export default function PostPage() {
 
       <section id="comments" aria-labelledby="comments-heading" className="scroll-mt-20">
         <Card className="p-5 sm:p-7">
-          <h2 id="comments-heading" className="text-lg font-semibold">Discussion</h2>
+          <h2 id="comments-heading" className="text-lg font-semibold">
+            Discussion
+          </h2>
           <div className="mt-4">
             {permissions.canComment ? (
               <CommentComposer postId={post.id} />
             ) : (
               post.status === 'published' && (
-                <UpgradeCallout compact title="Want to reply?" description="Commenting is part of NicheLink Pro." />
+                <UpgradeCallout
+                  compact
+                  title="Want to reply?"
+                  description="Commenting is part of NicheLink Pro."
+                />
               )
             )}
           </div>
@@ -182,7 +257,14 @@ export default function PostPage() {
           />
         )}
       </ConfirmDialog>
-      {reporting && <ReportDialog open onClose={() => setReporting(false)} targetType="Post" targetId={post.id} />}
+      {reporting && (
+        <ReportDialog
+          open
+          onClose={() => setReporting(false)}
+          targetType="Post"
+          targetId={post.id}
+        />
+      )}
     </div>
   );
 }

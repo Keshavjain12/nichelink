@@ -57,7 +57,10 @@ export async function getSubscriptionStatus(userId) {
 function pickAuthoritativeSubscription(subscriptions) {
   const entitled = subscriptions
     .filter((subscription) => isSubscriptionEntitled(subscription))
-    .sort((a, b) => (b.currentPeriodEnd?.getTime() ?? Infinity) - (a.currentPeriodEnd?.getTime() ?? Infinity));
+    .sort(
+      (a, b) =>
+        (b.currentPeriodEnd?.getTime() ?? Infinity) - (a.currentPeriodEnd?.getTime() ?? Infinity),
+    );
   return entitled[0] ?? subscriptions[0] ?? null;
 }
 
@@ -89,7 +92,10 @@ export async function refreshUserEntitlement(userId) {
 
   if (previousRole !== nextRole) {
     const upgraded = nextRole === ROLES.PRO;
-    logger.info({ userId: String(userId), from: previousRole, to: nextRole }, 'Subscription entitlement changed');
+    logger.info(
+      { userId: String(userId), from: previousRole, to: nextRole },
+      'Subscription entitlement changed',
+    );
     await notify({
       recipient: userId,
       type: NOTIFICATION_TYPES.SUBSCRIPTION,
@@ -107,7 +113,9 @@ export async function refreshUserEntitlement(userId) {
 
 async function resolveUserForStripe({ customerId, userIdHint }) {
   if (customerId) {
-    const byCustomer = await User.findOne({ stripeCustomerId: customerId }).select('+stripeCustomerId').lean();
+    const byCustomer = await User.findOne({ stripeCustomerId: customerId })
+      .select('+stripeCustomerId')
+      .lean();
     if (byCustomer) return byCustomer;
   }
   if (!userIdHint || !/^[a-f0-9]{24}$/i.test(userIdHint)) return null;
@@ -115,11 +123,17 @@ async function resolveUserForStripe({ customerId, userIdHint }) {
   const user = await User.findById(userIdHint).select('+stripeCustomerId').lean();
   if (!user) return null;
   if (user.stripeCustomerId && customerId && user.stripeCustomerId !== customerId) {
-    logger.warn({ userId: userIdHint, customerId }, 'Stripe customer does not match the user; ignoring');
+    logger.warn(
+      { userId: userIdHint, customerId },
+      'Stripe customer does not match the user; ignoring',
+    );
     return null;
   }
   if (!user.stripeCustomerId && customerId) {
-    await User.updateOne({ _id: user._id, stripeCustomerId: { $exists: false } }, { $set: { stripeCustomerId: customerId } });
+    await User.updateOne(
+      { _id: user._id, stripeCustomerId: { $exists: false } },
+      { $set: { stripeCustomerId: customerId } },
+    );
   }
   return user;
 }
@@ -132,7 +146,10 @@ export async function applyStripeSubscription(stripeSubscription, { userIdHint }
     userIdHint: userIdHint ?? stripeSubscription.metadata?.userId,
   });
   if (!user) {
-    logger.warn({ subscriptionId: stripeSubscription.id, customerId }, 'No user found for Stripe subscription');
+    logger.warn(
+      { subscriptionId: stripeSubscription.id, customerId },
+      'No user found for Stripe subscription',
+    );
     return null;
   }
 
@@ -147,7 +164,9 @@ export async function applyStripeSubscription(stripeSubscription, { userIdHint }
         stripeCustomerId: customerId,
         stripePriceId: item?.price?.id,
         status: stripeSubscription.status,
-        currentPeriodStart: toDate(stripeSubscription.current_period_start ?? item?.current_period_start),
+        currentPeriodStart: toDate(
+          stripeSubscription.current_period_start ?? item?.current_period_start,
+        ),
         currentPeriodEnd: toDate(stripeSubscription.current_period_end ?? item?.current_period_end),
         cancelAtPeriodEnd: Boolean(stripeSubscription.cancel_at_period_end),
         canceledAt: toDate(stripeSubscription.canceled_at),
@@ -190,10 +209,14 @@ async function ensureStripeCustomer(user) {
 
 export async function createCheckoutSession(viewer) {
   const stripe = getStripe();
-  const user = await User.findById(viewer.id).select('+stripeCustomerId name email role subscription').lean();
+  const user = await User.findById(viewer.id)
+    .select('+stripeCustomerId name email role subscription')
+    .lean();
   if (!user) throw ApiError.unauthorized();
-  if (user.role === ROLES.ADMIN) throw ApiError.conflict('Admin accounts already include every Pro feature');
-  if (isSubscriptionEntitled(user.subscription)) throw ApiError.conflict('You already have an active Pro membership');
+  if (user.role === ROLES.ADMIN)
+    throw ApiError.conflict('Admin accounts already include every Pro feature');
+  if (isSubscriptionEntitled(user.subscription))
+    throw ApiError.conflict('You already have an active Pro membership');
 
   const customerId = await ensureStripeCustomer(user);
   const session = await stripe.checkout.sessions.create({
@@ -208,7 +231,10 @@ export async function createCheckoutSession(viewer) {
     subscription_data: { metadata: { userId: String(user._id) } },
   });
 
-  logger.info({ userId: String(user._id), sessionId: session.id }, 'Stripe checkout session created');
+  logger.info(
+    { userId: String(user._id), sessionId: session.id },
+    'Stripe checkout session created',
+  );
   return { url: session.url, sessionId: session.id };
 }
 
@@ -227,7 +253,8 @@ export async function confirmCheckoutSession(viewer, sessionId) {
     throw error;
   }
 
-  if (session.client_reference_id !== viewer.id) throw ApiError.notFound('Checkout session not found');
+  if (session.client_reference_id !== viewer.id)
+    throw ApiError.notFound('Checkout session not found');
 
   if (session.status === 'complete' && session.mode === 'subscription' && session.subscription) {
     await syncSubscriptionFromStripe(idOf(session.subscription), { userIdHint: viewer.id });
@@ -237,7 +264,8 @@ export async function confirmCheckoutSession(viewer, sessionId) {
 
 export async function createBillingPortalSession(viewer) {
   const user = await User.findById(viewer.id).select('+stripeCustomerId').lean();
-  if (!user?.stripeCustomerId) throw ApiError.badRequest('No billing account exists for this user yet');
+  if (!user?.stripeCustomerId)
+    throw ApiError.badRequest('No billing account exists for this user yet');
 
   const session = await getStripe().billingPortal.sessions.create({
     customer: user.stripeCustomerId,
@@ -281,7 +309,9 @@ async function processStripeEvent(event) {
   switch (event.type) {
     case 'checkout.session.completed':
       if (object.mode === 'subscription' && object.subscription) {
-        await syncSubscriptionFromStripe(idOf(object.subscription), { userIdHint: object.client_reference_id });
+        await syncSubscriptionFromStripe(idOf(object.subscription), {
+          userIdHint: object.client_reference_id,
+        });
       }
       break;
     case 'invoice.paid':
@@ -297,7 +327,8 @@ async function processStripeEvent(event) {
 
 export async function handleWebhook(rawBody, signature) {
   const stripe = getStripe();
-  if (!signature || !Buffer.isBuffer(rawBody)) throw ApiError.badRequest('Missing Stripe signature');
+  if (!signature || !Buffer.isBuffer(rawBody))
+    throw ApiError.badRequest('Missing Stripe signature');
 
   let event;
   try {
@@ -324,7 +355,10 @@ export async function handleWebhook(rawBody, signature) {
   } catch (error) {
     // Forget the event so Stripe's retry can process it again.
     await StripeEvent.deleteOne({ eventId: event.id });
-    logger.error({ err: error, eventId: event.id, type: event.type }, 'Stripe webhook processing failed');
+    logger.error(
+      { err: error, eventId: event.id, type: event.type },
+      'Stripe webhook processing failed',
+    );
     throw error;
   }
 

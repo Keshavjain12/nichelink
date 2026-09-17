@@ -7,7 +7,9 @@ export async function list(req, res) {
 }
 
 export async function start(req, res) {
-  sendSuccess(res, { data: await messageService.startConversation(req.user, req.body.recipientId) });
+  sendSuccess(res, {
+    data: await messageService.startConversation(req.user, req.body.recipientId),
+  });
 }
 
 export async function detail(req, res) {
@@ -37,7 +39,9 @@ export async function markRead(req, res) {
 }
 
 export async function unreadCount(req, res) {
-  sendSuccess(res, { data: { unreadCount: await messageService.getUnreadMessageTotal(req.user.id) } });
+  sendSuccess(res, {
+    data: { unreadCount: await messageService.getUnreadMessageTotal(req.user.id) },
+  });
 }
 
 export async function quota(req, res) {

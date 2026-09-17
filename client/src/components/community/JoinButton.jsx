@@ -2,7 +2,10 @@ import { Check, Crown, LogIn, UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import { useJoinCommunityMutation, useLeaveCommunityMutation } from '../../features/communities/communitiesApi';
+import {
+  useJoinCommunityMutation,
+  useLeaveCommunityMutation,
+} from '../../features/communities/communitiesApi';
 import { getErrorMessage } from '../../utils/errors';
 import { Button } from '../common/Button';
 import { ConfirmDialog } from '../common/Dialog';
@@ -15,7 +18,14 @@ export default function JoinButton({ community, size = 'sm', className }) {
 
   if (!viewer.isAuthenticated) {
     return (
-      <Button as={Link} to={`/login?redirect=/communities/${community.slug}`} size={size} variant="secondary" leftIcon={LogIn} className={className}>
+      <Button
+        as={Link}
+        to={`/login?redirect=/communities/${community.slug}`}
+        size={size}
+        variant="secondary"
+        leftIcon={LogIn}
+        className={className}
+      >
         Sign in to join
       </Button>
     );
@@ -64,7 +74,14 @@ export default function JoinButton({ community, size = 'sm', className }) {
 
   if (viewer.requiresPro) {
     return (
-      <Button as={Link} to="/pricing" size={size} variant="pro" leftIcon={Crown} className={className}>
+      <Button
+        as={Link}
+        to="/pricing"
+        size={size}
+        variant="pro"
+        leftIcon={Crown}
+        className={className}
+      >
         Pro only
       </Button>
     );

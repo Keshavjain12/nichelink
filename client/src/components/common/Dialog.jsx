@@ -52,7 +52,13 @@ export function Dialog({ open, onClose, title, description, children, footer, si
                 </p>
               )}
             </div>
-            <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label="Close dialog" className="-mt-1 -mr-2">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={onClose}
+              aria-label="Close dialog"
+              className="-mt-1 -mr-2"
+            >
               <X className="size-4" aria-hidden="true" />
             </Button>
           </div>

@@ -184,13 +184,20 @@ export const COMMUNITIES = [
     category: 'Engineering',
     accessType: 'public',
     isFeatured: true,
-    tagline: 'Multi-tenancy, billing, auth and everything else nobody tells you about shipping SaaS',
+    tagline:
+      'Multi-tenancy, billing, auth and everything else nobody tells you about shipping SaaS',
     description:
       'A home for engineers building and scaling software-as-a-service products. Share architecture decisions, billing war stories, pricing experiments and the tooling that keeps small teams shipping.',
     tags: ['saas', 'stripe', 'multi-tenancy', 'node-js', 'react'],
     rules: [
-      { title: 'Share context', description: 'Mention team size, stack and constraints so advice is useful.' },
-      { title: 'No drive-by self-promotion', description: 'Launch posts are welcome when you share lessons, not just links.' },
+      {
+        title: 'Share context',
+        description: 'Mention team size, stack and constraints so advice is useful.',
+      },
+      {
+        title: 'No drive-by self-promotion',
+        description: 'Launch posts are welcome when you share lessons, not just links.',
+      },
     ],
   },
   {
@@ -207,7 +214,10 @@ export const COMMUNITIES = [
       'Practitioners building with large language models and classic ML. We focus on what works in production: evaluation, retrieval quality, guardrails, observability and unit economics.',
     tags: ['llm', 'rag', 'python', 'evals', 'machine-learning'],
     rules: [
-      { title: 'Show your evals', description: 'Claims about quality should come with how you measured it.' },
+      {
+        title: 'Show your evals',
+        description: 'Claims about quality should come with how you measured it.',
+      },
       { title: 'No hype threads', description: 'Keep it technical and grounded in real systems.' },
     ],
   },
@@ -223,7 +233,9 @@ export const COMMUNITIES = [
     description:
       'For product managers leading teams across time zones. Async rituals, writing culture, stakeholder management and discovery practices that survive distance.',
     tags: ['product-management', 'roadmaps', 'async', 'discovery'],
-    rules: [{ title: 'Be specific', description: 'Templates and examples beat abstract frameworks.' }],
+    rules: [
+      { title: 'Be specific', description: 'Templates and examples beat abstract frameworks.' },
+    ],
   },
   {
     key: 'writers',
@@ -237,7 +249,12 @@ export const COMMUNITIES = [
     description:
       'Documentation engineers, technical writers and developer advocates sharing tooling, information architecture, style guides and career advice.',
     tags: ['documentation', 'docs-as-code', 'api-docs', 'writing'],
-    rules: [{ title: 'Portfolio reviews in the weekly thread', description: 'Keeps the board focused on discussions.' }],
+    rules: [
+      {
+        title: 'Portfolio reviews in the weekly thread',
+        description: 'Keeps the board focused on discussions.',
+      },
+    ],
   },
   {
     key: 'nomads',
@@ -252,7 +269,12 @@ export const COMMUNITIES = [
     description:
       'Remote professionals who travel while they work. Swap notes on nomad visas, reliable coworking spaces, health insurance and keeping a routine on the road.',
     tags: ['travel', 'remote-work', 'visas', 'coworking'],
-    rules: [{ title: 'Not legal or tax advice', description: 'Share experiences, and always verify with a professional.' }],
+    rules: [
+      {
+        title: 'Not legal or tax advice',
+        description: 'Share experiences, and always verify with a professional.',
+      },
+    ],
   },
   {
     key: 'devops',
@@ -266,7 +288,9 @@ export const COMMUNITIES = [
     description:
       'Platform, DevOps and SRE practitioners discussing pipelines, infrastructure as code, observability and incident response.',
     tags: ['kubernetes', 'terraform', 'ci-cd', 'observability', 'aws'],
-    rules: [{ title: 'Redact secrets', description: 'Double-check configs and logs before posting.' }],
+    rules: [
+      { title: 'Redact secrets', description: 'Double-check configs and logs before posting.' },
+    ],
   },
   {
     key: 'frontend',
@@ -277,9 +301,15 @@ export const COMMUNITIES = [
     category: 'Engineering',
     accessType: 'public',
     tagline: 'React, TypeScript, CSS, accessibility and web performance',
-    description: 'Frontend and design-system engineers sharing patterns, performance wins and accessibility practices.',
+    description:
+      'Frontend and design-system engineers sharing patterns, performance wins and accessibility practices.',
     tags: ['react', 'typescript', 'css', 'accessibility', 'performance'],
-    rules: [{ title: 'Include a reproduction', description: 'For bugs, link a minimal sandbox when possible.' }],
+    rules: [
+      {
+        title: 'Include a reproduction',
+        description: 'For bugs, link a minimal sandbox when possible.',
+      },
+    ],
   },
   {
     key: 'backend',
@@ -290,9 +320,15 @@ export const COMMUNITIES = [
     category: 'Engineering',
     accessType: 'public',
     tagline: 'APIs, databases and distributed systems that stay up',
-    description: 'Server-side engineers discussing API design, data modelling, queues, caching and scaling.',
+    description:
+      'Server-side engineers discussing API design, data modelling, queues, caching and scaling.',
     tags: ['node-js', 'go', 'postgresql', 'mongodb', 'distributed-systems'],
-    rules: [{ title: 'Numbers welcome', description: 'Share load, latency and data sizes when discussing performance.' }],
+    rules: [
+      {
+        title: 'Numbers welcome',
+        description: 'Share load, latency and data sizes when discussing performance.',
+      },
+    ],
   },
   {
     key: 'founders',
@@ -308,8 +344,14 @@ export const COMMUNITIES = [
       'An invite-quality space for founders to share revenue, pricing, fundraising and hiring details they would never post publicly. Pro members only.',
     tags: ['startups', 'fundraising', 'saas', 'growth'],
     rules: [
-      { title: 'What is shared here stays here', description: 'Do not screenshot or repost member numbers.' },
-      { title: 'Give before you ask', description: 'Share your own metrics when asking for benchmarks.' },
+      {
+        title: 'What is shared here stays here',
+        description: 'Do not screenshot or repost member numbers.',
+      },
+      {
+        title: 'Give before you ask',
+        description: 'Share your own metrics when asking for benchmarks.',
+      },
     ],
   },
   {
@@ -324,13 +366,21 @@ export const COMMUNITIES = [
     description:
       'Staff, principal and distinguished engineers discussing technical strategy, architecture reviews, sponsorship and navigating the IC leadership track. Pro members only.',
     tags: ['leadership', 'architecture', 'career', 'mentoring'],
-    rules: [{ title: 'Assume good intent', description: 'Many of these problems are organisational, not technical.' }],
+    rules: [
+      {
+        title: 'Assume good intent',
+        description: 'Many of these problems are organisational, not technical.',
+      },
+    ],
   },
 ];
 
 /** Community membership: owner is always Priya (admin); moderators listed first. */
 export const MEMBERSHIPS = {
-  saas: { moderators: ['daniel'], members: ['sofia', 'kenji', 'olivia', 'ethan', 'chloe', 'lukas', 'amara'] },
+  saas: {
+    moderators: ['daniel'],
+    members: ['sofia', 'kenji', 'olivia', 'ethan', 'chloe', 'lukas', 'amara'],
+  },
   ai: { moderators: ['meilin'], members: ['nadia', 'daniel', 'rafael', 'ethan', 'arjun'] },
   pm: { moderators: ['chloe'], members: ['tomas', 'kenji', 'olivia'] },
   writers: { moderators: ['hannah'], members: ['sofia', 'olivia', 'meilin'] },
@@ -342,7 +392,8 @@ export const MEMBERSHIPS = {
   staff: { moderators: ['rafael'], members: ['amara', 'hannah', 'meilin'] },
 };
 
-const p = (...paragraphs) => paragraphs.map((text) => (text.startsWith('<') ? text : `<p>${text}</p>`)).join('');
+const p = (...paragraphs) =>
+  paragraphs.map((text) => (text.startsWith('<') ? text : `<p>${text}</p>`)).join('');
 
 export const POSTS = [
   {
@@ -479,7 +530,8 @@ export const POSTS = [
     community: 'nomads',
     author: 'daniel',
     hoursAgo: 40,
-    title: 'Portugal digital nomad visa: my timeline, costs and what the consulate actually asked for',
+    title:
+      'Portugal digital nomad visa: my timeline, costs and what the consulate actually asked for',
     tags: ['visas', 'portugal'],
     content: p(
       'Got my D8 visa last month after a four-month process. Sharing the details because the official pages are vague.',
@@ -634,70 +686,114 @@ export const COMMENTS = {
   'billing-rewrite': [
     {
       author: 'kenji',
-      content: 'Point 2 is gold. We had a customer downgraded by a stale `updated` event that arrived after the upgrade. How long did the cohort migration take end to end?',
+      content:
+        'Point 2 is gold. We had a customer downgraded by a stale `updated` event that arrived after the upgrade. How long did the cohort migration take end to end?',
       replies: [
         {
           author: 'daniel',
-          content: 'About five weeks for 1,400 customers — four cohorts, starting with our friendliest accounts. The script itself was the easy part; support emails were the long tail.',
-          replies: [{ author: 'kenji', content: 'Makes sense. Stealing the friendly-accounts-first idea.' }],
+          content:
+            'About five weeks for 1,400 customers — four cohorts, starting with our friendliest accounts. The script itself was the easy part; support emails were the long tail.',
+          replies: [
+            { author: 'kenji', content: 'Makes sense. Stealing the friendly-accounts-first idea.' },
+          ],
         },
       ],
     },
     {
       author: 'amara',
       content: 'Did you keep your own invoice PDFs or switch to Stripe-hosted invoices?',
-      replies: [{ author: 'daniel', content: 'Switched to hosted invoices with our branding. One less thing to maintain.' }],
+      replies: [
+        {
+          author: 'daniel',
+          content: 'Switched to hosted invoices with our branding. One less thing to maintain.',
+        },
+      ],
     },
   ],
   'rag-evals': [
     {
       author: 'daniel',
-      content: 'How do you keep the model grader from drifting when you upgrade the grading model itself?',
+      content:
+        'How do you keep the model grader from drifting when you upgrade the grading model itself?',
       replies: [
         {
           author: 'meilin',
-          content: 'We pin the grader version and re-run the golden set whenever we change it. If agreement with human labels drops below 90% we do not ship the grader upgrade.',
+          content:
+            'We pin the grader version and re-run the golden set whenever we change it. If agreement with human labels drops below 90% we do not ship the grader upgrade.',
         },
       ],
     },
-    { author: 'rafael', content: 'Eleven minutes per PR is impressive. Are the cases sharded across workers?' },
+    {
+      author: 'rafael',
+      content: 'Eleven minutes per PR is impressive. Are the cases sharded across workers?',
+    },
   ],
   chunking: [
     {
       author: 'meilin',
-      content: 'For docs, chunk by heading hierarchy first and keep code blocks and tables intact even if they exceed your target size. Prepend the page title and section path to every chunk — it helps retrieval a lot.',
-      replies: [{ author: 'hannah', content: 'From the docs side: this is also why consistent heading structure matters so much!' }],
+      content:
+        'For docs, chunk by heading hierarchy first and keep code blocks and tables intact even if they exceed your target size. Prepend the page title and section path to every chunk — it helps retrieval a lot.',
+      replies: [
+        {
+          author: 'hannah',
+          content:
+            'From the docs side: this is also why consistent heading structure matters so much!',
+        },
+      ],
     },
   ],
   'async-roadmap': [
     {
       author: 'kenji',
-      content: 'Tagging comments as question / concern / blocker is such a simple idea. Would love the template.',
-      replies: [{ author: 'chloe', content: 'Adding a link to the template in the post body later today!' }],
+      content:
+        'Tagging comments as question / concern / blocker is such a simple idea. Would love the template.',
+      replies: [
+        { author: 'chloe', content: 'Adding a link to the template in the post body later today!' },
+      ],
     },
   ],
   'docs-as-code': [
     {
       author: 'amara',
-      content: 'Preview deployments changed everything for our design-system docs too. Which static site generator did you land on?',
-      replies: [{ author: 'hannah', content: 'Docusaurus, mainly for versioning and the search integration.' }],
+      content:
+        'Preview deployments changed everything for our design-system docs too. Which static site generator did you land on?',
+      replies: [
+        {
+          author: 'hannah',
+          content: 'Docusaurus, mainly for versioning and the search integration.',
+        },
+      ],
     },
   ],
   'k8s-cost': [
     {
       author: 'daniel',
-      content: 'Thanks for writing this up publicly. Did you consider KEDA for request-based scaling?',
-      replies: [{ author: 'rafael', content: 'Yes — KEDA with the Prometheus scaler is exactly what we moved to.' }],
+      content:
+        'Thanks for writing this up publicly. Did you consider KEDA for request-based scaling?',
+      replies: [
+        {
+          author: 'rafael',
+          content: 'Yes — KEDA with the Prometheus scaler is exactly what we moved to.',
+        },
+      ],
     },
   ],
   'founder-numbers': [
-    { author: 'daniel', content: 'Revenue churn under 2% at that stage is excellent. What drives the expansion revenue?' },
-    { author: 'chloe', content: 'Respect for choosing the August-off option. That is the real metric.' },
+    {
+      author: 'daniel',
+      content:
+        'Revenue churn under 2% at that stage is excellent. What drives the expansion revenue?',
+    },
+    {
+      author: 'chloe',
+      content: 'Respect for choosing the August-off option. That is the real metric.',
+    },
   ],
   idempotency: [
     {
       author: 'rafael',
-      content: 'Insert-first-and-let-the-constraint-arbitrate is the pattern more people need to know.',
+      content:
+        'Insert-first-and-let-the-constraint-arbitrate is the pattern more people need to know.',
     },
   ],
 };
@@ -806,25 +902,61 @@ export const CONVERSATIONS = [
   {
     members: ['sofia', 'daniel'],
     messages: [
-      { from: 'sofia', hoursAgo: 50, body: 'Hi Daniel! I loved your billing migration post. I am a technical writer — would your team ever need help documenting the billing API?' },
-      { from: 'daniel', hoursAgo: 49, body: 'Hey Sofia, thanks! Honestly yes. Our API reference is generated but has zero examples. Do you do contract work?' },
-      { from: 'sofia', hoursAgo: 48, body: 'I do! I can send over a couple of samples from previous API docs projects.' },
-      { from: 'daniel', hoursAgo: 2, body: 'Perfect. Also check out my Stripe webhook toolkit project on Project Match — we need docs help there too 🙂' },
+      {
+        from: 'sofia',
+        hoursAgo: 50,
+        body: 'Hi Daniel! I loved your billing migration post. I am a technical writer — would your team ever need help documenting the billing API?',
+      },
+      {
+        from: 'daniel',
+        hoursAgo: 49,
+        body: 'Hey Sofia, thanks! Honestly yes. Our API reference is generated but has zero examples. Do you do contract work?',
+      },
+      {
+        from: 'sofia',
+        hoursAgo: 48,
+        body: 'I do! I can send over a couple of samples from previous API docs projects.',
+      },
+      {
+        from: 'daniel',
+        hoursAgo: 2,
+        body: 'Perfect. Also check out my Stripe webhook toolkit project on Project Match — we need docs help there too 🙂',
+      },
     ],
   },
   {
     members: ['daniel', 'meilin'],
     messages: [
-      { from: 'meilin', hoursAgo: 30, body: 'Your prompt caching numbers match what we saw. Did you cache the retrieved docs as well or only the system prompt?' },
-      { from: 'daniel', hoursAgo: 29, body: 'Only the static product docs. Retrieved chunks change too often to hit the cache.' },
-      { from: 'meilin', hoursAgo: 28, body: 'Makes sense. Want to compare eval setups over a call next week?' },
+      {
+        from: 'meilin',
+        hoursAgo: 30,
+        body: 'Your prompt caching numbers match what we saw. Did you cache the retrieved docs as well or only the system prompt?',
+      },
+      {
+        from: 'daniel',
+        hoursAgo: 29,
+        body: 'Only the static product docs. Retrieved chunks change too often to hit the cache.',
+      },
+      {
+        from: 'meilin',
+        hoursAgo: 28,
+        body: 'Makes sense. Want to compare eval setups over a call next week?',
+      },
     ],
   },
   {
     members: ['priya', 'daniel'],
     messages: [
-      { from: 'priya', hoursAgo: 20, body: 'Hi Daniel, thanks for moderating SaaS Developers! Could you pin the weekly shipping thread?' },
-      { from: 'daniel', hoursAgo: 19, body: 'Will do. Also flagging that a few new accounts are posting affiliate links — I reported one.' },
+      {
+        from: 'priya',
+        hoursAgo: 20,
+        body: 'Hi Daniel, thanks for moderating SaaS Developers! Could you pin the weekly shipping thread?',
+      },
+      {
+        from: 'daniel',
+        hoursAgo: 19,
+        body: 'Will do. Also flagging that a few new accounts are posting affiliate links — I reported one.',
+      },
     ],
   },
 ];

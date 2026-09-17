@@ -11,7 +11,9 @@ function toTargetPreview(targetType, target) {
       title: target.title,
       excerpt: truncate(target.excerpt ?? '', 200),
       status: target.status,
-      community: target.community ? { name: target.community.name, slug: target.community.slug } : null,
+      community: target.community
+        ? { name: target.community.name, slug: target.community.slug }
+        : null,
       link: `/posts/${id}`,
     };
   }

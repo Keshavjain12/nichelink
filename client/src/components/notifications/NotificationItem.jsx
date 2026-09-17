@@ -1,4 +1,13 @@
-import { AtSign, Briefcase, Crown, Heart, MessageCircle, MessagesSquare, ShieldCheck, Sparkles } from 'lucide-react';
+import {
+  AtSign,
+  Briefcase,
+  Crown,
+  Heart,
+  MessageCircle,
+  MessagesSquare,
+  ShieldCheck,
+  Sparkles,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMarkNotificationReadMutation } from '../../features/notifications/notificationsApi';
 import { cn } from '../../utils/misc';
@@ -19,7 +28,10 @@ const TYPE_ICONS = {
 
 function notificationText(notification) {
   if (!notification.actor) return notification.title;
-  const others = notification.count > 1 ? ` and ${notification.count - 1} other${notification.count > 2 ? 's' : ''}` : '';
+  const others =
+    notification.count > 1
+      ? ` and ${notification.count - 1} other${notification.count > 2 ? 's' : ''}`
+      : '';
   return (
     <>
       <span className="font-semibold text-fg">{notification.actor.name}</span>
@@ -53,7 +65,12 @@ export default function NotificationItem({ notification, onNavigate, compact = f
         {notification.actor ? (
           <Avatar user={notification.actor} size={compact ? 'sm' : 'md'} />
         ) : (
-          <span className={cn('inline-flex items-center justify-center rounded-full bg-brand-100 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300', compact ? 'size-8' : 'size-10')}>
+          <span
+            className={cn(
+              'inline-flex items-center justify-center rounded-full bg-brand-100 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300',
+              compact ? 'size-8' : 'size-10',
+            )}
+          >
             <Icon className="size-4" aria-hidden="true" />
           </span>
         )}
@@ -64,9 +81,18 @@ export default function NotificationItem({ notification, onNavigate, compact = f
         )}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-sm leading-5 text-fg-muted">{notificationText(notification)}</span>
-        {notification.body && <span className="mt-0.5 line-clamp-2 block text-sm text-fg-subtle">{notification.body}</span>}
-        <RelativeTime value={notification.updatedAt} className="mt-1 block text-xs text-fg-subtle" />
+        <span className="block text-sm leading-5 text-fg-muted">
+          {notificationText(notification)}
+        </span>
+        {notification.body && (
+          <span className="mt-0.5 line-clamp-2 block text-sm text-fg-subtle">
+            {notification.body}
+          </span>
+        )}
+        <RelativeTime
+          value={notification.updatedAt}
+          className="mt-1 block text-xs text-fg-subtle"
+        />
       </span>
       {!notification.isRead && (
         <span className="mt-2 size-2 shrink-0 rounded-full bg-brand-500">

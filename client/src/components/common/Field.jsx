@@ -10,7 +10,13 @@ export function Input({ className, ref, ...props }) {
 }
 
 export function Textarea({ className, ref, ...props }) {
-  return <textarea ref={ref} className={cn(controlClass, 'min-h-24 py-2.5 leading-6', className)} {...props} />;
+  return (
+    <textarea
+      ref={ref}
+      className={cn(controlClass, 'min-h-24 py-2.5 leading-6', className)}
+      {...props}
+    />
+  );
 }
 
 export function Select({ className, children, ref, ...props }) {
@@ -36,7 +42,8 @@ export function Label({ htmlFor, children, required, className }) {
 
 /** Label + control + hint/error, wired with aria-describedby for screen readers. */
 export function FormField({ id, label, error, hint, required, className, children }) {
-  const describedBy = [error && `${id}-error`, hint && `${id}-hint`].filter(Boolean).join(' ') || undefined;
+  const describedBy =
+    [error && `${id}-error`, hint && `${id}-hint`].filter(Boolean).join(' ') || undefined;
   return (
     <div className={className}>
       {label && (
@@ -51,7 +58,11 @@ export function FormField({ id, label, error, hint, required, className, childre
         </p>
       )}
       {error && (
-        <p id={`${id}-error`} role="alert" className="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">
+        <p
+          id={`${id}-error`}
+          role="alert"
+          className="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400"
+        >
           {error}
         </p>
       )}
@@ -61,7 +72,14 @@ export function FormField({ id, label, error, hint, required, className, childre
 
 export function TextField({ id, label, error, hint, required, className, ...inputProps }) {
   return (
-    <FormField id={id} label={label} error={error} hint={hint} required={required} className={className}>
+    <FormField
+      id={id}
+      label={label}
+      error={error}
+      hint={hint}
+      required={required}
+      className={className}
+    >
       {(fieldProps) => <Input {...fieldProps} {...inputProps} />}
     </FormField>
   );
@@ -69,15 +87,38 @@ export function TextField({ id, label, error, hint, required, className, ...inpu
 
 export function TextareaField({ id, label, error, hint, required, className, ...inputProps }) {
   return (
-    <FormField id={id} label={label} error={error} hint={hint} required={required} className={className}>
+    <FormField
+      id={id}
+      label={label}
+      error={error}
+      hint={hint}
+      required={required}
+      className={className}
+    >
       {(fieldProps) => <Textarea {...fieldProps} {...inputProps} />}
     </FormField>
   );
 }
 
-export function SelectField({ id, label, error, hint, required, className, children, ...selectProps }) {
+export function SelectField({
+  id,
+  label,
+  error,
+  hint,
+  required,
+  className,
+  children,
+  ...selectProps
+}) {
   return (
-    <FormField id={id} label={label} error={error} hint={hint} required={required} className={className}>
+    <FormField
+      id={id}
+      label={label}
+      error={error}
+      hint={hint}
+      required={required}
+      className={className}
+    >
       {(fieldProps) => (
         <Select {...fieldProps} {...selectProps}>
           {children}

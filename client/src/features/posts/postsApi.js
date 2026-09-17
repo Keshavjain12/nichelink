@@ -9,7 +9,9 @@ function patchPostEverywhere(dispatch, getState, postId, recipe) {
   const patches = api.util.selectCachedArgsForQuery(getState(), 'listPosts').map((args) =>
     dispatch(
       api.util.updateQueryData('listPosts', args, (draft) => {
-        draft.pages.forEach((page) => page.items.forEach((post) => post.id === postId && recipe(post)));
+        draft.pages.forEach((page) =>
+          page.items.forEach((post) => post.id === postId && recipe(post)),
+        );
       }),
     ),
   );
@@ -42,7 +44,8 @@ export const postsApi = api.injectEndpoints({
     listPosts: build.infiniteQuery({
       infiniteQueryOptions: {
         initialPageParam: 1,
-        getNextPageParam: (lastPage, _allPages, lastPageParam) => (lastPage.meta.hasMore ? lastPageParam + 1 : undefined),
+        getNextPageParam: (lastPage, _allPages, lastPageParam) =>
+          lastPage.meta.hasMore ? lastPageParam + 1 : undefined,
       },
       query: ({ queryArg, pageParam }) => ({
         url: '/posts',
@@ -59,7 +62,11 @@ export const postsApi = api.injectEndpoints({
     createPost: build.mutation({
       query: (body) => ({ url: '/posts', method: 'POST', body }),
       transformResponse: unwrapData,
-      invalidatesTags: (_result, _error, body) => [LIST, { type: 'Community', id: body.community }, 'Profile'],
+      invalidatesTags: (_result, _error, body) => [
+        LIST,
+        { type: 'Community', id: body.community },
+        'Profile',
+      ],
     }),
     updatePost: build.mutation({
       query: ({ id, ...body }) => ({ url: `/posts/${id}`, method: 'PATCH', body }),
@@ -67,9 +74,18 @@ export const postsApi = api.injectEndpoints({
       invalidatesTags: (_result, _error, { id }) => [LIST, { type: 'Post', id }],
     }),
     deletePost: build.mutation({
-      query: ({ id, reason }) => ({ url: `/posts/${id}`, method: 'DELETE', body: reason ? { reason } : undefined }),
+      query: ({ id, reason }) => ({
+        url: `/posts/${id}`,
+        method: 'DELETE',
+        body: reason ? { reason } : undefined,
+      }),
       transformResponse: unwrapData,
-      invalidatesTags: (_result, _error, { id }) => [LIST, { type: 'Post', id }, 'Profile', { type: 'Community', id: 'LIST' }],
+      invalidatesTags: (_result, _error, { id }) => [
+        LIST,
+        { type: 'Post', id },
+        'Profile',
+        { type: 'Community', id: 'LIST' },
+      ],
     }),
     likePost: build.mutation({
       query: (id) => ({ url: `/posts/${id}/reactions`, method: 'PUT' }),
@@ -90,14 +106,20 @@ export const postsApi = api.injectEndpoints({
       transformResponse: unwrapData,
     }),
     listComments: build.query({
-      query: ({ postId, sort = 'oldest' }) => ({ url: `/posts/${postId}/comments`, params: { limit: 50, sort } }),
+      query: ({ postId, sort = 'oldest' }) => ({
+        url: `/posts/${postId}/comments`,
+        params: { limit: 50, sort },
+      }),
       transformResponse: unwrapList,
       providesTags: (_result, _error, { postId }) => [{ type: 'Comment', id: postId }],
     }),
     createComment: build.mutation({
       query: ({ postId, ...body }) => ({ url: `/posts/${postId}/comments`, method: 'POST', body }),
       transformResponse: unwrapData,
-      invalidatesTags: (_result, _error, { postId }) => [{ type: 'Comment', id: postId }, { type: 'Post', id: postId }],
+      invalidatesTags: (_result, _error, { postId }) => [
+        { type: 'Comment', id: postId },
+        { type: 'Post', id: postId },
+      ],
     }),
     updateComment: build.mutation({
       query: ({ id, content }) => ({ url: `/comments/${id}`, method: 'PATCH', body: { content } }),
@@ -107,7 +129,10 @@ export const postsApi = api.injectEndpoints({
     deleteComment: build.mutation({
       query: ({ id }) => ({ url: `/comments/${id}`, method: 'DELETE' }),
       transformResponse: unwrapData,
-      invalidatesTags: (_result, _error, { postId }) => [{ type: 'Comment', id: postId }, { type: 'Post', id: postId }],
+      invalidatesTags: (_result, _error, { postId }) => [
+        { type: 'Comment', id: postId },
+        { type: 'Post', id: postId },
+      ],
     }),
     createReport: build.mutation({
       query: (body) => ({ url: '/reports', method: 'POST', body }),

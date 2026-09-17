@@ -2,11 +2,24 @@ import { Router } from 'express';
 import * as commentController from '../controllers/commentController.js';
 import * as postController from '../controllers/postController.js';
 import { PERMISSIONS } from '../constants/permissions.js';
-import { authenticate, optionalAuthenticate, requirePermission } from '../middleware/authenticate.js';
+import {
+  authenticate,
+  optionalAuthenticate,
+  requirePermission,
+} from '../middleware/authenticate.js';
 import { validate } from '../middleware/validate.js';
-import { createCommentBody, listCommentsQuery, updateCommentBody } from '../validators/commentValidators.js';
+import {
+  createCommentBody,
+  listCommentsQuery,
+  updateCommentBody,
+} from '../validators/commentValidators.js';
 import { idParams } from '../validators/common.js';
-import { createPostBody, deletePostBody, listPostsQuery, updatePostBody } from '../validators/postValidators.js';
+import {
+  createPostBody,
+  deletePostBody,
+  listPostsQuery,
+  updatePostBody,
+} from '../validators/postValidators.js';
 
 export function createPostRouter({ limiters }) {
   const router = Router();
@@ -22,8 +35,19 @@ export function createPostRouter({ limiters }) {
   );
 
   router.get('/:id', authenticate, validate({ params: idParams }), postController.detail);
-  router.patch('/:id', authenticate, limiters.write, validate({ params: idParams, body: updatePostBody }), postController.update);
-  router.delete('/:id', authenticate, validate({ params: idParams, body: deletePostBody }), postController.remove);
+  router.patch(
+    '/:id',
+    authenticate,
+    limiters.write,
+    validate({ params: idParams, body: updatePostBody }),
+    postController.update,
+  );
+  router.delete(
+    '/:id',
+    authenticate,
+    validate({ params: idParams, body: deletePostBody }),
+    postController.remove,
+  );
 
   router.put(
     '/:id/reactions',
@@ -40,7 +64,12 @@ export function createPostRouter({ limiters }) {
     postController.unlike,
   );
 
-  router.get('/:id/comments', authenticate, validate({ params: idParams, query: listCommentsQuery }), postController.listComments);
+  router.get(
+    '/:id/comments',
+    authenticate,
+    validate({ params: idParams, query: listCommentsQuery }),
+    postController.listComments,
+  );
   router.post(
     '/:id/comments',
     authenticate,

@@ -21,11 +21,27 @@ export function createAdminRouter() {
 
   router.get('/stats', adminController.stats);
   router.get('/users', validate({ query: listUsersQuery }), adminController.users);
-  router.patch('/users/:id/status', validate({ params: idParams, body: userStatusBody }), adminController.updateUserStatus);
-  router.patch('/users/:id/admin', validate({ params: idParams, body: userAdminBody }), adminController.updateUserAdmin);
-  router.get('/communities', validate({ query: listAdminCommunitiesQuery }), adminController.communities);
+  router.patch(
+    '/users/:id/status',
+    validate({ params: idParams, body: userStatusBody }),
+    adminController.updateUserStatus,
+  );
+  router.patch(
+    '/users/:id/admin',
+    validate({ params: idParams, body: userAdminBody }),
+    adminController.updateUserAdmin,
+  );
+  router.get(
+    '/communities',
+    validate({ query: listAdminCommunitiesQuery }),
+    adminController.communities,
+  );
   router.get('/reports', validate({ query: listReportsQuery }), adminController.reports);
-  router.patch('/reports/:id', validate({ params: idParams, body: resolveReportBody }), adminController.resolveReport);
+  router.patch(
+    '/reports/:id',
+    validate({ params: idParams, body: resolveReportBody }),
+    adminController.resolveReport,
+  );
   router.get('/audit-logs', validate({ query: paginationQuery }), adminController.auditLogs);
 
   return router;

@@ -22,7 +22,10 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
           {footer && <div className="mt-8 text-center text-sm text-fg-muted">{footer}</div>}
         </div>
       </main>
-      <aside className="relative hidden overflow-hidden bg-linear-to-br from-brand-700 via-violet-700 to-fuchsia-700 lg:block" aria-hidden="true">
+      <aside
+        className="relative hidden overflow-hidden bg-linear-to-br from-brand-700 via-violet-700 to-fuchsia-700 lg:block"
+        aria-hidden="true"
+      >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.18),transparent_45%)]" />
         <div className="relative flex h-full flex-col justify-center px-16 text-white">
           <p className="text-sm font-semibold uppercase tracking-widest text-white/70">NicheLink</p>

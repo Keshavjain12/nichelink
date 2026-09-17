@@ -26,6 +26,7 @@ React 19 + Vite + Redux Toolkit  ⇄  Express 5 + Socket.io + Mongoose  ⇄  Mon
 ## Features
 
 **Communities & content**
+
 - Public and Pro-only communities with categories, tags, rules, moderators and featured placement
 - Memberships with community roles (member / moderator / owner) and atomic member counts
 - Posts with a rich text editor (Quill), sanitized HTML, image attachments, tags and soft deletion
@@ -33,19 +34,23 @@ React 19 + Vite + Redux Toolkit  ⇄  Express 5 + Socket.io + Mongoose  ⇄  Mon
 - Feed with Latest / Trending / Top sorting, "my communities" scope, infinite scroll and search
 
 **Real-time messaging**
+
 - 1-to-1 conversations with instant delivery, presence, typing indicators and read receipts
 - Optimistic sending with `clientId` de-duplication and an automatic REST fallback when the socket drops
 - Message history with cursor pagination; unread badges across the app
 
 **Project Match**
+
 - Pro members post collaboration requests (type, commitment, compensation, skills, remote)
 - Anyone can express interest with a message; authors accept or decline and message applicants
 
 **Membership & monetization**
+
 - Free vs Pro plans, Stripe Checkout, billing portal, cancel/resume at period end
 - Pro access derived exclusively from signature-verified, idempotent Stripe webhooks
 
 **Platform**
+
 - Role-based access control (Guest / FreeMember / ProMember / Admin) enforced server-side
 - Notifications (in-app + real-time) for replies, reactions, messages, project interest and account events
 - Global search across communities, people, posts and projects, with type-ahead suggestions
@@ -55,12 +60,12 @@ React 19 + Vite + Redux Toolkit  ⇄  Express 5 + Socket.io + Mongoose  ⇄  Mon
 
 ## Tech stack
 
-| Layer | Choices |
-| --- | --- |
-| Frontend | React 19, Vite, React Router 7, Redux Toolkit + RTK Query, Tailwind CSS 4, React Hook Form + Zod, Socket.io client, Quill, DOMPurify, Recharts, Lucide, Sonner |
-| Backend | Node 24, Express 5, Mongoose 9, Socket.io, JWT, bcrypt, Zod, Helmet, express-rate-limit, sanitize-html, multer, pino |
-| Data & services | MongoDB, Stripe, Cloudinary |
-| Tooling | npm workspaces, Vitest, Supertest, Testing Library, ESLint 9/10 flat config, Prettier, GitHub Actions, Docker |
+| Layer           | Choices                                                                                                                                                        |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Frontend        | React 19, Vite, React Router 7, Redux Toolkit + RTK Query, Tailwind CSS 4, React Hook Form + Zod, Socket.io client, Quill, DOMPurify, Recharts, Lucide, Sonner |
+| Backend         | Node 24, Express 5, Mongoose 9, Socket.io, JWT, bcrypt, Zod, Helmet, express-rate-limit, sanitize-html, multer, pino                                           |
+| Data & services | MongoDB, Stripe, Cloudinary                                                                                                                                    |
+| Tooling         | npm workspaces, Vitest, Supertest, Testing Library, ESLint 9/10 flat config, Prettier, GitHub Actions, Docker                                                  |
 
 ## Architecture
 
@@ -82,16 +87,16 @@ Deep dives: [architecture](docs/architecture.md) · [database & ER diagram](docs
 
 > Run `npm run dev` and `npm run seed` to explore the seeded demo content.
 
-| Screen | Path |
-| --- | --- |
-| Landing page | `/` |
-| Feed with trending communities | `/feed` |
-| Community board | `/communities/saas-developers` |
-| Discussion with nested comments | `/posts/:id` |
-| Real-time messages | `/messages` |
-| Project Match | `/projects` |
-| Pricing & billing | `/pricing`, `/settings/billing` |
-| Admin dashboard | `/admin` |
+| Screen                          | Path                            |
+| ------------------------------- | ------------------------------- |
+| Landing page                    | `/`                             |
+| Feed with trending communities  | `/feed`                         |
+| Community board                 | `/communities/saas-developers`  |
+| Discussion with nested comments | `/posts/:id`                    |
+| Real-time messages              | `/messages`                     |
+| Project Match                   | `/projects`                     |
+| Pricing & billing               | `/pricing`, `/settings/billing` |
+| Admin dashboard                 | `/admin`                        |
 
 ## Getting started
 
@@ -154,28 +159,28 @@ validated by magic bytes and stored under `nichelink/users/<userId>/`.
 
 Full documentation in [`server/.env.example`](server/.env.example) and [`client/.env.example`](client/.env.example).
 
-| Variable | Required | Purpose |
-| --- | --- | --- |
-| `MONGODB_URI` | ✅ | MongoDB connection string |
-| `JWT_ACCESS_SECRET` | ✅ | Access-token signing key (≥ 32 chars) |
-| `CLIENT_URL` | ✅ in production | SPA origin for CORS and Stripe redirects |
-| `JWT_ACCESS_EXPIRES_IN`, `REFRESH_TOKEN_TTL_DAYS` | — | Token lifetimes (15m / 30 days) |
-| `COOKIE_SAMESITE`, `COOKIE_SECURE`, `TRUST_PROXY` | — | Cookie and proxy behaviour |
-| `RATE_LIMIT_ENABLED`, `LOG_LEVEL`, `PORT` | — | Operational tuning |
-| `CLOUDINARY_*` | — | Enables image uploads |
-| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRO_PRICE_ID` | — | Enables payments |
-| `SEED_DEMO_PASSWORD` | — | Overrides the seeded demo password |
-| `VITE_API_URL`, `VITE_SOCKET_URL` | — | Client endpoints (defaults suit the dev proxy) |
+| Variable                                                            | Required         | Purpose                                        |
+| ------------------------------------------------------------------- | ---------------- | ---------------------------------------------- |
+| `MONGODB_URI`                                                       | ✅               | MongoDB connection string                      |
+| `JWT_ACCESS_SECRET`                                                 | ✅               | Access-token signing key (≥ 32 chars)          |
+| `CLIENT_URL`                                                        | ✅ in production | SPA origin for CORS and Stripe redirects       |
+| `JWT_ACCESS_EXPIRES_IN`, `REFRESH_TOKEN_TTL_DAYS`                   | —                | Token lifetimes (15m / 30 days)                |
+| `COOKIE_SAMESITE`, `COOKIE_SECURE`, `TRUST_PROXY`                   | —                | Cookie and proxy behaviour                     |
+| `RATE_LIMIT_ENABLED`, `LOG_LEVEL`, `PORT`                           | —                | Operational tuning                             |
+| `CLOUDINARY_*`                                                      | —                | Enables image uploads                          |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRO_PRICE_ID` | —                | Enables payments                               |
+| `SEED_DEMO_PASSWORD`                                                | —                | Overrides the seeded demo password             |
+| `VITE_API_URL`, `VITE_SOCKET_URL`                                   | —                | Client endpoints (defaults suit the dev proxy) |
 
 ## Demo accounts
 
 After `npm run seed` (development only — never seed production):
 
-| Role | Email | Password |
-| --- | --- | --- |
-| Admin | `admin@nichelink.demo` | `NicheLink-Demo-2026!` |
-| Pro member | `pro@nichelink.demo` | `NicheLink-Demo-2026!` |
-| Free member | `free@nichelink.demo` | `NicheLink-Demo-2026!` |
+| Role        | Email                  | Password               |
+| ----------- | ---------------------- | ---------------------- |
+| Admin       | `admin@nichelink.demo` | `NicheLink-Demo-2026!` |
+| Pro member  | `pro@nichelink.demo`   | `NicheLink-Demo-2026!` |
+| Free member | `free@nichelink.demo`  | `NicheLink-Demo-2026!` |
 
 Set `SEED_DEMO_PASSWORD` to use your own. These credentials exist only in seeded development data.
 

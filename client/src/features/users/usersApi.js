@@ -45,7 +45,10 @@ export const usersApi = api.injectEndpoints({
       invalidatesTags: ['Profile'],
     }),
     search: build.query({
-      query: ({ q, type = 'all', page = 1 }) => ({ url: '/search', params: { q, type, page, limit: 20 } }),
+      query: ({ q, type = 'all', page = 1 }) => ({
+        url: '/search',
+        params: { q, type, page, limit: 20 },
+      }),
       transformResponse: unwrapData,
       providesTags: ['Search'],
     }),

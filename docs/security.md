@@ -4,16 +4,16 @@ Every rule below is enforced on the server. The client's permission list only sh
 
 ## Authentication
 
-| Concern | Implementation |
-| --- | --- |
-| Password storage | bcrypt, cost 12 (cost 4 in tests only), `select: false`, never serialized |
-| Password policy | ≥ 8 characters with upper, lower and a digit; ≤ 72 bytes (bcrypt's limit) |
-| Access tokens | HS256 JWT, 15 minutes, issuer/audience checked, kept **in memory** on the client |
-| Refresh tokens | 256-bit random, only the SHA-256 hash stored, httpOnly cookie scoped to `/api/v1/auth`, TTL index |
-| Rotation | Every refresh rotates the token; tokens belong to a family |
-| Theft detection | Re-use of a rotated token outside a 20 s grace window revokes the whole family |
-| Session invalidation | Password change sets `passwordChangedAt`; older access tokens are rejected and all refresh tokens revoked |
-| Suspension | `authenticate` reloads the user on every request, so a suspended account loses access immediately; sockets are disconnected and refresh tokens revoked |
+| Concern              | Implementation                                                                                                                                         |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Password storage     | bcrypt, cost 12 (cost 4 in tests only), `select: false`, never serialized                                                                              |
+| Password policy      | ≥ 8 characters with upper, lower and a digit; ≤ 72 bytes (bcrypt's limit)                                                                              |
+| Access tokens        | HS256 JWT, 15 minutes, issuer/audience checked, kept **in memory** on the client                                                                       |
+| Refresh tokens       | 256-bit random, only the SHA-256 hash stored, httpOnly cookie scoped to `/api/v1/auth`, TTL index                                                      |
+| Rotation             | Every refresh rotates the token; tokens belong to a family                                                                                             |
+| Theft detection      | Re-use of a rotated token outside a 20 s grace window revokes the whole family                                                                         |
+| Session invalidation | Password change sets `passwordChangedAt`; older access tokens are rejected and all refresh tokens revoked                                              |
+| Suspension           | `authenticate` reloads the user on every request, so a suspended account loses access immediately; sockets are disconnected and refresh tokens revoked |
 
 **Why not a JWT in `localStorage`?** Any XSS could read it. **Why not only a cookie?** The Socket.io
 gateway may live on another origin, where third-party cookie rules are unreliable. A short-lived in-memory
@@ -105,8 +105,8 @@ The refresh cookie is `SameSite=Lax` by default (first-party when the SPA proxie
 
 `npm audit` reports one advisory, reviewed and accepted:
 
-| Package | Advisory | Status |
-| --- | --- | --- |
+| Package                | Advisory                                                                                                                       | Status                                   |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------- |
 | `quill@2.0.3` (client) | [GHSA-v3m3-f69x-jf25](https://github.com/advisories/GHSA-v3m3-f69x-jf25) — XSS via the HTML export feature (`getSemanticHTML`) | **Mitigated; no patched release exists** |
 
 Why it does not expose NicheLink users:

@@ -12,7 +12,9 @@ export function useDebouncedValue(value, delayMs = 300) {
 
 export function useDocumentTitle(title) {
   useEffect(() => {
-    document.title = title ? `${title} · ${APP_NAME}` : `${APP_NAME} — Find your people. Build your niche.`;
+    document.title = title
+      ? `${title} · ${APP_NAME}`
+      : `${APP_NAME} — Find your people. Build your niche.`;
   }, [title]);
 }
 

@@ -30,8 +30,8 @@ Client                      API                          Stripe
 Two independent paths reach the same state:
 
 - **Webhooks are authoritative** for the whole lifecycle (created, updated, canceled, payment failures).
-- **`/checkout/confirm`** is a fast path for the success page. The server retrieves the session *from
-  Stripe* and checks `client_reference_id === req.user.id`. A `?success=true` query parameter proves
+- **`/checkout/confirm`** is a fast path for the success page. The server retrieves the session _from
+  Stripe_ and checks `client_reference_id === req.user.id`. A `?success=true` query parameter proves
   nothing and is never read.
 
 The success page polls `/subscriptions/me` while the webhook lands, and honestly reports "still

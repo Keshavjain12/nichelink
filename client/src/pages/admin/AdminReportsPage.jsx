@@ -17,19 +17,52 @@ import { useDocumentTitle } from '../../hooks/common';
 import { getErrorMessage } from '../../utils/errors';
 
 const ACTIONS = {
-  dismiss: { label: 'Dismiss', icon: Check, variant: 'secondary', title: 'Dismiss this report?', description: 'No action will be taken. All open reports on this target are closed.', confirm: 'Dismiss report' },
-  remove_content: { label: 'Remove content', icon: Trash2, variant: 'danger', title: 'Remove this content?', description: 'The content is hidden from members and its author is notified.', confirm: 'Remove content' },
-  suspend_user: { label: 'Suspend author', icon: Ban, variant: 'danger', title: 'Suspend this member?', description: 'They are signed out everywhere and cannot sign in until reactivated.', confirm: 'Suspend member' },
+  dismiss: {
+    label: 'Dismiss',
+    icon: Check,
+    variant: 'secondary',
+    title: 'Dismiss this report?',
+    description: 'No action will be taken. All open reports on this target are closed.',
+    confirm: 'Dismiss report',
+  },
+  remove_content: {
+    label: 'Remove content',
+    icon: Trash2,
+    variant: 'danger',
+    title: 'Remove this content?',
+    description: 'The content is hidden from members and its author is notified.',
+    confirm: 'Remove content',
+  },
+  suspend_user: {
+    label: 'Suspend author',
+    icon: Ban,
+    variant: 'danger',
+    title: 'Suspend this member?',
+    description: 'They are signed out everywhere and cannot sign in until reactivated.',
+    confirm: 'Suspend member',
+  },
 };
 
-const RESOLUTION_LABELS = { none: 'No action', content_removed: 'Content removed', user_suspended: 'Member suspended' };
+const RESOLUTION_LABELS = {
+  none: 'No action',
+  content_removed: 'Content removed',
+  user_suspended: 'Member suspended',
+};
 
 function TargetPreview({ report }) {
   const { target, targetType } = report;
-  if (!target) return <p className="text-sm text-fg-subtle italic">The reported {targetType.toLowerCase()} no longer exists.</p>;
+  if (!target)
+    return (
+      <p className="text-sm text-fg-subtle italic">
+        The reported {targetType.toLowerCase()} no longer exists.
+      </p>
+    );
 
   return (
-    <Link to={target.link} className="group block rounded-xl border border-line bg-surface-muted/50 p-3 transition-colors hover:border-line-strong">
+    <Link
+      to={target.link}
+      className="group block rounded-xl border border-line bg-surface-muted/50 p-3 transition-colors hover:border-line-strong"
+    >
       {targetType === 'User' ? (
         <span className="flex items-center gap-3">
           <Avatar user={target} size="sm" />
@@ -40,12 +73,17 @@ function TargetPreview({ report }) {
         </span>
       ) : (
         <>
-          {target.title && <span className="block text-sm font-semibold text-fg">{target.title}</span>}
+          {target.title && (
+            <span className="block text-sm font-semibold text-fg">{target.title}</span>
+          )}
           <span className="mt-0.5 line-clamp-3 block text-sm text-fg-muted">{target.excerpt}</span>
           <span className="mt-2 flex flex-wrap items-center gap-2 text-xs text-fg-subtle">
             {target.community && <span>in {target.community.name}</span>}
             {target.status !== 'published' && <Badge variant="danger">{target.status}</Badge>}
-            <ExternalLink className="size-3 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
+            <ExternalLink
+              className="size-3 opacity-0 transition-opacity group-hover:opacity-100"
+              aria-hidden="true"
+            />
           </span>
         </>
       )}
@@ -64,8 +102,14 @@ export default function AdminReportsPage() {
 
   const confirm = async () => {
     try {
-      const result = await resolveReport({ id: pending.report.id, action: pending.action, note: note.trim() || undefined }).unwrap();
-      toast.success(result.resolvedCount > 1 ? `${result.resolvedCount} reports resolved` : 'Report resolved');
+      const result = await resolveReport({
+        id: pending.report.id,
+        action: pending.action,
+        note: note.trim() || undefined,
+      }).unwrap();
+      toast.success(
+        result.resolvedCount > 1 ? `${result.resolvedCount} reports resolved` : 'Report resolved',
+      );
       setPending(null);
       setNote('');
     } catch (resolveError) {
@@ -78,7 +122,10 @@ export default function AdminReportsPage() {
       <Tabs
         label="Report status"
         value={status}
-        onChange={(value) => { setStatus(value); setPage(1); }}
+        onChange={(value) => {
+          setStatus(value);
+          setPage(1);
+        }}
         tabs={[
           { value: 'open', label: 'Moderation queue' },
           { value: 'resolved', label: 'Resolved' },
@@ -90,36 +137,71 @@ export default function AdminReportsPage() {
       {error && <ErrorState error={error} onRetry={refetch} />}
       {isLoading && [0, 1, 2].map((index) => <Skeleton key={index} className="h-40 rounded-2xl" />)}
       {data?.items.length === 0 && (
-        <EmptyState icon={ShieldCheck} title={status === 'open' ? 'The moderation queue is empty' : 'No reports here'} description={status === 'open' ? 'Nice — nothing needs your attention right now.' : undefined} />
+        <EmptyState
+          icon={ShieldCheck}
+          title={status === 'open' ? 'The moderation queue is empty' : 'No reports here'}
+          description={
+            status === 'open' ? 'Nice — nothing needs your attention right now.' : undefined
+          }
+        />
       )}
 
       <div className="space-y-4">
         {data?.items.map((report) => (
           <Card key={report.id} as="article" className="p-5">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="danger" icon={Flag}>{labelFor(REPORT_REASONS, report.reason)}</Badge>
+              <Badge variant="danger" icon={Flag}>
+                {labelFor(REPORT_REASONS, report.reason)}
+              </Badge>
               <Badge>{report.targetType}</Badge>
-              {report.status !== 'open' && <Badge variant={report.status === 'resolved' ? 'success' : 'neutral'} className="capitalize">{report.status}</Badge>}
-              <span className="ml-auto text-xs text-fg-subtle">Reported <RelativeTime value={report.createdAt} /></span>
+              {report.status !== 'open' && (
+                <Badge
+                  variant={report.status === 'resolved' ? 'success' : 'neutral'}
+                  className="capitalize"
+                >
+                  {report.status}
+                </Badge>
+              )}
+              <span className="ml-auto text-xs text-fg-subtle">
+                Reported <RelativeTime value={report.createdAt} />
+              </span>
             </div>
 
             <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_240px]">
               <div className="space-y-3">
                 <TargetPreview report={report} />
                 {report.details && (
-                  <blockquote className="border-l-2 border-line-strong pl-3 text-sm text-fg-muted">“{report.details}”</blockquote>
+                  <blockquote className="border-l-2 border-line-strong pl-3 text-sm text-fg-muted">
+                    “{report.details}”
+                  </blockquote>
                 )}
               </div>
               <dl className="space-y-3 text-sm">
                 <div>
                   <dt className="text-xs text-fg-subtle">Reported by</dt>
-                  <dd className="mt-1">{report.reporter ? <Link to={`/profile/${report.reporter.username}`} className="font-medium hover:underline">{report.reporter.name}</Link> : 'Deleted member'}</dd>
+                  <dd className="mt-1">
+                    {report.reporter ? (
+                      <Link
+                        to={`/profile/${report.reporter.username}`}
+                        className="font-medium hover:underline"
+                      >
+                        {report.reporter.name}
+                      </Link>
+                    ) : (
+                      'Deleted member'
+                    )}
+                  </dd>
                 </div>
                 {report.targetOwner && (
                   <div>
                     <dt className="text-xs text-fg-subtle">Content owner</dt>
                     <dd className="mt-1 flex items-center gap-2">
-                      <Link to={`/profile/${report.targetOwner.username}`} className="font-medium hover:underline">{report.targetOwner.name}</Link>
+                      <Link
+                        to={`/profile/${report.targetOwner.username}`}
+                        className="font-medium hover:underline"
+                      >
+                        {report.targetOwner.name}
+                      </Link>
                       {report.targetOwner.isSuspended && <Badge variant="danger">Suspended</Badge>}
                     </dd>
                   </div>
@@ -128,8 +210,13 @@ export default function AdminReportsPage() {
                   <div>
                     <dt className="text-xs text-fg-subtle">Resolution</dt>
                     <dd className="mt-1">
-                      {RESOLUTION_LABELS[report.resolution.action]} by {report.resolution.resolvedBy?.name ?? 'an admin'}
-                      {report.resolution.note && <span className="block text-xs text-fg-subtle">{report.resolution.note}</span>}
+                      {RESOLUTION_LABELS[report.resolution.action]} by{' '}
+                      {report.resolution.resolvedBy?.name ?? 'an admin'}
+                      {report.resolution.note && (
+                        <span className="block text-xs text-fg-subtle">
+                          {report.resolution.note}
+                        </span>
+                      )}
                     </dd>
                   </div>
                 )}
@@ -139,9 +226,18 @@ export default function AdminReportsPage() {
             {report.status === 'open' && (
               <div className="mt-4 flex flex-wrap justify-end gap-2 border-t border-line pt-4">
                 {Object.entries(ACTIONS)
-                  .filter(([action]) => !(action === 'remove_content' && report.targetType === 'User'))
+                  .filter(
+                    ([action]) => !(action === 'remove_content' && report.targetType === 'User'),
+                  )
                   .map(([action, config]) => (
-                    <Button key={action} size="sm" variant={config.variant} leftIcon={config.icon} onClick={() => setPending({ report, action })} disabled={action === 'suspend_user' && report.targetOwner?.isSuspended}>
+                    <Button
+                      key={action}
+                      size="sm"
+                      variant={config.variant}
+                      leftIcon={config.icon}
+                      onClick={() => setPending({ report, action })}
+                      disabled={action === 'suspend_user' && report.targetOwner?.isSuspended}
+                    >
                       {config.label}
                     </Button>
                   ))}
@@ -154,7 +250,10 @@ export default function AdminReportsPage() {
 
       <ConfirmDialog
         open={Boolean(pending)}
-        onClose={() => { setPending(null); setNote(''); }}
+        onClose={() => {
+          setPending(null);
+          setNote('');
+        }}
         title={pending && ACTIONS[pending.action].title}
         description={pending && ACTIONS[pending.action].description}
         confirmLabel={pending && ACTIONS[pending.action].confirm}
@@ -162,7 +261,13 @@ export default function AdminReportsPage() {
         loading={resolving}
         onConfirm={confirm}
       >
-        <TextareaField id="resolution-note" label="Moderator note (optional)" value={note} maxLength={500} onChange={(event) => setNote(event.target.value)} />
+        <TextareaField
+          id="resolution-note"
+          label="Moderator note (optional)"
+          value={note}
+          maxLength={500}
+          onChange={(event) => setNote(event.target.value)}
+        />
       </ConfirmDialog>
     </div>
   );

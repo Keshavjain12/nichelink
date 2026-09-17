@@ -62,7 +62,9 @@ describe('GET /config', () => {
   });
 
   it('does not divide amounts in zero-decimal currencies', async () => {
-    stripeMock.prices.retrieve.mockResolvedValue(stripePrice({ unit_amount: 1200, currency: 'jpy' }));
+    stripeMock.prices.retrieve.mockResolvedValue(
+      stripePrice({ unit_amount: 1200, currency: 'jpy' }),
+    );
     const res = await request(app).get('/api/v1/config').expect(200);
     expect(planById(res, 'pro')).toMatchObject({ price: 1200, currency: 'jpy' });
   });
@@ -74,7 +76,9 @@ describe('GET /config', () => {
   });
 
   it('caches the Stripe price between requests', async () => {
-    stripeMock.prices.retrieve.mockResolvedValue(stripePrice({ unit_amount: 1500, currency: 'usd' }));
+    stripeMock.prices.retrieve.mockResolvedValue(
+      stripePrice({ unit_amount: 1500, currency: 'usd' }),
+    );
 
     const responses = await Promise.all([
       request(app).get('/api/v1/config').expect(200),

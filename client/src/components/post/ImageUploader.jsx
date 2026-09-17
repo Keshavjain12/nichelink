@@ -47,7 +47,10 @@ export default function ImageUploader({ value = [], onChange, max = LIMITS.POST_
     <div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {value.map((image) => (
-          <div key={image.publicId} className="group relative aspect-square overflow-hidden rounded-xl border border-line">
+          <div
+            key={image.publicId}
+            className="group relative aspect-square overflow-hidden rounded-xl border border-line"
+          >
             <img src={image.url} alt="" className="size-full object-cover" />
             <button
               type="button"
@@ -60,7 +63,10 @@ export default function ImageUploader({ value = [], onChange, max = LIMITS.POST_
           </div>
         ))}
         {Array.from({ length: pending }, (_, index) => (
-          <div key={`pending-${index}`} className="flex aspect-square items-center justify-center rounded-xl border border-dashed border-line">
+          <div
+            key={`pending-${index}`}
+            className="flex aspect-square items-center justify-center rounded-xl border border-dashed border-line"
+          >
             <Spinner label="Uploading image" />
           </div>
         ))}
@@ -87,7 +93,9 @@ export default function ImageUploader({ value = [], onChange, max = LIMITS.POST_
       >
         Add images
       </Button>
-      <p className="mt-1.5 text-xs text-fg-subtle">Up to {max} images · JPEG, PNG, WebP or GIF · 5 MB each</p>
+      <p className="mt-1.5 text-xs text-fg-subtle">
+        Up to {max} images · JPEG, PNG, WebP or GIF · 5 MB each
+      </p>
     </div>
   );
 }

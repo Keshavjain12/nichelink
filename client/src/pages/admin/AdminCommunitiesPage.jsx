@@ -10,12 +10,22 @@ import { Button } from '../../components/common/Button';
 import { Card } from '../../components/common/Card';
 import { Dialog } from '../../components/common/Dialog';
 import { EmptyState, ErrorState, Skeleton } from '../../components/common/Feedback';
-import { FormField, Input, Select, SelectField, TextareaField, TextField } from '../../components/common/Field';
+import {
+  FormField,
+  Input,
+  Select,
+  SelectField,
+  TextareaField,
+  TextField,
+} from '../../components/common/Field';
 import { Pagination, TagInput } from '../../components/common/Misc';
 import { CommunityIcon } from '../../components/community/CommunityCard';
 import { COMMUNITY_CATEGORIES } from '../../constants/content';
 import { useListAdminCommunitiesQuery } from '../../features/admin/adminApi';
-import { useCreateCommunityMutation, useUpdateCommunityMutation } from '../../features/communities/communitiesApi';
+import {
+  useCreateCommunityMutation,
+  useUpdateCommunityMutation,
+} from '../../features/communities/communitiesApi';
 import { useDebouncedValue, useDocumentTitle } from '../../hooks/common';
 import { formatCompactNumber } from '../../utils/format';
 import { applyFieldErrors, getErrorMessage } from '../../utils/errors';
@@ -33,7 +43,10 @@ const communitySchema = z.object({
   isFeatured: z.boolean(),
 });
 
-const rulesToText = (rules = []) => rules.map((rule) => (rule.description ? `${rule.title}: ${rule.description}` : rule.title)).join('\n');
+const rulesToText = (rules = []) =>
+  rules
+    .map((rule) => (rule.description ? `${rule.title}: ${rule.description}` : rule.title))
+    .join('\n');
 const textToRules = (text) =>
   text
     .split('\n')
@@ -86,38 +99,111 @@ function CommunityFormDialog({ open, onClose, community }) {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} size="lg" title={community ? `Edit ${community.name}` : 'Create a community'} description="Communities are created by admins; members join and moderators keep them healthy.">
+    <Dialog
+      open={open}
+      onClose={onClose}
+      size="lg"
+      title={community ? `Edit ${community.name}` : 'Create a community'}
+      description="Communities are created by admins; members join and moderators keep them healthy."
+    >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_96px_120px]">
-          <TextField id="community-name" label="Name" required error={errors.name?.message ?? errors.slug?.message} {...register('name')} />
-          <TextField id="community-icon" label="Icon" required error={errors.icon?.message} {...register('icon')} />
+          <TextField
+            id="community-name"
+            label="Name"
+            required
+            error={errors.name?.message ?? errors.slug?.message}
+            {...register('name')}
+          />
+          <TextField
+            id="community-icon"
+            label="Icon"
+            required
+            error={errors.icon?.message}
+            {...register('icon')}
+          />
           <FormField id="community-color" label="Accent" error={errors.accentColor?.message}>
-            {(fieldProps) => <Input type="color" className="h-10 p-1" {...fieldProps} {...register('accentColor')} />}
+            {(fieldProps) => (
+              <Input
+                type="color"
+                className="h-10 p-1"
+                {...fieldProps}
+                {...register('accentColor')}
+              />
+            )}
           </FormField>
         </div>
-        <TextField id="community-tagline" label="Tagline" error={errors.tagline?.message} {...register('tagline')} />
-        <TextareaField id="community-description" label="Description" error={errors.description?.message} {...register('description')} />
+        <TextField
+          id="community-tagline"
+          label="Tagline"
+          error={errors.tagline?.message}
+          {...register('tagline')}
+        />
+        <TextareaField
+          id="community-description"
+          label="Description"
+          error={errors.description?.message}
+          {...register('description')}
+        />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <SelectField id="community-category" label="Category" required error={errors.category?.message} {...register('category')}>
+          <SelectField
+            id="community-category"
+            label="Category"
+            required
+            error={errors.category?.message}
+            {...register('category')}
+          >
             <option value="">Select…</option>
-            {COMMUNITY_CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
+            {COMMUNITY_CATEGORIES.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
           </SelectField>
           <SelectField id="community-access" label="Access" {...register('accessType')}>
             <option value="public">Public (Free members can read)</option>
             <option value="pro">Pro members only</option>
           </SelectField>
         </div>
-        <FormField id="community-tags" label="Tags" hint="Used for recommendations" error={errors.tags?.message}>
-          {(fieldProps) => <Controller control={control} name="tags" render={({ field }) => <TagInput {...fieldProps} value={field.value ?? []} onChange={field.onChange} max={8} />} />}
+        <FormField
+          id="community-tags"
+          label="Tags"
+          hint="Used for recommendations"
+          error={errors.tags?.message}
+        >
+          {(fieldProps) => (
+            <Controller
+              control={control}
+              name="tags"
+              render={({ field }) => (
+                <TagInput
+                  {...fieldProps}
+                  value={field.value ?? []}
+                  onChange={field.onChange}
+                  max={8}
+                />
+              )}
+            />
+          )}
         </FormField>
-        <TextareaField id="community-rules" label="Rules" hint="One rule per line. Optional description after a colon." error={errors.rulesText?.message} {...register('rulesText')} />
+        <TextareaField
+          id="community-rules"
+          label="Rules"
+          hint="One rule per line. Optional description after a colon."
+          error={errors.rulesText?.message}
+          {...register('rulesText')}
+        />
         <label className="flex items-center gap-3 text-sm font-medium">
           <input type="checkbox" className="size-4 accent-brand-600" {...register('isFeatured')} />
           Feature on the landing page and directory
         </label>
         <div className="flex justify-end gap-2 pt-2">
-          <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button type="submit" loading={creating || updating}>{community ? 'Save changes' : 'Create community'}</Button>
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" loading={creating || updating}>
+            {community ? 'Save changes' : 'Create community'}
+          </Button>
         </div>
       </form>
     </Dialog>
@@ -149,17 +235,44 @@ export default function AdminCommunitiesPage() {
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
-          <label htmlFor="admin-community-search" className="sr-only">Search communities</label>
-          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-fg-subtle" aria-hidden="true" />
-          <Input id="admin-community-search" type="search" value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Search communities" className="pl-9" />
+          <label htmlFor="admin-community-search" className="sr-only">
+            Search communities
+          </label>
+          <Search
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-fg-subtle"
+            aria-hidden="true"
+          />
+          <Input
+            id="admin-community-search"
+            type="search"
+            value={search}
+            onChange={(event) => {
+              setSearch(event.target.value);
+              setPage(1);
+            }}
+            placeholder="Search communities"
+            className="pl-9"
+          />
         </div>
-        <label htmlFor="admin-community-status" className="sr-only">Status</label>
-        <Select id="admin-community-status" value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }} className="sm:w-40">
+        <label htmlFor="admin-community-status" className="sr-only">
+          Status
+        </label>
+        <Select
+          id="admin-community-status"
+          value={status}
+          onChange={(event) => {
+            setStatus(event.target.value);
+            setPage(1);
+          }}
+          className="sm:w-40"
+        >
           <option value="all">All statuses</option>
           <option value="active">Active</option>
           <option value="archived">Archived</option>
         </Select>
-        <Button leftIcon={Plus} onClick={() => setSearchParams({ create: '1' })}>New community</Button>
+        <Button leftIcon={Plus} onClick={() => setSearchParams({ create: '1' })}>
+          New community
+        </Button>
       </div>
 
       {error ? (
@@ -171,47 +284,129 @@ export default function AdminCommunitiesPage() {
               <caption className="sr-only">Communities</caption>
               <thead className="border-b border-line bg-surface-muted text-xs text-fg-subtle uppercase">
                 <tr>
-                  <th scope="col" className="px-4 py-3 font-semibold">Community</th>
-                  <th scope="col" className="px-4 py-3 font-semibold">Access</th>
-                  <th scope="col" className="px-4 py-3 text-right font-semibold">Members</th>
-                  <th scope="col" className="px-4 py-3 text-right font-semibold">Posts</th>
-                  <th scope="col" className="px-4 py-3 font-semibold">Status</th>
-                  <th scope="col" className="px-4 py-3"><span className="sr-only">Actions</span></th>
+                  <th scope="col" className="px-4 py-3 font-semibold">
+                    Community
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-semibold">
+                    Access
+                  </th>
+                  <th scope="col" className="px-4 py-3 text-right font-semibold">
+                    Members
+                  </th>
+                  <th scope="col" className="px-4 py-3 text-right font-semibold">
+                    Posts
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-semibold">
+                    Status
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    <span className="sr-only">Actions</span>
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
-                {isLoading && Array.from({ length: 5 }, (_, index) => <tr key={index}><td colSpan={6} className="px-4 py-3"><Skeleton className="h-9 w-full" /></td></tr>)}
+                {isLoading &&
+                  Array.from({ length: 5 }, (_, index) => (
+                    <tr key={index}>
+                      <td colSpan={6} className="px-4 py-3">
+                        <Skeleton className="h-9 w-full" />
+                      </td>
+                    </tr>
+                  ))}
                 {data?.items.map((community) => (
                   <tr key={community.id} className="hover:bg-surface-hover/60">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <CommunityIcon community={community} size="sm" />
                         <div className="min-w-0">
-                          <Link to={`/communities/${community.slug}`} className="block truncate font-medium text-fg hover:underline">{community.name}</Link>
-                          <span className="text-xs text-fg-subtle">{community.category} · /{community.slug}</span>
+                          <Link
+                            to={`/communities/${community.slug}`}
+                            className="block truncate font-medium text-fg hover:underline"
+                          >
+                            {community.name}
+                          </Link>
+                          <span className="text-xs text-fg-subtle">
+                            {community.category} · /{community.slug}
+                          </span>
                         </div>
-                        {community.isFeatured && <Badge variant="brand" icon={Star}>Featured</Badge>}
+                        {community.isFeatured && (
+                          <Badge variant="brand" icon={Star}>
+                            Featured
+                          </Badge>
+                        )}
                       </div>
                     </td>
-                    <td className="px-4 py-3"><Badge variant={community.accessType === 'pro' ? 'pro' : 'neutral'}>{community.accessType === 'pro' ? 'Pro' : 'Public'}</Badge></td>
-                    <td className="px-4 py-3 text-right tabular-nums">{formatCompactNumber(community.memberCount)}</td>
-                    <td className="px-4 py-3 text-right tabular-nums">{formatCompactNumber(community.postCount)}</td>
-                    <td className="px-4 py-3"><Badge variant={community.status === 'active' ? 'success' : 'neutral'}>{community.status === 'active' ? 'Active' : 'Archived'}</Badge></td>
+                    <td className="px-4 py-3">
+                      <Badge variant={community.accessType === 'pro' ? 'pro' : 'neutral'}>
+                        {community.accessType === 'pro' ? 'Pro' : 'Public'}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3 text-right tabular-nums">
+                      {formatCompactNumber(community.memberCount)}
+                    </td>
+                    <td className="px-4 py-3 text-right tabular-nums">
+                      {formatCompactNumber(community.postCount)}
+                    </td>
+                    <td className="px-4 py-3">
+                      <Badge variant={community.status === 'active' ? 'success' : 'neutral'}>
+                        {community.status === 'active' ? 'Active' : 'Archived'}
+                      </Badge>
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-1">
-                        <Button variant="ghost" size="icon-sm" aria-label={community.isFeatured ? `Unfeature ${community.name}` : `Feature ${community.name}`} aria-pressed={community.isFeatured} onClick={() => quickUpdate(community, { isFeatured: !community.isFeatured }, community.isFeatured ? 'Removed from featured' : 'Featured community')}>
-                          <Star className={`size-4 ${community.isFeatured ? 'fill-amber-400 text-amber-500' : ''}`} aria-hidden="true" />
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          aria-label={
+                            community.isFeatured
+                              ? `Unfeature ${community.name}`
+                              : `Feature ${community.name}`
+                          }
+                          aria-pressed={community.isFeatured}
+                          onClick={() =>
+                            quickUpdate(
+                              community,
+                              { isFeatured: !community.isFeatured },
+                              community.isFeatured ? 'Removed from featured' : 'Featured community',
+                            )
+                          }
+                        >
+                          <Star
+                            className={`size-4 ${community.isFeatured ? 'fill-amber-400 text-amber-500' : ''}`}
+                            aria-hidden="true"
+                          />
                         </Button>
-                        <Button variant="ghost" size="icon-sm" aria-label={`Edit ${community.name}`} onClick={() => setEditing(community)}>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          aria-label={`Edit ${community.name}`}
+                          onClick={() => setEditing(community)}
+                        >
                           <Pencil className="size-4" aria-hidden="true" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon-sm"
-                          aria-label={community.status === 'active' ? `Archive ${community.name}` : `Restore ${community.name}`}
-                          onClick={() => quickUpdate(community, { status: community.status === 'active' ? 'archived' : 'active' }, community.status === 'active' ? 'Community archived' : 'Community restored')}
+                          aria-label={
+                            community.status === 'active'
+                              ? `Archive ${community.name}`
+                              : `Restore ${community.name}`
+                          }
+                          onClick={() =>
+                            quickUpdate(
+                              community,
+                              { status: community.status === 'active' ? 'archived' : 'active' },
+                              community.status === 'active'
+                                ? 'Community archived'
+                                : 'Community restored',
+                            )
+                          }
                         >
-                          {community.status === 'active' ? <Archive className="size-4" aria-hidden="true" /> : <ArchiveRestore className="size-4" aria-hidden="true" />}
+                          {community.status === 'active' ? (
+                            <Archive className="size-4" aria-hidden="true" />
+                          ) : (
+                            <ArchiveRestore className="size-4" aria-hidden="true" />
+                          )}
                         </Button>
                       </div>
                     </td>
@@ -233,7 +428,9 @@ export default function AdminCommunitiesPage() {
 
 /** Admin list rows omit description and rules, so load full details before editing. */
 function EditCommunityLoader({ community, onClose }) {
-  return <EditCommunityDialog key={community?.slug ?? 'none'} slug={community?.slug} onClose={onClose} />;
+  return (
+    <EditCommunityDialog key={community?.slug ?? 'none'} slug={community?.slug} onClose={onClose} />
+  );
 }
 
 function EditCommunityDialog({ slug, onClose }) {
@@ -245,12 +442,15 @@ function EditCommunityDialog({ slug, onClose }) {
     let cancelled = false;
     import('../../app/store').then(({ store }) =>
       store
-        .dispatch(
-          (async (dispatch) => {
-            const { communitiesApi } = await import('../../features/communities/communitiesApi');
-            return dispatch(communitiesApi.endpoints.getCommunity.initiate(slug, { subscribe: false, forceRefetch: true })).unwrap();
-          }),
-        )
+        .dispatch(async (dispatch) => {
+          const { communitiesApi } = await import('../../features/communities/communitiesApi');
+          return dispatch(
+            communitiesApi.endpoints.getCommunity.initiate(slug, {
+              subscribe: false,
+              forceRefetch: true,
+            }),
+          ).unwrap();
+        })
         .then((data) => !cancelled && setDetails(data))
         .catch((error) => !cancelled && setLoadError(error)),
     );

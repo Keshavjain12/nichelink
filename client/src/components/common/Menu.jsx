@@ -7,7 +7,11 @@ const GAP_PX = 6;
 /** Bottom edge of the nearest ancestor that clips overflow, or the viewport. */
 function clippingBottom(element) {
   let bottom = window.innerHeight;
-  for (let node = element?.parentElement; node && node !== document.body; node = node.parentElement) {
+  for (
+    let node = element?.parentElement;
+    node && node !== document.body;
+    node = node.parentElement
+  ) {
     const { overflowX, overflowY } = getComputedStyle(node);
     if (overflowX !== 'visible' || overflowY !== 'visible') {
       bottom = Math.min(bottom, node.getBoundingClientRect().bottom);
@@ -35,7 +39,12 @@ export function Menu({ label, trigger, children, align = 'end', className, menuC
     const triggerRect = container.getBoundingClientRect();
     const roomBelow = clippingBottom(container) - triggerRect.bottom;
     if (roomBelow < menuHeight + GAP_PX && triggerRect.top > menuHeight + GAP_PX) {
-      Object.assign(menu.style, { top: 'auto', bottom: '100%', marginTop: '0', marginBottom: `${GAP_PX}px` });
+      Object.assign(menu.style, {
+        top: 'auto',
+        bottom: '100%',
+        marginTop: '0',
+        marginBottom: `${GAP_PX}px`,
+      });
     }
   }, [open]);
 
@@ -44,7 +53,9 @@ export function Menu({ label, trigger, children, align = 'end', className, menuC
   }, [open]);
 
   const onKeyDown = (event) => {
-    const items = [...(menuRef.current?.querySelectorAll('[role="menuitem"]:not([disabled])') ?? [])];
+    const items = [
+      ...(menuRef.current?.querySelectorAll('[role="menuitem"]:not([disabled])') ?? []),
+    ];
     const index = items.indexOf(document.activeElement);
     const moves = { ArrowDown: index + 1, ArrowUp: index - 1, Home: 0, End: items.length - 1 };
     if (event.key in moves) {
@@ -85,7 +96,14 @@ export function Menu({ label, trigger, children, align = 'end', className, menuC
   );
 }
 
-export function MenuItem({ as: Component = 'button', icon: Icon, danger = false, className, children, ...props }) {
+export function MenuItem({
+  as: Component = 'button',
+  icon: Icon,
+  danger = false,
+  className,
+  children,
+  ...props
+}) {
   return (
     <Component
       role="menuitem"

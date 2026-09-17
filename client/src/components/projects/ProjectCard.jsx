@@ -1,6 +1,11 @@
 import { Clock3, Coins, Globe, MapPin, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PROJECT_COMMITMENTS, PROJECT_COMPENSATION, PROJECT_TYPES, labelFor } from '../../constants/content';
+import {
+  PROJECT_COMMITMENTS,
+  PROJECT_COMPENSATION,
+  PROJECT_TYPES,
+  labelFor,
+} from '../../constants/content';
 import { Avatar } from '../common/Avatar';
 import { Badge } from '../common/Badge';
 import { Card } from '../common/Card';
@@ -18,7 +23,9 @@ export function ProjectMeta({ project }) {
     <div className="flex flex-wrap gap-x-4 gap-y-1.5">
       <StatPill icon={Clock3}>{labelFor(PROJECT_COMMITMENTS, project.commitment)}</StatPill>
       <StatPill icon={Coins}>{labelFor(PROJECT_COMPENSATION, project.compensation)}</StatPill>
-      <StatPill icon={project.remote ? Globe : MapPin}>{project.remote ? 'Remote' : project.location || 'On-site'}</StatPill>
+      <StatPill icon={project.remote ? Globe : MapPin}>
+        {project.remote ? 'Remote' : project.location || 'On-site'}
+      </StatPill>
       <StatPill icon={Users}>{project.interestCount} interested</StatPill>
     </div>
   );
@@ -43,7 +50,10 @@ export function ProjectCardSkeleton() {
 
 export default function ProjectCard({ project }) {
   return (
-    <Card as="article" className="relative flex h-full flex-col p-5 transition-colors hover:border-line-strong">
+    <Card
+      as="article"
+      className="relative flex h-full flex-col p-5 transition-colors hover:border-line-strong"
+    >
       <div className="flex flex-wrap items-center gap-2">
         <Badge variant="brand">{labelFor(PROJECT_TYPES, project.projectType)}</Badge>
         {project.status === 'closed' && <Badge>Closed</Badge>}
@@ -51,11 +61,16 @@ export default function ProjectCard({ project }) {
         {project.viewer.isAuthor && <Badge variant="admin">Your project</Badge>}
       </div>
       <h2 className="mt-3 text-base font-semibold leading-snug text-fg">
-        <Link to={`/projects/${project.id}`} className="after:absolute after:inset-0 after:rounded-2xl">
+        <Link
+          to={`/projects/${project.id}`}
+          className="after:absolute after:inset-0 after:rounded-2xl"
+        >
           {project.title}
         </Link>
       </h2>
-      {project.summary && <p className="mt-1 line-clamp-2 text-sm text-fg-muted">{project.summary}</p>}
+      {project.summary && (
+        <p className="mt-1 line-clamp-2 text-sm text-fg-muted">{project.summary}</p>
+      )}
       <div className="mt-3 flex flex-wrap gap-1.5">
         {project.requiredSkills.slice(0, 5).map((skill) => (
           <Tag key={skill}>{skill}</Tag>

@@ -25,26 +25,26 @@ explicitly and only after a membership check.
 All of these take an acknowledgement callback and resolve to `{ ok: true, data }` or
 `{ ok: false, error: { code, message, status } }`.
 
-| Event | Payload | Behaviour |
-| --- | --- | --- |
-| `join_conversation` | `{ conversationId }` | Verifies membership, then joins the room. 404 for non-participants. |
-| `leave_conversation` | `{ conversationId }` | Leaves the room. |
-| `send_message` | `{ conversationId, body, clientId? }` | Re-reads the sender's authorization, enforces the Free-tier quota, persists, then fans out. Rate limited to 20 per 10 s per socket. |
-| `message_read` | `{ conversationId }` | Zeroes the viewer's unread count and clears message notifications. |
-| `typing_start` / `typing_stop` | `{ conversationId }` | Relayed only if the socket has joined that room. No acknowledgement. Rate limited to 30 per 10 s. |
-| `presence_query` | `{ userIds: [...] }` (max 200) | Returns `{ online: [...] }`. |
+| Event                          | Payload                               | Behaviour                                                                                                                           |
+| ------------------------------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `join_conversation`            | `{ conversationId }`                  | Verifies membership, then joins the room. 404 for non-participants.                                                                 |
+| `leave_conversation`           | `{ conversationId }`                  | Leaves the room.                                                                                                                    |
+| `send_message`                 | `{ conversationId, body, clientId? }` | Re-reads the sender's authorization, enforces the Free-tier quota, persists, then fans out. Rate limited to 20 per 10 s per socket. |
+| `message_read`                 | `{ conversationId }`                  | Zeroes the viewer's unread count and clears message notifications.                                                                  |
+| `typing_start` / `typing_stop` | `{ conversationId }`                  | Relayed only if the socket has joined that room. No acknowledgement. Rate limited to 30 per 10 s.                                   |
+| `presence_query`               | `{ userIds: [...] }` (max 200)        | Returns `{ online: [...] }`.                                                                                                        |
 
 ## Server → client
 
-| Event | Payload | Sent to |
-| --- | --- | --- |
-| `receive_message` | `{ message, conversation: { id, lastMessage, lastMessageAt, unreadCount } }` | Both participants' user rooms (sender included, so every tab syncs). |
-| `conversation_read` | `{ conversationId, userId, lastReadAt }` | Both participants — drives the "Seen" indicator. |
-| `user_typing` | `{ conversationId, userId, isTyping }` | The conversation room, except the sender. |
-| `user_online` / `user_offline` | `{ userId, at }` | Users who share a conversation with that person. |
-| `notification_new` | serialized notification | The recipient's user room. |
-| `notification_count` | `{ unreadCount }` | The recipient's user room. |
-| `session_updated` | `{ reason, role }` | The affected user — triggers a session refresh after plan changes. |
+| Event                          | Payload                                                                      | Sent to                                                              |
+| ------------------------------ | ---------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `receive_message`              | `{ message, conversation: { id, lastMessage, lastMessageAt, unreadCount } }` | Both participants' user rooms (sender included, so every tab syncs). |
+| `conversation_read`            | `{ conversationId, userId, lastReadAt }`                                     | Both participants — drives the "Seen" indicator.                     |
+| `user_typing`                  | `{ conversationId, userId, isTyping }`                                       | The conversation room, except the sender.                            |
+| `user_online` / `user_offline` | `{ userId, at }`                                                             | Users who share a conversation with that person.                     |
+| `notification_new`             | serialized notification                                                      | The recipient's user room.                                           |
+| `notification_count`           | `{ unreadCount }`                                                            | The recipient's user room.                                           |
+| `session_updated`              | `{ reason, role }`                                                           | The affected user — triggers a session refresh after plan changes.   |
 
 ## Delivery guarantees
 

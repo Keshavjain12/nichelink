@@ -33,7 +33,10 @@ export function disconnectSocket() {
 
 /** Emits with an acknowledgement and normalizes `{ ok, data | error }` into resolve / reject. */
 export async function emitWithAck(event, payload) {
-  if (!socket?.connected) throw Object.assign(new Error('Real-time connection unavailable'), { code: 'SOCKET_DISCONNECTED' });
+  if (!socket?.connected)
+    throw Object.assign(new Error('Real-time connection unavailable'), {
+      code: 'SOCKET_DISCONNECTED',
+    });
   const response = await socket.timeout(ACK_TIMEOUT_MS).emitWithAck(event, payload);
   if (!response?.ok) {
     throw Object.assign(new Error(response?.error?.message ?? 'Request failed'), {

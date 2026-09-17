@@ -35,7 +35,10 @@ const registerSchema = z.object({
   password: z
     .string()
     .max(72, 'Password is too long')
-    .refine((value) => PASSWORD_RULES.every((rule) => rule.test(value)), 'Password does not meet the requirements'),
+    .refine(
+      (value) => PASSWORD_RULES.every((rule) => rule.test(value)),
+      'Password does not meet the requirements',
+    ),
 });
 
 const suggestUsername = (name) =>
@@ -86,14 +89,19 @@ export default function RegisterPage() {
       footer={
         <>
           Already a member?{' '}
-          <Link to="/login" className="font-semibold text-brand-600 hover:underline dark:text-brand-400">
+          <Link
+            to="/login"
+            className="font-semibold text-brand-600 hover:underline dark:text-brand-400"
+          >
             Sign in
           </Link>
         </>
       }
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
-        {error && !error.data?.errors?.length && <InlineAlert variant="danger">{getErrorMessage(error)}</InlineAlert>}
+        {error && !error.data?.errors?.length && (
+          <InlineAlert variant="danger">{getErrorMessage(error)}</InlineAlert>
+        )}
 
         <TextField
           id="name"
@@ -103,7 +111,8 @@ export default function RegisterPage() {
           {...nameField}
           onChange={(event) => {
             nameField.onChange(event);
-            if (!getFieldState('username').isDirty) setValue('username', suggestUsername(event.target.value));
+            if (!getFieldState('username').isDirty)
+              setValue('username', suggestUsername(event.target.value));
           }}
         />
         <TextField
@@ -114,17 +123,36 @@ export default function RegisterPage() {
           error={errors.username?.message}
           {...register('username')}
         />
-        <TextField id="email" label="Email" type="email" autoComplete="email" error={errors.email?.message} {...register('email')} />
+        <TextField
+          id="email"
+          label="Email"
+          type="email"
+          autoComplete="email"
+          error={errors.email?.message}
+          {...register('email')}
+        />
 
         <FormField id="password" label="Password" error={errors.password?.message}>
-          {(fieldProps) => <PasswordInput autoComplete="new-password" {...fieldProps} {...register('password')} />}
+          {(fieldProps) => (
+            <PasswordInput autoComplete="new-password" {...fieldProps} {...register('password')} />
+          )}
         </FormField>
         <ul className="grid grid-cols-2 gap-x-3 gap-y-1.5" aria-label="Password requirements">
           {PASSWORD_RULES.map((rule) => {
             const passed = rule.test(password);
             return (
-              <li key={rule.label} className={cn('flex items-center gap-1.5 text-xs', passed ? 'text-emerald-600 dark:text-emerald-400' : 'text-fg-subtle')}>
-                {passed ? <Check className="size-3.5" aria-hidden="true" /> : <X className="size-3.5" aria-hidden="true" />}
+              <li
+                key={rule.label}
+                className={cn(
+                  'flex items-center gap-1.5 text-xs',
+                  passed ? 'text-emerald-600 dark:text-emerald-400' : 'text-fg-subtle',
+                )}
+              >
+                {passed ? (
+                  <Check className="size-3.5" aria-hidden="true" />
+                ) : (
+                  <X className="size-3.5" aria-hidden="true" />
+                )}
                 {rule.label}
                 <span className="sr-only">{passed ? '(met)' : '(not met)'}</span>
               </li>

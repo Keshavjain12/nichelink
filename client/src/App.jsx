@@ -16,7 +16,13 @@ export default function App() {
   return (
     <>
       <AppRoutes />
-      <Toaster theme={isDark ? 'dark' : 'light'} position="top-right" richColors closeButton visibleToasts={3} />
+      <Toaster
+        theme={isDark ? 'dark' : 'light'}
+        position="top-right"
+        richColors
+        closeButton
+        visibleToasts={3}
+      />
     </>
   );
 }

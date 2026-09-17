@@ -8,7 +8,8 @@ export const projectsApi = api.injectEndpoints({
     listProjects: build.infiniteQuery({
       infiniteQueryOptions: {
         initialPageParam: 1,
-        getNextPageParam: (lastPage, _allPages, lastPageParam) => (lastPage.meta.hasMore ? lastPageParam + 1 : undefined),
+        getNextPageParam: (lastPage, _allPages, lastPageParam) =>
+          lastPage.meta.hasMore ? lastPageParam + 1 : undefined,
       },
       query: ({ queryArg, pageParam }) => ({
         url: '/projects',
@@ -37,7 +38,11 @@ export const projectsApi = api.injectEndpoints({
       invalidatesTags: (_result, _error, id) => [LIST, { type: 'Project', id }, 'Profile'],
     }),
     expressInterest: build.mutation({
-      query: ({ id, message }) => ({ url: `/projects/${id}/interests`, method: 'POST', body: { message } }),
+      query: ({ id, message }) => ({
+        url: `/projects/${id}/interests`,
+        method: 'POST',
+        body: { message },
+      }),
       transformResponse: unwrapData,
       invalidatesTags: (_result, _error, { id }) => [LIST, { type: 'Project', id }],
     }),
@@ -57,7 +62,9 @@ export const projectsApi = api.injectEndpoints({
         body: { status },
       }),
       transformResponse: unwrapData,
-      invalidatesTags: (_result, _error, { projectId }) => [{ type: 'ProjectInterest', id: projectId }],
+      invalidatesTags: (_result, _error, { projectId }) => [
+        { type: 'ProjectInterest', id: projectId },
+      ],
     }),
   }),
 });

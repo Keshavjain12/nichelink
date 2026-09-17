@@ -17,12 +17,21 @@ export function createConversationRouter({ limiters }) {
   router.use(authenticate, requirePermission(PERMISSIONS.MESSAGE_SEND));
 
   router.get('/', validate({ query: listConversationsQuery }), conversationController.list);
-  router.post('/', limiters.write, validate({ body: startConversationBody }), conversationController.start);
+  router.post(
+    '/',
+    limiters.write,
+    validate({ body: startConversationBody }),
+    conversationController.start,
+  );
   router.get('/unread-count', conversationController.unreadCount);
   router.get('/quota', conversationController.quota);
 
   router.get('/:id', validate({ params: idParams }), conversationController.detail);
-  router.get('/:id/messages', validate({ params: idParams, query: listMessagesQuery }), conversationController.messages);
+  router.get(
+    '/:id/messages',
+    validate({ params: idParams, query: listMessagesQuery }),
+    conversationController.messages,
+  );
   router.post(
     '/:id/messages',
     limiters.message,

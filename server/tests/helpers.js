@@ -6,7 +6,10 @@ import { signAccessToken } from '../src/utils/tokens.js';
 
 export const TEST_PASSWORD = 'Str0ngPassw0rd';
 export const CLIENT_ORIGIN = 'http://localhost:5173';
-export const CSRF_HEADERS = Object.freeze({ 'X-Requested-With': 'XMLHttpRequest', Origin: CLIENT_ORIGIN });
+export const CSRF_HEADERS = Object.freeze({
+  'X-Requested-With': 'XMLHttpRequest',
+  Origin: CLIENT_ORIGIN,
+});
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 let sequence = 0;
@@ -41,7 +44,12 @@ export async function createUser({ plan = 'free', admin = false, ...overrides } 
   const user = await User.create(data);
   if (plan === 'pro') {
     // Keep the snapshot backed by a real record, as the subscription service would.
-    await Subscription.create({ user: user._id, provider: 'complimentary', status: 'active', currentPeriodEnd });
+    await Subscription.create({
+      user: user._id,
+      provider: 'complimentary',
+      status: 'active',
+      currentPeriodEnd,
+    });
   }
   return user;
 }
@@ -65,11 +73,17 @@ export function bearerWithClaims(user, { issuedSecondsAgo = 0, expiresIn = '15m'
 
 export function extractRefreshCookie(response) {
   const cookies = response.headers['set-cookie'] ?? [];
-  const cookie = cookies.find((value) => value.startsWith('nl_refresh=') && !value.startsWith('nl_refresh=;'));
+  const cookie = cookies.find(
+    (value) => value.startsWith('nl_refresh=') && !value.startsWith('nl_refresh=;'),
+  );
   return cookie ? cookie.split(';')[0] : null;
 }
 
-export async function createCommunity({ createdBy, accessType = COMMUNITY_ACCESS.PUBLIC, ...overrides } = {}) {
+export async function createCommunity({
+  createdBy,
+  accessType = COMMUNITY_ACCESS.PUBLIC,
+  ...overrides
+} = {}) {
   const suffix = uniqueSuffix();
   const owner = createdBy ?? (await createAdmin());
   return Community.create({

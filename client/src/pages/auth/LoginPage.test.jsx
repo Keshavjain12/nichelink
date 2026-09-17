@@ -1,6 +1,13 @@
 import { screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { apiError, apiSuccess, buildUser, guestState, mockApi, renderWithProviders } from '../../test/utils';
+import {
+  apiError,
+  apiSuccess,
+  buildUser,
+  guestState,
+  mockApi,
+  renderWithProviders,
+} from '../../test/utils';
 import LoginPage from './LoginPage';
 
 describe('LoginPage', () => {
@@ -20,7 +27,10 @@ describe('LoginPage', () => {
 
   it('stores the session after a successful sign-in', async () => {
     const { calls } = mockApi({
-      'POST /api/v1/auth/login': apiSuccess({ accessToken: 'access-123', user: buildUser({ role: 'ProMember' }) }),
+      'POST /api/v1/auth/login': apiSuccess({
+        accessToken: 'access-123',
+        user: buildUser({ role: 'ProMember' }),
+      }),
     });
     const { user, store } = renderWithProviders(<LoginPage />, { preloadedState: guestState });
 
@@ -38,7 +48,9 @@ describe('LoginPage', () => {
   });
 
   it('shows the server error and stays signed out on bad credentials', async () => {
-    mockApi({ 'POST /api/v1/auth/login': apiError(401, 'Invalid email or password', 'INVALID_CREDENTIALS') });
+    mockApi({
+      'POST /api/v1/auth/login': apiError(401, 'Invalid email or password', 'INVALID_CREDENTIALS'),
+    });
     const { user, store } = renderWithProviders(<LoginPage />, { preloadedState: guestState });
 
     await user.type(screen.getByLabelText('Email'), 'daniel@example.com');

@@ -1,6 +1,9 @@
 import { ACCOUNT_STATUS } from '../constants/roles.js';
 import { Community, User } from '../models/index.js';
-import { COMMUNITY_SUMMARY_FIELDS, toCommunitySummary } from '../serializers/communitySerializer.js';
+import {
+  COMMUNITY_SUMMARY_FIELDS,
+  toCommunitySummary,
+} from '../serializers/communitySerializer.js';
 import { USER_SUMMARY_FIELDS, toUserSummary } from '../serializers/userSerializer.js';
 import { ApiError } from '../utils/ApiError.js';
 import { splitPage, toPageWindow } from '../utils/pagination.js';
@@ -64,7 +67,10 @@ export async function suggest(q, viewer) {
           .lean()
       : [],
     viewer && usernamePrefix
-      ? User.find({ status: ACCOUNT_STATUS.ACTIVE, username: { $regex: `^${escapeRegex(usernamePrefix)}` } })
+      ? User.find({
+          status: ACCOUNT_STATUS.ACTIVE,
+          username: { $regex: `^${escapeRegex(usernamePrefix)}` },
+        })
           .select(USER_SUMMARY_FIELDS)
           .limit(SUGGESTION_LIMIT)
           .lean()

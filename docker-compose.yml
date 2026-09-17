@@ -24,9 +24,9 @@ services:
       NODE_ENV: production
       PORT: 5000
       MONGODB_URI: mongodb://mongo:27017/nichelink
-      CLIENT_URL: ${CLIENT_URL:-http://localhost:5173}
-      # Override with your own secret: JWT_ACCESS_SECRET=... docker compose up
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-local-development-secret-change-me-0123456789}
+      # NODE_ENV=production has no fallbacks: export both (or put them in .env) before `docker compose up`.
+      CLIENT_URL: ${CLIENT_URL:?Set CLIENT_URL to the SPA origin, e.g. http://localhost:5173}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?Set JWT_ACCESS_SECRET (>=32 chars)}
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
       CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}

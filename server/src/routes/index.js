@@ -1,8 +1,6 @@
 import { Router } from 'express';
-import { env } from '../config/env.js';
 import { isDatabaseReady } from '../config/database.js';
-import { PLAN_CATALOG, PLAN_LIMITS } from '../constants/plans.js';
-import { sendSuccess } from '../utils/response.js';
+import * as configController from '../controllers/configController.js';
 import { createAdminRouter, createReportRouter } from './adminRoutes.js';
 import { createAuthRouter } from './authRoutes.js';
 import { createCommunityRouter, createMembershipRouter } from './communityRoutes.js';
@@ -24,9 +22,7 @@ export function createApiRouter({ limiters }) {
     });
   });
 
-  router.get('/config', (_req, res) =>
-    sendSuccess(res, { data: { features: env.features, plans: PLAN_CATALOG, limits: PLAN_LIMITS } }),
-  );
+  router.get('/config', configController.getConfig);
 
   router.use('/auth', createAuthRouter({ limiters }));
   router.use('/users', createUserRouter({ limiters }));

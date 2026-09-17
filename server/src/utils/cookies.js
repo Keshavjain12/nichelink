@@ -1,7 +1,8 @@
 import { env } from '../config/env.js';
+import { API_PREFIX } from '../constants/api.js';
 
 export const REFRESH_COOKIE_NAME = 'nl_refresh';
-const REFRESH_COOKIE_PATH = '/api/v1/auth';
+const REFRESH_COOKIE_PATH = `${API_PREFIX}/auth`;
 
 function baseCookieOptions() {
   return {

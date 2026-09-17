@@ -26,7 +26,10 @@ export const PLAN_CATALOG = Object.freeze([
   {
     id: PLANS.FREE,
     name: 'Free',
-    priceMonthly: 0,
+    price: 0,
+    currency: 'usd',
+    interval: 'month',
+    intervalCount: 1,
     features: [
       'Browse every public community',
       'Join public communities',
@@ -38,7 +41,11 @@ export const PLAN_CATALOG = Object.freeze([
   {
     id: PLANS.PRO,
     name: 'Pro',
-    priceMonthly: 12,
+    // Display fallback only; when payments are configured the live Stripe price replaces it.
+    price: 12,
+    currency: 'usd',
+    interval: 'month',
+    intervalCount: 1,
     features: [
       'Everything in Free',
       'Publish posts with rich text and images',

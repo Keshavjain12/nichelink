@@ -42,7 +42,7 @@ const DEFAULT_DEMO_PASSWORD = 'NicheLink-Demo-2026!';
 const hoursAgo = (hours) => new Date(Date.now() - hours * HOUR_MS);
 
 function assertSafeToSeed() {
-  if (env.isProduction && process.env.ALLOW_PRODUCTION_SEED !== 'true') {
+  if (env.isProduction && !env.ALLOW_PRODUCTION_SEED) {
     throw new Error('Refusing to seed a production database. Set ALLOW_PRODUCTION_SEED=true to override.');
   }
 }

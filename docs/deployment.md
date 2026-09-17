@@ -54,11 +54,14 @@ Render's free tier sleeps after inactivity; the first request wakes it and may t
 | Build command | `npm run build` |
 | Output directory | `dist` |
 
-Edit `client/vercel.json` so the `/api/:path*` rewrite points at your Render URL, then set:
+**Replace the placeholder API host in `client/vercel.json`.** The `/api/:path*` rewrite ships pointing at
+`https://nichelink-api.onrender.com`, which is a placeholder, not your API. `vercel.json` cannot read
+environment variables, so edit the `destination` to your own Render URL and commit it — otherwise every API
+call from the deployed SPA goes to the wrong host. Then set:
 
 ```
 VITE_API_URL=/api/v1
-VITE_SOCKET_URL=https://nichelink-api.onrender.com
+VITE_SOCKET_URL=https://<your-api>.onrender.com
 ```
 
 `vercel.json` also rewrites unknown paths to `index.html` (SPA routing), caches hashed assets immutably
@@ -90,13 +93,20 @@ The script refuses to run against `NODE_ENV=production` unless `ALLOW_PRODUCTION
 ## Docker (local or self-hosted)
 
 ```bash
+cp .env.example .env           # then edit .env: set JWT_ACCESS_SECRET and CLIENT_URL
 docker compose up --build      # API on :5000 with a MongoDB 8 container
 ```
+
+The API container runs with `NODE_ENV=production`, so there are no fallbacks: `docker compose` refuses to
+start unless `JWT_ACCESS_SECRET` (at least 32 characters) and `CLIENT_URL` are set in `.env` or your shell.
+[`.env.example`](../.env.example) shows how to generate the secret and lists the optional Stripe and
+Cloudinary keys. `MONGODB_URI` is supplied by the compose file.
 
 `Dockerfile` builds a production image of the API only (the SPA is static hosting).
 
 ## Post-deploy checklist
 
+- [ ] `client/vercel.json` rewrites `/api/:path*` to your API host, not the `nichelink-api.onrender.com` placeholder
 - [ ] `GET /api/v1/health` returns `{ status: "ok", database: "up" }`
 - [ ] Register, sign out, sign back in — the session survives a page reload (refresh cookie works)
 - [ ] The socket connects (no `connect_error` in the console) and a message arrives in a second browser

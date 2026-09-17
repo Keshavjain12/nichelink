@@ -78,7 +78,13 @@ describe('subscriptions & Stripe webhooks', () => {
   it('reports the Free plan for new members', async () => {
     const user = await createFreeUser();
     const res = await request(app).get('/api/v1/subscriptions/me').set(bearer(user)).expect(200);
-    expect(res.body.data).toMatchObject({ plan: 'free', role: 'FreeMember', status: 'none', paymentsEnabled: true });
+    expect(res.body.data).toMatchObject({
+      plan: 'free',
+      role: 'FreeMember',
+      status: 'none',
+      paymentsEnabled: true,
+      paymentsMode: 'test',
+    });
   });
 
   it('creates a Stripe customer and checkout session', async () => {

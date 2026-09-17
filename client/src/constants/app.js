@@ -5,6 +5,8 @@ export const API_URL = import.meta.env.VITE_API_URL || '/api/v1';
 /** Empty string means "same origin" (the Vite dev proxy forwards /socket.io). */
 export const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || '';
 
+export const SHOW_DEMO_ACCOUNTS = import.meta.env.DEV || import.meta.env.VITE_SHOW_DEMO_ACCOUNTS === 'true';
+
 export const STORAGE_KEYS = Object.freeze({
   THEME: 'nichelink:theme',
   FEED_SORT: 'nichelink:feed-sort',

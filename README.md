@@ -208,6 +208,10 @@ Frontend on Vercel, API on Render, data on MongoDB Atlas — step by step in
 production `Dockerfile`, `docker-compose.yml` and a GitHub Actions workflow that lints, tests, builds and
 scans for committed secrets.
 
+> **Before deploying the SPA:** the `/api/:path*` rewrite in `client/vercel.json` points at
+> `https://nichelink-api.onrender.com`, a placeholder. `vercel.json` cannot read environment variables, so
+> replace that `destination` with your own API URL, or the deployed client will call the wrong host.
+
 ## Project structure
 
 ```

@@ -63,6 +63,11 @@ export function formatDayLabel(value) {
   return formatDate(date, { weekday: 'long', month: 'short', day: 'numeric' });
 }
 
-export function formatCurrency(amount) {
-  return new Intl.NumberFormat('en', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
+export function formatCurrency(amount, currency) {
+  return new Intl.NumberFormat('en', { style: 'currency', currency, trailingZeroDisplay: 'stripIfInteger' }).format(amount);
+}
+
+/** Stripe billing interval as a phrase: `month`, `3 months`. */
+export function formatBillingInterval(interval, intervalCount = 1) {
+  return intervalCount === 1 ? interval : `${intervalCount} ${interval}s`;
 }

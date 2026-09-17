@@ -7,13 +7,12 @@ import helmet from 'helmet';
 import { pinoHttp } from 'pino-http';
 import { env } from './config/env.js';
 import { logger } from './config/logger.js';
+import { API_PREFIX } from './constants/api.js';
 import * as subscriptionController from './controllers/subscriptionController.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { createRateLimiters } from './middleware/rateLimiters.js';
 import { sanitizeInput } from './middleware/sanitizeInput.js';
 import { createApiRouter } from './routes/index.js';
-
-export const API_PREFIX = '/api/v1';
 
 export function createApp({ rateLimitEnabled = env.RATE_LIMIT_ENABLED } = {}) {
   const app = express();

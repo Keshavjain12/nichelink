@@ -23,7 +23,7 @@ import { PublicFooter, PublicNavbar } from '../components/layout/PublicLayout';
 import { useGetConfigQuery } from '../app/api';
 import { useListCommunitiesQuery } from '../features/communities/communitiesApi';
 import { useDocumentTitle } from '../hooks/common';
-import { formatCompactNumber } from '../utils/format';
+import { formatBillingInterval, formatCompactNumber, formatCurrency } from '../utils/format';
 
 function HeroPreview() {
   return (
@@ -144,8 +144,8 @@ function PlanComparison() {
             {isPro && <Badge variant="brand" className="absolute top-6 right-6">Most popular</Badge>}
             <h3 className="text-lg font-semibold">{plan.name}</h3>
             <p className="mt-2">
-              <span className="text-4xl font-bold tracking-tight">${plan.priceMonthly}</span>
-              <span className="text-sm text-fg-subtle"> / month</span>
+              <span className="text-4xl font-bold tracking-tight">{formatCurrency(plan.price, plan.currency)}</span>
+              <span className="text-sm text-fg-subtle"> / {formatBillingInterval(plan.interval, plan.intervalCount)}</span>
             </p>
             <ul className="mt-6 space-y-3">
               {plan.features.map((feature) => (

@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RefreshToken, User } from '../src/models/index.js';
 import {
   CSRF_HEADERS,
@@ -10,6 +10,11 @@ import {
   createFreeUser,
   extractRefreshCookie,
 } from './helpers.js';
+
+// /config looks up the Pro price; keep this suite off the network.
+vi.mock('../src/services/stripeClient.js', () => ({
+  getStripe: () => ({ prices: { retrieve: vi.fn().mockRejectedValue(new Error('Stripe is not reachable in tests')) } }),
+}));
 
 const validRegistration = {
   name: 'Ada Lovelace',
@@ -297,7 +302,7 @@ describe('platform endpoints', () => {
     expect(health.body.data.database).toBe('up');
 
     const config = await request(app).get('/api/v1/config').expect(200);
-    expect(config.body.data.features).toEqual({ payments: true, uploads: true });
+    expect(config.body.data.features).toEqual({ payments: true, paymentsMode: 'test', uploads: true });
 
     const missing = await request(app).get('/api/v1/does-not-exist').expect(404);
     expect(missing.body).toMatchObject({ success: false, code: 'NOT_FOUND' });

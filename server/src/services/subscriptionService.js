@@ -45,6 +45,7 @@ export async function getSubscriptionStatus(userId) {
     cancelAtPeriodEnd: Boolean(user.subscription?.cancelAtPeriodEnd),
     provider: latest?.provider ?? null,
     paymentsEnabled: env.features.payments,
+    paymentsMode: env.features.paymentsMode,
     canManageBilling: env.features.payments && Boolean(user.stripeCustomerId),
   };
 }

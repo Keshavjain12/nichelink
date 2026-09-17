@@ -40,6 +40,7 @@ export default function BillingSettings() {
   const isAdmin = subscription.role === 'Admin';
   const status = STATUS_BADGES[subscription.status] ?? { variant: 'neutral', label: subscription.status };
   const managedByStripe = subscription.provider === 'stripe';
+  const stripeBillingLabel = subscription.paymentsMode === 'test' ? 'Stripe (test mode)' : 'Stripe';
 
   const run = async (action, successMessage) => {
     try {
@@ -81,7 +82,7 @@ export default function BillingSettings() {
           {subscription.provider && (
             <div>
               <dt className="text-xs text-fg-subtle">Billing</dt>
-              <dd className="mt-0.5 text-sm font-medium">{managedByStripe ? 'Stripe (test mode)' : 'Complimentary membership'}</dd>
+              <dd className="mt-0.5 text-sm font-medium">{managedByStripe ? stripeBillingLabel : 'Complimentary membership'}</dd>
             </div>
           )}
         </dl>

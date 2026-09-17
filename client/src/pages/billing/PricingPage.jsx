@@ -13,15 +13,11 @@ import {
 } from '../../features/subscriptions/subscriptionsApi';
 import { useDocumentTitle } from '../../hooks/common';
 import { useAuth } from '../../hooks/useAuth';
-import { formatDate } from '../../utils/format';
+import { formatBillingInterval, formatCurrency, formatDate } from '../../utils/format';
 import { getErrorMessage } from '../../utils/errors';
 import { redirectTo } from '../../utils/navigation';
 
-const FAQ = [
-  {
-    question: 'How does billing work?',
-    answer: 'Pro is billed monthly through Stripe. This deployment runs in Stripe test mode, so use a test card such as 4242 4242 4242 4242.',
-  },
+const STATIC_FAQ = [
   {
     question: 'Can I cancel anytime?',
     answer: 'Yes. Cancel from Settings → Billing and you keep Pro until the end of the period you already paid for.',
@@ -31,6 +27,22 @@ const FAQ = [
     answer: 'Everything you published stays up. You can still read, like and message within the Free limits.',
   },
 ];
+
+const TEST_MODE_HINT = 'This deployment runs in Stripe test mode, so use a test card such as 4242 4242 4242 4242.';
+
+function buildFaq({ proPlan, paymentsMode }) {
+  const cadence = proPlan
+    ? `every ${formatBillingInterval(proPlan.interval, proPlan.intervalCount)}`
+    : 'on a recurring basis';
+  const billing = `Pro is billed ${cadence} through Stripe.`;
+  return [
+    {
+      question: 'How does billing work?',
+      answer: paymentsMode === 'test' ? `${billing} ${TEST_MODE_HINT}` : billing,
+    },
+    ...STATIC_FAQ,
+  ];
+}
 
 function CurrentPlanBanner({ subscription }) {
   if (!subscription) return null;
@@ -66,6 +78,8 @@ export default function PricingPage() {
   const [createCheckout, { isLoading: redirecting }] = useCreateCheckoutSessionMutation();
 
   const paymentsEnabled = Boolean(config?.features.payments);
+  const proPlan = config?.plans.find((plan) => plan.id === 'pro');
+  const faq = buildFaq({ proPlan, paymentsMode: config?.features.paymentsMode });
   const isPro = subscription?.plan === 'pro' || subscription?.role === 'Admin';
 
   const upgrade = async () => {
@@ -116,8 +130,8 @@ export default function PricingPage() {
                 {isCurrent && <Badge variant="success">Current plan</Badge>}
               </div>
               <p className="mt-3">
-                <span className="text-4xl font-bold tracking-tight">${plan.priceMonthly}</span>
-                <span className="text-sm text-fg-subtle"> / month</span>
+                <span className="text-4xl font-bold tracking-tight">{formatCurrency(plan.price, plan.currency)}</span>
+                <span className="text-sm text-fg-subtle"> / {formatBillingInterval(plan.interval, plan.intervalCount)}</span>
               </p>
               <ul className="mt-6 flex-1 space-y-3">
                 {plan.features.map((feature) => (
@@ -151,7 +165,7 @@ export default function PricingPage() {
       <section aria-labelledby="faq-heading">
         <h2 id="faq-heading" className="text-lg font-semibold">Frequently asked questions</h2>
         <div className="mt-4 divide-y divide-line rounded-2xl border border-line bg-surface">
-          {FAQ.map((item) => (
+          {faq.map((item) => (
             <details key={item.question} className="group px-5 py-4">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-medium text-fg">
                 {item.question}

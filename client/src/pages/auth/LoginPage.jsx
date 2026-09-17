@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { Button } from '../../components/common/Button';
 import { InlineAlert } from '../../components/common/Feedback';
 import { FormField, Input, TextField } from '../../components/common/Field';
+import { SHOW_DEMO_ACCOUNTS } from '../../constants/app';
 import { useLoginMutation } from '../../features/auth/authApi';
 import { useDocumentTitle } from '../../hooks/common';
 import { getErrorMessage } from '../../utils/errors';
@@ -24,7 +25,6 @@ const DEMO_ACCOUNTS = [
   { label: 'Pro', email: 'pro@nichelink.demo' },
   { label: 'Free', email: 'free@nichelink.demo' },
 ];
-const SHOW_DEMO_ACCOUNTS = import.meta.env.DEV || import.meta.env.VITE_SHOW_DEMO_ACCOUNTS === 'true';
 
 export function PasswordInput({ ref, ...props }) {
   const [visible, setVisible] = useState(false);

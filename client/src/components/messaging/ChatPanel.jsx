@@ -41,7 +41,7 @@ function MessageBubble({ message, isOwn, showSeen, onRetry }) {
     <div className={cn('flex flex-col', isOwn ? 'items-end' : 'items-start')}>
       <div
         className={cn(
-          'max-w-[85%] rounded-2xl px-3.5 py-2 text-sm leading-6 whitespace-pre-wrap break-words sm:max-w-[70%]',
+          'max-w-[85%] rounded-2xl px-3.5 py-2 text-sm leading-6 whitespace-pre-wrap wrap-break-word sm:max-w-[70%]',
           isOwn ? 'rounded-br-md bg-brand-600 text-white' : 'rounded-bl-md bg-surface-muted text-fg',
           message.pending && 'opacity-70',
           message.failed && 'bg-rose-600',

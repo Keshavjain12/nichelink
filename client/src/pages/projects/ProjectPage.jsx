@@ -134,7 +134,7 @@ export default function ProjectPage() {
             {project.summary && <p className="mt-2 text-base text-fg-muted">{project.summary}</p>}
             <div className="mt-5"><ProjectMeta project={project} /></div>
             <h2 className="mt-8 text-sm font-semibold">About the project</h2>
-            <p className="mt-2 text-[15px] leading-7 whitespace-pre-wrap break-words text-fg">{project.description}</p>
+            <p className="mt-2 text-[15px] leading-7 whitespace-pre-wrap wrap-break-word text-fg">{project.description}</p>
             <h2 className="mt-8 text-sm font-semibold">Skills needed</h2>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {project.requiredSkills.map((skill) => <Tag key={skill} className="text-sm">{skill}</Tag>)}

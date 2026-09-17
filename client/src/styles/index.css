@@ -98,7 +98,7 @@
 @layer components {
   /* Rendered post content (sanitized HTML). */
   .rich-content {
-    @apply text-[15px] leading-7 text-fg break-words;
+    @apply text-[15px] leading-7 text-fg wrap-break-word;
   }
   .rich-content > * + * {
     @apply mt-3;

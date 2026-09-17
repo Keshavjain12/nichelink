@@ -28,7 +28,7 @@ import { formatCompactNumber } from '../utils/format';
 function HeroPreview() {
   return (
     <div className="relative mx-auto w-full max-w-lg lg:mx-0" aria-hidden="true">
-      <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-tr from-brand-500/25 via-violet-500/15 to-transparent blur-2xl" />
+      <div className="absolute -inset-6 rounded-[2rem] bg-linear-to-tr from-brand-500/25 via-violet-500/15 to-transparent blur-2xl" />
       <Card className="relative overflow-hidden shadow-elevated">
         <div className="flex items-center gap-3 border-b border-line px-5 py-4">
           <span className="flex size-10 items-center justify-center rounded-xl bg-indigo-500/15 text-xl">🚀</span>
@@ -197,7 +197,7 @@ export default function LandingPage() {
               <Badge variant="brand" icon={Sparkles}>Built for remote professionals</Badge>
               <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-fg sm:text-5xl lg:text-6xl">
                 Find your people.
-                <span className="block bg-gradient-to-r from-brand-600 via-violet-600 to-fuchsia-500 bg-clip-text text-transparent">
+                <span className="block bg-linear-to-r from-brand-600 via-violet-600 to-fuchsia-500 bg-clip-text text-transparent">
                   Build your niche.
                 </span>
               </h1>
@@ -291,7 +291,7 @@ export default function LandingPage() {
         </Section>
 
         <section className="px-4 pb-24 sm:px-6">
-          <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl bg-gradient-to-br from-brand-600 via-violet-600 to-fuchsia-600 px-6 py-14 text-center shadow-elevated sm:px-12">
+          <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl bg-linear-to-br from-brand-600 via-violet-600 to-fuchsia-600 px-6 py-14 text-center shadow-elevated sm:px-12">
             <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Your niche is already here.</h2>
             <p className="mx-auto mt-4 max-w-xl text-base text-white/85">
               Join practitioners who share what actually works — and find the people you will build with next.

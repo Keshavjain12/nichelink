@@ -110,7 +110,7 @@ export default function Sidebar() {
       {!isPro && !isAdmin && (
         <Link
           to="/pricing"
-          className="mt-6 block rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-4 transition-shadow hover:shadow-card dark:border-amber-500/20 dark:from-amber-500/10 dark:to-orange-500/5"
+          className="mt-6 block rounded-xl border border-amber-200 bg-linear-to-br from-amber-50 to-orange-50 p-4 transition-shadow hover:shadow-card dark:border-amber-500/20 dark:from-amber-500/10 dark:to-orange-500/5"
         >
           <span className="flex items-center gap-2 text-sm font-semibold text-amber-800 dark:text-amber-200">
             <Crown className="size-4" aria-hidden="true" />

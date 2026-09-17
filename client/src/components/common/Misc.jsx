@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
 import { ChevronLeft, ChevronRight, Crown, X } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useInfiniteScroll } from '../../hooks/common';
 import { formatDate, formatRelativeTime } from '../../utils/format';
@@ -9,16 +9,19 @@ import { Button } from './Button';
 import { Spinner } from './Feedback';
 
 export function Logo({ className, compact = false }) {
+  // Unique per instance: several logos can be on a page, and an SVG gradient referenced by id
+  // does not render if the first element with that id sits inside a display:none subtree.
+  const gradientId = `nl-logo-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   return (
     <span className={cn('inline-flex items-center gap-2 font-semibold tracking-tight text-fg', className)}>
       <svg viewBox="0 0 64 64" className="size-7 shrink-0" aria-hidden="true">
         <defs>
-          <linearGradient id="nl-logo" x1="0" y1="0" x2="1" y2="1">
+          <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#6366f1" />
             <stop offset="1" stopColor="#8b5cf6" />
           </linearGradient>
         </defs>
-        <rect width="64" height="64" rx="16" fill="url(#nl-logo)" />
+        <rect width="64" height="64" rx="16" fill={`url(#${gradientId})`} />
         <circle cx="22" cy="24" r="7" fill="#fff" />
         <circle cx="42" cy="40" r="7" fill="#fff" />
         <path d="M26 29 L38 35" stroke="#fff" strokeWidth="5" strokeLinecap="round" />
@@ -126,13 +129,13 @@ export function UpgradeCallout({ title = 'Unlock with Pro', description, compact
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 via-orange-50 to-white dark:border-amber-500/25 dark:from-amber-500/10 dark:via-orange-500/5 dark:to-transparent',
+        'relative overflow-hidden rounded-2xl border border-amber-200 bg-linear-to-br from-amber-50 via-orange-50 to-white dark:border-amber-500/25 dark:from-amber-500/10 dark:via-orange-500/5 dark:to-transparent',
         compact ? 'p-4' : 'p-5',
         className,
       )}
     >
       <div className="flex items-start gap-3">
-        <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-sm">
+        <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-amber-400 to-orange-500 text-white shadow-sm">
           <Crown className="size-4.5" aria-hidden="true" />
         </span>
         <div className="min-w-0 flex-1">

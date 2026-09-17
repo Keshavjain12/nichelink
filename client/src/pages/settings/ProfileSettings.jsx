@@ -119,7 +119,7 @@ export default function ProfileSettings() {
             <p className="text-xs font-medium text-fg-subtle">Profile completion</p>
             <div className="mt-1.5 flex items-center gap-2">
               <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-muted" role="progressbar" aria-valuenow={user.profileCompletion} aria-valuemin={0} aria-valuemax={100} aria-label="Profile completion">
-                <div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-violet-500" style={{ width: `${user.profileCompletion}%` }} />
+                <div className="h-full rounded-full bg-linear-to-r from-brand-500 to-violet-500" style={{ width: `${user.profileCompletion}%` }} />
               </div>
               <span className="text-sm font-semibold">{user.profileCompletion}%</span>
             </div>

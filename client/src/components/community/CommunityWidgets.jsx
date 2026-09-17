@@ -90,7 +90,7 @@ export function ProfileCompletionCard() {
           aria-valuemax={100}
           aria-label="Profile completion"
         >
-          <div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-violet-500" style={{ width: `${user.profileCompletion}%` }} />
+          <div className="h-full rounded-full bg-linear-to-r from-brand-500 to-violet-500" style={{ width: `${user.profileCompletion}%` }} />
         </div>
         <span className="text-xs font-semibold text-fg">{user.profileCompletion}%</span>
       </div>

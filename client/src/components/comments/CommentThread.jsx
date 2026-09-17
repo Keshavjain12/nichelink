@@ -130,7 +130,7 @@ function CommentItem({ comment, postId }) {
                   </div>
                 </div>
               ) : (
-                <p className="mt-1 text-sm leading-6 whitespace-pre-wrap break-words text-fg">{comment.content}</p>
+                <p className="mt-1 text-sm leading-6 whitespace-pre-wrap wrap-break-word text-fg">{comment.content}</p>
               )}
 
               {!editing && (

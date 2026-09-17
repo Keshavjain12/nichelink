@@ -75,7 +75,7 @@ export default function ProfilePage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <Card className="overflow-hidden">
-        <div className="h-24 bg-gradient-to-r from-brand-500/80 via-violet-500/70 to-fuchsia-500/60 sm:h-32" aria-hidden="true" />
+        <div className="h-24 bg-linear-to-r from-brand-500/80 via-violet-500/70 to-fuchsia-500/60 sm:h-32" aria-hidden="true" />
         <div className="px-5 pb-6 sm:px-7">
           <div className="-mt-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <span className="w-fit rounded-full bg-surface p-1">

@@ -7,7 +7,7 @@ const VARIANTS = {
   ghost: 'text-fg-muted hover:bg-surface-hover hover:text-fg',
   danger: 'bg-rose-600 text-white shadow-sm hover:bg-rose-700',
   'danger-ghost': 'text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-500/10',
-  pro: 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm hover:from-amber-600 hover:to-orange-600',
+  pro: 'bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-sm hover:from-amber-600 hover:to-orange-600',
 };
 
 const SIZES = {

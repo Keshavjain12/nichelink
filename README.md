@@ -2,6 +2,12 @@
 
 **Find your people. Build your niche.**
 
+**[Live demo →](https://nichelink-sigma.vercel.app)** · sign in with `pro@nichelink.demo` / `NicheLink-Demo-2026!`
+
+> Hosted on free tiers: the API sleeps after 15 minutes idle, so the first request may take ~50 seconds to
+> wake it. Payments run in Stripe **test mode** — upgrade with card `4242 4242 4242 4242`, any future expiry
+> and any CVC. No real money moves.
+
 NicheLink is a community platform for remote professionals: persistent, high-quality micro-communities
 ("SaaS Developers", "AI Engineers", "Technical Writers") with threaded discussions, real-time direct
 messaging, a collaboration board, and a Pro tier backed by Stripe.
@@ -174,7 +180,7 @@ Full documentation in [`server/.env.example`](server/.env.example) and [`client/
 
 ## Demo accounts
 
-After `npm run seed` (development only — never seed production):
+On the [live demo](https://nichelink-sigma.vercel.app), or locally after `npm run seed`:
 
 | Role        | Email                  | Password               |
 | ----------- | ---------------------- | ---------------------- |
@@ -182,7 +188,7 @@ After `npm run seed` (development only — never seed production):
 | Pro member  | `pro@nichelink.demo`   | `NicheLink-Demo-2026!` |
 | Free member | `free@nichelink.demo`  | `NicheLink-Demo-2026!` |
 
-Set `SEED_DEMO_PASSWORD` to use your own. These credentials exist only in seeded development data.
+Set `SEED_DEMO_PASSWORD` to use your own. These credentials exist only in seeded demo data.
 
 Try: sign in as the Free member and attempt to post (blocked with an upgrade path), then as the Pro member
 to publish, message and post a project; sign in as the Admin to review the moderation queue.
@@ -213,9 +219,9 @@ Frontend on Vercel, API on Render, data on MongoDB Atlas — step by step in
 production `Dockerfile`, `docker-compose.yml` and a GitHub Actions workflow that lints, tests, builds and
 scans for committed secrets.
 
-> **Before deploying the SPA:** the `/api/:path*` rewrite in `client/vercel.json` points at
-> `https://nichelink-api.onrender.com`, a placeholder. `vercel.json` cannot read environment variables, so
-> replace that `destination` with your own API URL, or the deployed client will call the wrong host.
+> **If you fork this:** the `/api/:path*` rewrite in `client/vercel.json` points at
+> `https://nichelink-api.onrender.com`, this deployment's API. `vercel.json` cannot read environment
+> variables, so replace that `destination` with your own API URL, or your client will call this one.
 
 ## Project structure
 

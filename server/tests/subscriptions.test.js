@@ -15,8 +15,8 @@ import {
 
 const stripeMock = vi.hoisted(() => ({
   customers: { create: vi.fn() },
-  checkout: { sessions: { create: vi.fn(), retrieve: vi.fn() } },
-  subscriptions: { retrieve: vi.fn(), update: vi.fn() },
+  checkout: { sessions: { create: vi.fn(), retrieve: vi.fn(), list: vi.fn() } },
+  subscriptions: { retrieve: vi.fn(), update: vi.fn(), cancel: vi.fn() },
   billingPortal: { sessions: { create: vi.fn() } },
 }));
 
@@ -133,6 +133,70 @@ describe('subscriptions & Stripe webhooks', () => {
     ).toBe('cus_test_123');
     // Starting checkout grants nothing.
     expect((await User.findById(user._id).lean()).role).toBe('FreeMember');
+  });
+
+  it('reuses a checkout session the member already has open', async () => {
+    // Two tabs must not produce two payable sessions; Stripe bills each one separately.
+    const user = await createFreeUser();
+    stripeMock.customers.create.mockResolvedValue({ id: 'cus_test_123' });
+    stripeMock.checkout.sessions.list.mockResolvedValue({
+      data: [
+        {
+          id: 'cs_test_open1',
+          mode: 'subscription',
+          status: 'open',
+          url: 'https://checkout.stripe.com/c/pay/cs_test_open1',
+        },
+      ],
+    });
+
+    const res = await request(app)
+      .post('/api/v1/subscriptions/checkout')
+      .set(bearer(user))
+      .expect(200);
+
+    expect(res.body.data.sessionId).toBe('cs_test_open1');
+    expect(stripeMock.checkout.sessions.create).not.toHaveBeenCalled();
+  });
+
+  it('cancels a duplicate subscription so a member is never billed twice', async () => {
+    const user = await createFreeUser();
+    const first = stripeSubscription({
+      id: 'sub_first',
+      customer: 'cus_dup',
+      userId: String(user._id),
+    });
+    const second = stripeSubscription({
+      id: 'sub_second',
+      customer: 'cus_dup',
+      userId: String(user._id),
+    });
+    // The second checkout starts a moment later, so it bills a later period.
+    second.items.data[0].current_period_start = first.items.data[0].current_period_start + 60;
+    stripeMock.subscriptions.cancel.mockResolvedValue({ id: 'sub_second', status: 'canceled' });
+    // The handler always re-reads the subscription from Stripe rather than trusting the payload.
+    stripeMock.subscriptions.retrieve.mockImplementation(async (id) =>
+      id === 'sub_first' ? first : second,
+    );
+
+    await signedWebhook(app, {
+      id: 'evt_dup_1',
+      type: 'customer.subscription.created',
+      data: { object: first },
+    }).expect(200);
+    await signedWebhook(app, {
+      id: 'evt_dup_2',
+      type: 'customer.subscription.created',
+      data: { object: second },
+    }).expect(200);
+
+    expect(stripeMock.subscriptions.cancel).toHaveBeenCalledTimes(1);
+    expect(stripeMock.subscriptions.cancel).toHaveBeenCalledWith('sub_second', {
+      prorate: true,
+      invoice_now: true,
+    });
+    // The first subscription is untouched and the member keeps Pro.
+    expect((await User.findById(user._id).lean()).role).toBe('ProMember');
   });
 
   it('refuses checkout for admins and existing Pro members', async () => {

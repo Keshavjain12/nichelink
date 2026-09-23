@@ -177,7 +177,45 @@ export async function applyStripeSubscription(stripeSubscription, { userIdHint }
     { upsert: true, returnDocument: 'after', runValidators: true },
   );
 
+  await cancelDuplicateSubscriptions(user._id);
   return refreshUserEntitlement(user._id);
+}
+
+/**
+ * A member only ever needs one paid subscription. Two checkout tabs opened before either is paid
+ * produce two payable sessions, and Stripe will happily bill both, so the newest duplicate is
+ * cancelled as soon as it lands. Cancelling with proration credits the unused time back to the
+ * customer instead of silently keeping the second charge.
+ */
+async function cancelDuplicateSubscriptions(userId) {
+  const active = await Subscription.find({
+    user: userId,
+    status: { $in: ENTITLED_SUBSCRIPTION_STATUSES },
+    stripeSubscriptionId: { $ne: null },
+  })
+    .sort({ currentPeriodStart: 1, createdAt: 1 })
+    .lean();
+  if (active.length < 2) return;
+
+  // Keep the one the member paid for first; everything after it is an accident.
+  const [, ...duplicates] = active;
+  for (const duplicate of duplicates) {
+    try {
+      await getStripe().subscriptions.cancel(duplicate.stripeSubscriptionId, {
+        prorate: true,
+        invoice_now: true,
+      });
+      logger.warn(
+        { userId: String(userId), subscriptionId: duplicate.stripeSubscriptionId },
+        'Cancelled a duplicate Stripe subscription',
+      );
+    } catch (error) {
+      logger.error(
+        { err: error, userId: String(userId), subscriptionId: duplicate.stripeSubscriptionId },
+        'Failed to cancel a duplicate Stripe subscription',
+      );
+    }
+  }
 }
 
 /** Always re-reads the subscription from Stripe, so event ordering and stale payloads cannot matter. */
@@ -189,6 +227,21 @@ export async function syncSubscriptionFromStripe(subscriptionId, options) {
 /* -------------------------------------------------------------------------- */
 /*                                  Checkout                                  */
 /* -------------------------------------------------------------------------- */
+
+async function findOpenCheckoutSession(stripe, customerId) {
+  try {
+    const { data } = await stripe.checkout.sessions.list({
+      customer: customerId,
+      status: 'open',
+      limit: 5,
+    });
+    return data.find((session) => session.mode === 'subscription' && session.url) ?? null;
+  } catch (error) {
+    // Reuse is an optimisation; the duplicate guard above still protects the member.
+    logger.warn({ err: error, customerId }, 'Could not list open checkout sessions');
+    return null;
+  }
+}
 
 async function ensureStripeCustomer(user) {
   if (user.stripeCustomerId) return user.stripeCustomerId;
@@ -219,6 +272,15 @@ export async function createCheckoutSession(viewer) {
     throw ApiError.conflict('You already have an active Pro membership');
 
   const customerId = await ensureStripeCustomer(user);
+
+  // Reusing the open session keeps a second tab from becoming a second payable session, which
+  // Stripe would bill separately. A completed session cannot be paid twice.
+  const open = await findOpenCheckoutSession(stripe, customerId);
+  if (open) {
+    logger.info({ userId: String(user._id), sessionId: open.id }, 'Reusing open checkout session');
+    return { url: open.url, sessionId: open.id };
+  }
+
   const session = await stripe.checkout.sessions.create({
     mode: 'subscription',
     customer: customerId,

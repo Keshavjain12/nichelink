@@ -5,6 +5,10 @@ async function startSessionOnSuccess(_arg, { dispatch, queryFulfilled }) {
   try {
     const { data } = await queryFulfilled;
     dispatch(sessionStarted(data));
+    // Responses cached while signed out carry guest viewer state (no membership, no
+    // permissions), so drop them and let each screen refetch as the new user. signOut()
+    // does the same in the other direction.
+    dispatch(api.util.resetApiState());
   } catch {
     // The failure is returned to the component through the mutation result.
   }

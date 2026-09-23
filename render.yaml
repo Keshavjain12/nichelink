@@ -3,7 +3,7 @@ services:
     name: nichelink-api
     runtime: node
     plan: free
-    region: oregon
+    region: singapore
     buildCommand: npm ci
     startCommand: npm start --workspace server
     healthCheckPath: /api/v1/health
